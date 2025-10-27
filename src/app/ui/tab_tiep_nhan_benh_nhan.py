@@ -1,7 +1,7 @@
 # src/app/ui/tab_tiep_nhan_benh_nhan.py
 from PyQt6.QtGui import QRegularExpressionValidator
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButton, QLineEdit, QDateEdit, QComboBox, \
-    QCheckBox, QGridLayout, QApplication, QDateTimeEdit
+    QCheckBox, QGridLayout, QApplication, QDateTimeEdit, QMessageBox
 from PyQt6.QtCore import Qt, QDate, QObject, QEvent, QDateTime, QTimer, QRegularExpression
 
 try:
@@ -130,6 +130,12 @@ class TabTiepNhanBenhNhan(QWidget):
                 background-color: #A0A0A0;      /* Màu nền xám */
                 color: #E0E0E0;                 /* Màu chữ xám nhạt */
                 border: none;
+            }
+            
+            /* Style cho trường bị lỗi */
+            .error {
+                border: 2px solid red; /* Viền đỏ nổi bật */
+                background-color: #FFF0F0; /* Nền đỏ nhạt */
             }
         """)
         # ----------------------------------------------------
@@ -355,8 +361,7 @@ class TabTiepNhanBenhNhan(QWidget):
         # Lấy widget Số điện thoại
         sdt_widget = self.data_widgets["Số điện thoại"]
 
-        # Tạo biểu thức chính quy:
-        # \d{10} : Yêu cầu chính xác 10 chữ số (0-9).
+        # Tạo biểu thức chính quy: \d{10} : Yêu cầu chính xác 10 chữ số (0-9).
         sdt_regex = QRegularExpression(r"^\d{10}$")
 
         # Tạo Validator
@@ -408,8 +413,64 @@ class TabTiepNhanBenhNhan(QWidget):
         else:
             print(f"CẢNH BÁO: Dữ liệu CSV cho '{field_name}' rỗng hoặc bị lỗi.")
 
+    def is_valid_form(self) -> bool:
+        """Kiểm tra các trường bắt buộc không được để trống và áp dụng Style Sheet lỗi."""
+
+        # Danh sách tên các trường BẮT BUỘC (Dựa trên key trong self.data_widgets)
+        REQUIRED_FIELDS = [
+            "Mã y tế", "Họ tên", "Ngày sinh", "Giới tính",
+            "Số điện thoại", "Lý do tiếp nhận", "Quốc tịch", "Dân tộc"
+            # Thêm các trường * bắt buộc khác vào đây
+        ]
+
+        is_valid = True
+
+        # Lặp qua tất cả các widget để kiểm tra
+        for field_name, widget in self.data_widgets.items():
+            # Xóa style lỗi cũ trước khi kiểm tra lại
+            widget.setProperty('class', None)
+            widget.style().polish(widget)
+
+            if field_name not in REQUIRED_FIELDS:
+                continue
+
+            # Kiểm tra giá trị
+            value = None
+            if isinstance(widget, QLineEdit):
+                value = widget.text().strip()
+            elif isinstance(widget, QComboBox):
+                # Kiểm tra cả giá trị key, tránh trường hợp item đầu tiên là '---chọn---'
+                value = get_combobox_key(widget)
+                if value is None or value == "":
+                    # Nếu ComboBox có nội dung nhưng giá trị key rỗng
+                    value = None
+                else:
+                    # Nếu đã chọn một key hợp lệ, value có giá trị
+                    value = "valid"
+            elif isinstance(widget, QDateEdit) or isinstance(widget, QDateTimeEdit):
+                # Kiểm tra giá trị hợp lệ, thường là kiểm tra ngày không phải null/mặc định
+                # Nếu không có giới hạn, ta coi như luôn hợp lệ
+                value = widget.dateTime().toString() if widget.dateTime().isValid() else None
+
+            # Nếu giá trị là rỗng (None hoặc chuỗi rỗng)
+            if not value:
+                # 1. Đặt thuộc tính 'class' thành 'error'
+                widget.setProperty('class', 'error')
+
+                # 2. Yêu cầu widget cập nhật style (cần thiết cho setProperty)
+                widget.style().polish(widget)
+
+                is_valid = False
+
+        return is_valid
+
     def handle_action_button_click(self):
         """Thu thập dữ liệu từ tất cả các trường và gọi hàm in."""
+
+        # 1. GỌI HÀM VALIDATION
+        if not self.is_valid_form():
+            QMessageBox.warning(self, "Lỗi Nhập liệu", "Vui lòng điền đầy đủ các trường bắt buộc!")
+            return
 
         collected_data = {}
 
@@ -432,14 +493,14 @@ class TabTiepNhanBenhNhan(QWidget):
             # Lưu dữ liệu vào dictionary bằng key đã chuẩn hóa
             collected_data[key.replace("*", "").strip()] = value
 
-        # 2. Lưu dữ liệu vào file csv
+        # 2. Gọi hàm và lưu dữ liệu vào file csv
         luu_du_lieu_tiep_nhan(collected_data)
 
         # Lấy mã phòng khám
-        ma_phong_mau = self.data_widgets['Phòng khám'].currentData()
+        ma_phong_kham = get_combobox_key(self.data_widgets.get('Phòng khám'))
 
         # Gọi hàm lấy mã tiếp theo và cập nhật STT
-        next_stt = get_next_queue_number(ma_phong_mau)
+        next_stt = get_next_queue_number(ma_phong_kham)
 
         # 3. Chuẩn bị dữ liệu cho hàm in (Định dạng lại key theo yêu cầu của hàm in)
         # Đây là bước ánh xạ dữ liệu thu thập được (collected_data) sang

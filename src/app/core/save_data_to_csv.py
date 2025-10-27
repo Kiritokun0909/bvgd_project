@@ -6,7 +6,7 @@ def luu_du_lieu_tiep_nhan(data: dict):
     """
     Lưu toàn bộ dữ liệu tiếp nhận từ biểu mẫu vào file CSV.
     """
-    FILE_LICH_SU = "data/lich_su_tiep_nhan.csv"
+    LICH_SU_TIEP_NHAN_FILE_PATH = "data/lich_su_tiep_nhan.csv"
 
     # 1. Thêm timestamp để theo dõi thời điểm lưu
     data['timestamp_luu'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -15,21 +15,21 @@ def luu_du_lieu_tiep_nhan(data: dict):
     df_moi = pd.DataFrame([data])
 
     # 3. Kiểm tra và Lưu file
-    if os.path.exists(FILE_LICH_SU):
+    if os.path.exists(LICH_SU_TIEP_NHAN_FILE_PATH):
         # Nếu file tồn tại, đọc file cũ và nối dữ liệu mới
         try:
-            df_hien_tai = pd.read_csv(FILE_LICH_SU)
+            df_hien_tai = pd.read_csv(LICH_SU_TIEP_NHAN_FILE_PATH)
             df_ket_hop = pd.concat([df_hien_tai, df_moi], ignore_index=True)
-            df_ket_hop.to_csv(FILE_LICH_SU, index=False)
-            print(f"SUCCESS: Đã thêm dữ liệu mới vào {FILE_LICH_SU}.")
+            df_ket_hop.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False)
+            print(f"SUCCESS: Đã thêm dữ liệu mới vào {LICH_SU_TIEP_NHAN_FILE_PATH}.")
         except Exception as e:
-            print(f"LỖI LƯU: Không thể đọc/ghi vào file lịch sử. {e}")
+            print(f"LỖI LƯU: Không thể đọc/ghi vào file {LICH_SU_TIEP_NHAN_FILE_PATH}. {e}")
 
     else:
         # Nếu file chưa tồn tại, tạo file mới
         try:
-            os.makedirs(os.path.dirname(FILE_LICH_SU), exist_ok=True)
-            df_moi.to_csv(FILE_LICH_SU, index=False)
-            print(f"SUCCESS: Đã tạo và lưu dữ liệu đầu tiên vào {FILE_LICH_SU}.")
+            os.makedirs(os.path.dirname(LICH_SU_TIEP_NHAN_FILE_PATH), exist_ok=True)
+            df_moi.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False)
+            print(f"SUCCESS: Đã tạo và lưu dữ liệu đầu tiên vào {LICH_SU_TIEP_NHAN_FILE_PATH}.")
         except Exception as e:
             print(f"LỖI LƯU: Không thể tạo file lịch sử. {e}")

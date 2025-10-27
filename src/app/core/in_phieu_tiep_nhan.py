@@ -33,7 +33,7 @@ except Exception as e:
     VIET_FONT_BOLD = 'Times-Bold'
     VIET_FONT_ITALIC = 'Times-Italic'
 
-# ----------------- DỮ LIỆU CỦA PHIẾU CHỜ KHÁM -----------------
+# ----------------- DỮ LIỆU MẪU CỦA PHIẾU TIẾP NHẬN -----------------
 data = {
     'clinic_name': 'BỆNH VIỆN ABC',
     'room_info': 'Lầu X Phòng K',
@@ -130,7 +130,6 @@ def draw_ticket(canvas, data):
 
 def create_and_open_pdf_for_printing(data):
     """Tạo file PDF tạm thời bằng ReportLab và mở file."""
-
     try:
         # 1. Tạo tệp PDF tạm thời
         with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as tmp_file:
