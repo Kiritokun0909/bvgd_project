@@ -1,0 +1,18 @@
+# Thư mục cấu hình của PyCharm
+.idea/
+
+# Môi trường ảo (Virtual Environment)
+venv/
+*.egg-info/
+
+# Các file biên dịch Python
+*.pyc
+__pycache__/
+
+# Các file log, database local, v.v.
+*.log
+dist/
+
+build/
+
+main.spec
