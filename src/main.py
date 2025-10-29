@@ -1,14 +1,15 @@
-# BVGD_Project/src/main.py
-
 import sys
-from PyQt6.QtWidgets import QApplication
-from app.ui.main_window import MainWindow
+from PyQt6 import QtWidgets
 
-def main():
-    app = QApplication(sys.argv)
-    window = MainWindow()   # Init main window
-    window.show()   # Show the window
-    sys.exit(app.exec())
+from app.controllers.app_controller import AppController
 
-if __name__ == '__main__':
-    main()
+def main(argv):
+    app = QtWidgets.QApplication(argv)
+    window = AppController()
+    window.show()
+
+    return app.exec()
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

@@ -5,31 +5,34 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QScrollArea, QPushButt
 from PyQt6.QtCore import Qt, QDate, QObject, QEvent, QDateTime, QTimer, QRegularExpression
 
 try:
-    from app.core.load_order_from_csv import get_next_queue_number
+    from app.core.tiep_nhan_benh_nhan import get_next_queue_number
 except ImportError:
     def get_next_queue_number(data):
         print("LỖI: Không tìm thấy module 'get_next_queue_number'. Hàm được gọi với data:", data)
 
 try:
-    from app.core.save_data_to_csv import luu_du_lieu_tiep_nhan
+    from app.core.tiep_nhan_benh_nhan import luu_du_lieu_tiep_nhan
 except ImportError:
     def luu_du_lieu_tiep_nhan(data):
         print("LỖI: Không tìm thấy module 'luu_du_lieu_tiep_nhan'. Hàm được gọi với data:", data)
 
 try:
-    from app.core.in_phieu_tiep_nhan import create_and_open_pdf_for_printing
-except ImportError:
-    def create_and_open_pdf_for_printing(data):
-        print("LỖI: Không tìm thấy module 'create_and_open_pdf_for_printing'. Hàm đã được gọi với data:", data)
-
-try:
-    from app.core.load_data_from_csv import load_data_from_csv, populate_combobox, get_combobox_key
+    from app.core.tiep_nhan_benh_nhan import load_data_from_csv, populate_combobox, get_combobox_key
 except ImportError:
     def load_data_from_csv(file_path):
         print("LỖI: Không tìm thấy module 'load_data_from_csv'. Hàm được gọi với filePath:", file_path)
 
     def populate_combobox():
         print("LỖI: Không tìm thấy module 'load_data_from_csv'.")
+
+    def get_combobox_key():
+        print("LỖI: Không tìm thấy module 'get_combobox_key'.")
+
+try:
+    from app.core.in_phieu_tiep_nhan import create_and_open_pdf_for_printing
+except ImportError:
+    def create_and_open_pdf_for_printing(data):
+        print("LỖI: Không tìm thấy module 'create_and_open_pdf_for_printing'. Hàm đã được gọi với data:", data)
 
 PHONG_KHAM_FILE_PATH ='data/tiep_nhan_benh_nhan/phong_kham.csv'
 GIOI_TINH_FILE_PATH ='data/tiep_nhan_benh_nhan/gioi_tinh.csv'
@@ -419,7 +422,8 @@ class TabTiepNhanBenhNhan(QWidget):
         # Danh sách tên các trường BẮT BUỘC (Dựa trên key trong self.data_widgets)
         REQUIRED_FIELDS = [
             "Mã y tế", "Họ tên", "Ngày sinh", "Giới tính",
-            "Số điện thoại", "Lý do tiếp nhận", "Quốc tịch", "Dân tộc"
+            "Số điện thoại", "Lý do tiếp nhận", "Quốc tịch", "Dân tộc",
+            "CCCD/Số định danh"
             # Thêm các trường * bắt buộc khác vào đây
         ]
 
