@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1207</width>
+    <width>1366</width>
     <height>768</height>
    </rect>
   </property>
@@ -21,9 +21,9 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QVBoxLayout" name="tabKhamBenhLayout" stretch="0,0,2,2">
+    <layout class="QVBoxLayout" name="tabKhamBenhLayout" stretch="0,0,0,1">
      <item>
-      <layout class="QGridLayout" name="thongTinLayout">
+      <layout class="QGridLayout" name="thongTinLayout" columnstretch="0,0,0,0,0,0,0,0,0,0">
        <item row="2" column="7">
         <widget class="QLineEdit" name="so_bhyt"/>
        </item>
@@ -75,7 +75,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>30</width>
+           <width>20</width>
            <height>20</height>
           </size>
          </property>
@@ -258,9 +258,15 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>250</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -291,9 +297,15 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="minimumSize">
+          <size>
+           <width>110</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="maximumSize">
           <size>
-           <width>200</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>
@@ -344,7 +356,7 @@
                </spacer>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QPushButton" name="refreshBtn">
+               <widget class="QPushButton" name="btn_refresh">
                 <property name="maximumSize">
                  <size>
                   <width>150</width>
@@ -359,7 +371,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QTableWidget" name="dsChoWidget">
+             <widget class="QTableWidget" name="ds_benh_nhan_cho">
               <property name="frameShape">
                <enum>QFrame::StyledPanel</enum>
               </property>
@@ -917,14 +929,7 @@
              </layout>
             </item>
             <item>
-             <layout class="QGridLayout" name="nhapChanDoanLayout" rowstretch="0,0,0,0" columnstretch="0,1,2">
-              <item row="0" column="0">
-               <widget class="QLabel" name="lb_chan_doan">
-                <property name="text">
-                 <string>Chẩn đoán</string>
-                </property>
-               </widget>
-              </item>
+             <layout class="QGridLayout" name="nhapChanDoanLayout" rowstretch="0,0,0,0" columnstretch="0,2,0,0,0,0">
               <item row="1" column="0">
                <widget class="QLabel" name="lb_ma_icd">
                 <property name="text">
@@ -932,17 +937,17 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="lb_chan_doan">
+                <property name="text">
+                 <string>Chẩn đoán</string>
+                </property>
+               </widget>
+              </item>
               <item row="3" column="0">
                <widget class="QLabel" name="lb_cach_giai_quyet">
                 <property name="text">
                  <string>Cách giải quyết</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="lb_ma_icd_phu">
-                <property name="text">
-                 <string>Mã ICD phụ</string>
                 </property>
                </widget>
               </item>
@@ -973,36 +978,11 @@
                 </item>
                </widget>
               </item>
-              <item row="2" column="1">
-               <widget class="QComboBox" name="cb_ma_icd_phu">
-                <property name="editable">
-                 <bool>true</bool>
+              <item row="2" column="0">
+               <widget class="QLabel" name="lb_ma_icd_phu">
+                <property name="text">
+                 <string>Mã ICD phụ</string>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>Mã ICD phụ 1</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mã ICD phụ 2</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mã ICD phụ 3</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mã ICD phụ 4</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Mã ICD phụ 5</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item row="3" column="1">
@@ -1037,8 +1017,48 @@
                 </item>
                </widget>
               </item>
-              <item row="0" column="1" colspan="2">
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="ma_icd_phu"/>
+              </item>
+              <item row="3" column="2">
+               <widget class="QCheckBox" name="is_hen_kham">
+                <property name="text">
+                 <string>Hẹn tái khám sau</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="5">
+               <widget class="QDateTimeEdit" name="ngay_hen_kham">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
+               <widget class="QLineEdit" name="so_ngay_hen">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>50</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" colspan="5">
                <widget class="QLineEdit" name="chan_doan"/>
+              </item>
+              <item row="3" column="4">
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>ngày</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -1058,17 +1078,13 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QTableWidget" name="tableWidget">
-            <row>
-             <property name="text">
-              <string/>
-             </property>
-            </row>
-            <column>
-             <property name="text">
-              <string>STT</string>
-             </property>
-            </column>
+           <widget class="QTableWidget" name="ds_thuoc">
+            <property name="minimumSize">
+             <size>
+              <width>1316</width>
+              <height>0</height>
+             </size>
+            </property>
             <column>
              <property name="text">
               <string>Tên thuốc</string>
@@ -1116,17 +1132,12 @@
             </column>
             <column>
              <property name="text">
-              <string>Đường</string>
+              <string>Ghi chú</string>
              </property>
             </column>
             <column>
              <property name="text">
               <string>Huỷ</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Tên hoạt chất</string>
              </property>
             </column>
            </widget>
@@ -1179,8 +1190,6 @@
   <tabstop>noi_dung</tabstop>
   <tabstop>cb_gioi_tinh</tabstop>
   <tabstop>so_bhyt</tabstop>
-  <tabstop>bhyt_from</tabstop>
-  <tabstop>bhyt_to</tabstop>
   <tabstop>mach</tabstop>
   <tabstop>nhiet_do</tabstop>
   <tabstop>nhip_tho</tabstop>
@@ -1192,11 +1201,18 @@
   <tabstop>spo2</tabstop>
   <tabstop>chan_doan</tabstop>
   <tabstop>cb_ma_icd</tabstop>
-  <tabstop>cb_ma_icd_phu</tabstop>
+  <tabstop>ma_icd_phu</tabstop>
   <tabstop>cb_cach_giai_quyet</tabstop>
-  <tabstop>dsChoWidget</tabstop>
+  <tabstop>is_hen_kham</tabstop>
+  <tabstop>so_ngay_hen</tabstop>
+  <tabstop>ds_thuoc</tabstop>
+  <tabstop>btn_in_phieu</tabstop>
+  <tabstop>btn_refresh</tabstop>
+  <tabstop>ds_benh_nhan_cho</tabstop>
+  <tabstop>bhyt_to</tabstop>
+  <tabstop>bhyt_from</tabstop>
+  <tabstop>ngay_hen_kham</tabstop>
   <tabstop>ngay_gio_kham</tabstop>
-  <tabstop>refreshBtn</tabstop>
  </tabstops>
  <resources/>
  <connections/>

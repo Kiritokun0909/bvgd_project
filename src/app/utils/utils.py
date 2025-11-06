@@ -1,5 +1,7 @@
 import pandas as pd
+from PyQt6 import QtCore
 from PyQt6.QtWidgets import QComboBox
+import re
 
 def load_data_from_csv(file_path):
     """
@@ -33,14 +35,15 @@ def filter_data_by_foreign_key(data_frame: pd.DataFrame,
         try:
             # Chuyển giá trị khóa ngoại sang chuỗi để so sánh nhất quán
             fk_key_value_str = str(fk_key_value)
-
-            # Lọc DataFrame: so sánh cột khóa ngoại (cũng được chuyển sang chuỗi)
-            # với giá trị khóa ngoại cung cấp.
             filtered_df = data_frame.loc[data_frame[fk_column_name].astype(str) == fk_key_value_str]
+
+            if len(filtered_df) == 0:
+                fk_key_value_str = fk_key_value_str.upper()
+                filtered_df = data_frame.loc[data_frame[fk_column_name].astype(str) == fk_key_value_str]
 
         except KeyError:
             print(f"Lỗi lọc: Cột khóa ngoại '{fk_column_name}' không tồn tại trong dữ liệu.")
-            return pd.DataFrame()  # Trả về DataFrame rỗng nếu lỗi
+            return pd.DataFrame()
         except Exception as e:
             print(f"Lỗi trong quá trình lọc dữ liệu: {e}")
             return pd.DataFrame()
@@ -58,6 +61,7 @@ def get_first_row_data(data_frame: pd.DataFrame) -> dict | None:
 
     # Sử dụng iloc[0].to_dict() để lấy dữ liệu của dòng đầu tiên
     return data_frame.iloc[0].to_dict()
+
 
 def populate_combobox(combobox: QComboBox, display_col: str, key_col: str, file_path: str,
                       fk_key_value=None, fk_column_name=None):
@@ -114,3 +118,41 @@ def populate_combobox(combobox: QComboBox, display_col: str, key_col: str, file_
 def get_combobox_key(combobox: QComboBox):
     """Lấy giá trị khóa (key value) của mục hiện tại."""
     return combobox.currentData()
+
+
+def calculate_age(birthday):
+    """Tính toán tuổi dựa trên ngày sinh."""
+    date_format = "dd/MM/yyyy"
+
+    birth_date = QtCore.QDate.fromString(str(birthday), date_format)
+
+    if not birth_date.isValid():
+        return 0
+
+    current_date = QtCore.QDate.currentDate()
+    age = current_date.year() - birth_date.year()
+
+    if current_date.month() < birth_date.month() or \
+            (current_date.month() == birth_date.month() and current_date.day() < birth_date.day()):
+        age -= 1
+
+    return age
+
+
+def convert_to_unsigned(text):
+    """
+    Chuyển đổi chuỗi tiếng Việt có dấu sang không dấu và lowercase
+    (Nên đặt trong app.utils.utils để sử dụng chung)
+    """
+    if not isinstance(text, str):
+        return ""
+    text = text.lower()
+    text = re.sub(r'[áàảãạăắằẳẵặâấầẩẫậ]', 'a', text)
+    text = re.sub(r'[éèẻẽẹêếềểễệ]', 'e', text)
+    text = re.sub(r'[íìỉĩị]', 'i', text)
+    text = re.sub(r'[óòỏõọôốồổỗộơớờởỡợ]', 'o', text)
+    text = re.sub(r'[úùủũụưứừửữự]', 'u', text)
+    text = re.sub(r'[ýỳỷỹỵ]', 'y', text)
+    text = re.sub(r'đ', 'd', text)
+
+    return text.strip()

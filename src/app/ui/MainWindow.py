@@ -28,17 +28,17 @@ class Ui_mainWidget(object):
         self.tab_kham_benh = QtWidgets.QWidget()
         self.tab_kham_benh.setObjectName("tab_kham_benh")
         self.tabWidget.addTab(self.tab_kham_benh, "")
-        self.tab_tiep_nhan = QtWidgets.QWidget()
-        self.tab_tiep_nhan.setObjectName("tab_tiep_nhan")
-        self.tabWidget.addTab(self.tab_tiep_nhan, "")
+        self.tab_dkdv = QtWidgets.QWidget()
+        self.tab_dkdv.setObjectName("tab_dkdv")
+        self.tabWidget.addTab(self.tab_dkdv, "")
         self.verticalLayout.addWidget(self.tabWidget)
 
         self.retranslateUi(mainWidget)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(mainWidget)
 
     def retranslateUi(self, mainWidget):
         _translate = QtCore.QCoreApplication.translate
         mainWidget.setWindowTitle(_translate("mainWidget", "PhanMemBenhVien"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_kham_benh), _translate("mainWidget", "Khám bệnh"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_tiep_nhan), _translate("mainWidget", "Tiếp nhận"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_dkdv), _translate("mainWidget", "Đăng ký dịch vụ"))

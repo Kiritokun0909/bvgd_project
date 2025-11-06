@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>formDichVu</class>
+ <widget class="QWidget" name="formDichVu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1366</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Đăng ký dịch vụ</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,1">
+   <item>
+    <layout class="QGridLayout" name="thongTinLayout" columnstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+     <item row="1" column="5">
+      <spacer name="horizontalSpacer_4">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="9">
+      <widget class="QLabel" name="lb_nghe_nghiep">
+       <property name="text">
+        <string>Nghề nghiệp</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="12">
+      <widget class="QLabel" name="lb_doi_tuong">
+       <property name="text">
+        <string>Đối tượng</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="7">
+      <widget class="QLabel" name="gioi_tinh">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Nữ</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="3">
+      <widget class="QLabel" name="ho_ten_bn">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Nguyễn Văn A</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="13">
+      <widget class="QComboBox" name="cb_doi_tuong">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>100</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>Đối tượng 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Đối tượng 2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Đối tượng 3</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Đối tượng 4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Đối tượng 5</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="10">
+      <widget class="QLabel" name="nghe_nghiep">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Không xác định</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4">
+      <widget class="QLabel" name="tuoi">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>28</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lb_nam_sinh">
+       <property name="text">
+        <string>Năm sinh</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lb_ho_ten">
+       <property name="text">
+        <string>Tên bệnh nhân</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="6">
+      <widget class="QLabel" name="lb_gioi_tinh">
+       <property name="text">
+        <string>Giới tính</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="14">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>100</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="8">
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="2">
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="3">
+      <widget class="QLabel" name="lb_tuoi">
+       <property name="text">
+        <string>Tuổi:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="11">
+      <spacer name="horizontalSpacer_6">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="nam_sinh">
+       <property name="font">
+        <font>
+         <pointsize>8</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>21/10/2000</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="10" colspan="4">
+      <widget class="QLabel" name="dia_chi">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>86/85 Nguyễn Văn Đậu</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="9">
+      <widget class="QLabel" name="lb_dia_chi">
+       <property name="text">
+        <string>Địa chỉ</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="chiDinhLayout">
+     <item>
+      <widget class="QGroupBox" name="chiDinhBox">
+       <property name="title">
+        <string>Thông tin chỉ đỉnh</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1,0,0,1,2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="lb_noi_yeu_cau">
+            <property name="text">
+             <string>Nơi yêu cầu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="lb_bac_si_chi_dinh">
+            <property name="text">
+             <string>Bác sĩ chỉ định</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lb_chan_doan">
+            <property name="text">
+             <string>Chẩn đoán</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cb_noi_yeu_cau">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QCheckBox" name="is_khan">
+            <property name="text">
+             <string>&amp;Khẩn</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="lb_ma_code_xn">
+            <property name="text">
+             <string>Mã Code XN</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="lb_ghi_chu">
+            <property name="text">
+             <string>Ghi chú</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QLabel" name="lb_ngay_gio_yeu_cau">
+            <property name="text">
+             <string>Ngày giờ yêu cầu</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="4">
+           <widget class="QLineEdit" name="bac_si_chi_dinh"/>
+          </item>
+          <item row="2" column="1" colspan="2">
+           <widget class="QLineEdit" name="ghi_chu"/>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="chan_doan"/>
+          </item>
+          <item row="3" column="1" colspan="2">
+           <widget class="QLineEdit" name="ma_code_xn"/>
+          </item>
+          <item row="1" column="4">
+           <widget class="QDateTimeEdit" name="dateTimeEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="displayFormat">
+             <string>dd/MM/yyyy h:mm:ss AP</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="1" column="0">
+      <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,4">
+       <item row="0" column="1">
+        <widget class="QTableWidget" name="table_dich_vu">
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Mã</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Tên dịch vụ</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Đơn giá doanh thu</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Tỷ lệ TT</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Thành tiền doanh thu</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Loại giá</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Bảo hiểm thanh toán</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Bệnh nhân thanh toán</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Không thu tiền</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Không hỗ trợ</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Chọn In</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Nơi thực hiện</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Số phiếu</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Lý do không thu</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Huỷ</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>In phiếu</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" rowspan="2">
+        <widget class="QTreeWidget" name="list_danh_muc">
+         <column>
+          <property name="text">
+           <string>Thuoc</string>
+          </property>
+         </column>
+         <item>
+          <property name="text">
+           <string>Thuoc vien</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Pana</string>
+           </property>
+          </item>
+         </item>
+         <item>
+          <property name="text">
+           <string>Siro</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Cao ti ba</string>
+           </property>
+          </item>
+         </item>
+         <item>
+          <property name="text">
+           <string>Vien sui</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Effe</string>
+           </property>
+          </item>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_5" columnstretch="3,1,3,2,1,2,2,1,0">
+       <item row="2" column="7">
+        <widget class="QCheckBox" name="is_khong_ho_tro">
+         <property name="text">
+          <string>Không &amp;hỗ trợ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_so_luong">
+         <property name="text">
+          <string>Số lượng</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="7">
+        <widget class="QCheckBox" name="is_khong_thu_tien">
+         <property name="text">
+          <string>Không &amp;thu tiền</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QLabel" name="lb_nhom_dich_vu">
+         <property name="text">
+          <string>Nhóm dịch vụ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_ma_dich_vu">
+         <property name="text">
+          <string>Mã dịch vụ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_don_gia">
+         <property name="text">
+          <string>Đơn giá</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="cb_nhom_dich_vu">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="6" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_thanh_tien">
+         <property name="text">
+          <string>Thành tiền</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="8">
+        <widget class="QPushButton" name="btn_huy">
+         <property name="text">
+          <string>Huỷ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="8">
+        <widget class="QPushButton" name="btn_them">
+         <property name="text">
+          <string>Thêm</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="cb_noi_thuc_hien">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QComboBox" name="cb_loai_gia">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_loai_gia">
+         <property name="text">
+          <string>Loại giá</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" alignment="Qt::AlignHCenter">
+        <widget class="QLabel" name="lb_noi_thuc_hien">
+         <property name="text">
+          <string>Nơi thực hiện</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="5">
+        <widget class="QComboBox" name="cb_ty_le">
+         <property name="editable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QCheckBox" name="is_bnvp">
+         <property name="text">
+          <string>BNVP</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>% tỷ lệ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QCheckBox" name="is_dich_vu_ty_le">
+         <property name="text">
+          <string>Dịch vụ tỷ lệ</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLineEdit" name="don_gia">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QLineEdit" name="thanh_tien">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLineEdit" name="so_luong"/>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLineEdit" name="icd_kiem_tra"/>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="lb_icd_kiem_tra">
+         <property name="text">
+          <string>ICD kiểm tra</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="ten_dich_vu"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="ma_dich_vu"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>cb_doi_tuong</tabstop>
+  <tabstop>cb_noi_yeu_cau</tabstop>
+  <tabstop>is_khan</tabstop>
+  <tabstop>bac_si_chi_dinh</tabstop>
+  <tabstop>chan_doan</tabstop>
+  <tabstop>dateTimeEdit</tabstop>
+  <tabstop>ghi_chu</tabstop>
+  <tabstop>ma_code_xn</tabstop>
+  <tabstop>cb_nhom_dich_vu</tabstop>
+  <tabstop>ten_dich_vu</tabstop>
+  <tabstop>ma_dich_vu</tabstop>
+  <tabstop>cb_noi_thuc_hien</tabstop>
+  <tabstop>cb_loai_gia</tabstop>
+  <tabstop>so_luong</tabstop>
+  <tabstop>is_dich_vu_ty_le</tabstop>
+  <tabstop>is_bnvp</tabstop>
+  <tabstop>cb_ty_le</tabstop>
+  <tabstop>is_khong_thu_tien</tabstop>
+  <tabstop>is_khong_ho_tro</tabstop>
+  <tabstop>btn_them</tabstop>
+  <tabstop>btn_huy</tabstop>
+  <tabstop>don_gia</tabstop>
+  <tabstop>icd_kiem_tra</tabstop>
+  <tabstop>table_dich_vu</tabstop>
+  <tabstop>thanh_tien</tabstop>
+  <tabstop>list_danh_muc</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -31,16 +31,16 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_kham_benh">
       <attribute name="title">
        <string>Khám bệnh</string>
       </attribute>
      </widget>
-     <widget class="QWidget" name="tab_tiep_nhan">
+     <widget class="QWidget" name="tab_dkdv">
       <attribute name="title">
-       <string>Tiếp nhận</string>
+       <string>Đăng ký dịch vụ</string>
       </attribute>
      </widget>
     </widget>
