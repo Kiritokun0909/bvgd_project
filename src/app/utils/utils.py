@@ -2,6 +2,10 @@ import pandas as pd
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QComboBox
 import re
+import locale
+
+from pandas.core.interchange.dataframe_protocol import DataFrame
+
 
 def load_data_from_csv(file_path):
     """
@@ -101,19 +105,20 @@ def populate_combobox(combobox: QComboBox, display_col: str, key_col: str, file_
         fk_column_name=fk_column_name
     )
 
-    # Đổ dữ liệu đã lọc vào QComboBox
-    for index, row in filtered_df.iterrows():
-        try:
-            display_value = str(row[display_col])
-            key_value = str(row[key_col])
+    populate_df_to_combobox(combobox, filtered_df, display_col, key_col)
+    return
 
-            combobox.addItem(display_value)
-            # Lưu giá trị khóa (key value) vào item data
-            combobox.setItemData(combobox.count() - 1, key_value)
+def populate_df_to_combobox(combobox: QComboBox, df: DataFrame, display_col: str, key_col: str):
+    for index, row in df.iterrows():
+        try:
+            display_val = str(row[display_col])
+            key_val = str(row[key_col])
+
+            combobox.addItem(display_val)
+            combobox.setItemData(combobox.count() - 1, key_val)
         except KeyError:
             print("Lỗi: Tên cột hiển thị (display_col) hoặc cột khóa (key_col) không chính xác.")
             return
-
 
 def get_combobox_key(combobox: QComboBox):
     """Lấy giá trị khóa (key value) của mục hiện tại."""
@@ -156,3 +161,63 @@ def convert_to_unsigned(text):
     text = re.sub(r'đ', 'd', text)
 
     return text.strip()
+
+
+
+
+
+def format_currency_vn(amount, decimal_places=3):
+    """
+    Định dạng số tiền theo chuẩn Việt Nam: 1.786.000,000
+
+    :param amount: Số (int hoặc float) cần định dạng.
+    :param decimal_places: Số chữ số thập phân muốn hiển thị sau dấu phẩy.
+    :return: Chuỗi đã định dạng.
+    """
+    # Làm tròn và định dạng số
+    # Dùng '{:,.Xf}' để định dạng với dấu phẩy là phân cách hàng nghìn, và dấu chấm là thập phân
+    amount = float(amount)
+    format_spec = f",.{decimal_places}f"
+
+    # B1: Định dạng số mặc định (ví dụ: '1,786,000.000')
+    amount_str_default = f"{amount:{format_spec}}"
+
+    # B2: Tách phần nguyên và phần thập phân
+    parts = amount_str_default.split('.')
+    integer_part = parts[0]
+    decimal_part = parts[1] if len(parts) > 1 else '0' * decimal_places
+
+    # B3: Xử lý phần nguyên: Thay dấu phẩy phân cách hàng nghìn bằng dấu chấm
+    formatted_integer = integer_part.replace(',', '.')
+
+    # B4: Kết hợp lại: Dùng dấu phẩy làm phân cách thập phân
+    return f"{formatted_integer},{decimal_part}"
+
+
+def unformat_currency_to_float(formatted_string):
+    """
+    Chuyển đổi chuỗi định dạng tiền tệ VN (1.786.000,000) thành float (1786000.0)
+
+    :param formatted_string: Chuỗi giá tiền cần chuyển đổi.
+    :return: Số float tương ứng.
+    """
+    if not isinstance(formatted_string, str):
+        # Nếu đầu vào không phải chuỗi, thử ép kiểu hoặc trả về ngay nếu đã là số
+        if isinstance(formatted_string, (int, float)):
+            return float(formatted_string)
+        return float(str(formatted_string))
+
+    # Bước 1: Loại bỏ dấu phân cách hàng nghìn (dấu chấm '.')
+    # Ví dụ: '1.786.000,000' -> '1786000,000'
+    temp_string = formatted_string.replace('.', '')
+
+    # Bước 2: Thay thế dấu phân cách thập phân (dấu phẩy ',') bằng dấu chấm '.'
+    # Ví dụ: '1786000,000' -> '1786000.000'
+    final_string = temp_string.replace(',', '.')
+
+    # Bước 3: Chuyển đổi chuỗi kết quả thành float
+    try:
+        return float(final_string)
+    except ValueError:
+        print(f"Lỗi: Không thể chuyển đổi '{formatted_string}' thành số.")
+        return None

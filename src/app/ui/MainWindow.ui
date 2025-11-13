@@ -31,7 +31,7 @@
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_kham_benh">
       <attribute name="title">
@@ -41,6 +41,11 @@
      <widget class="QWidget" name="tab_dkdv">
       <attribute name="title">
        <string>Đăng ký dịch vụ</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_tai_vu">
+      <attribute name="title">
+       <string>Tài vụ</string>
       </attribute>
      </widget>
     </widget>

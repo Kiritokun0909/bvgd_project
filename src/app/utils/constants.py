@@ -9,3 +9,5 @@ MA_Y_TE_LENGTH = 6
 # --- THÔNG TIN BỆNH VIỆN ---
 HOSPITAL_NAME = "BỆNH VIỆN ABC"
 SO_Y_TE = "SỞ Y TẾ XYZ"
+
+CLS_CODE = 'GQ02'

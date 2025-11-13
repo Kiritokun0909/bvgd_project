@@ -1,16 +1,30 @@
 # --- THÔNG TIN BỆNH VIỆN ---
-TEN_BENH_VIEN = "BỆNH VIỆN ABC"
-SO_Y_TE = "SỞ Y TẾ XYZ"
+from app.utils.get_file_path import get_file_path
+from app.utils.setting_loader import AppConfig
 
-PHIEU_TOA_THUOC_HEADER = 'ĐƠN THUỐC BHYT'
+SO_Y_TE = AppConfig.SO_Y_TE
+TEN_BENH_VIEN = AppConfig.TEN_DON_VI
 
 # --- FILE PATH ---
-PHONG_KHAM_FILE_PATH = 'data/kham_benh/phong_kham.csv'
-DOI_TUONG_FILE_PATH = 'data/kham_benh/doi_tuong.csv'
-GIAI_QUYET_FILE_PATH = 'data/kham_benh/cach_giai_quyet.csv'
-ICD_FILE_PATH = 'data/kham_benh/icd.csv'
-BENH_NHAN_FILE_PATH = 'data/kham_benh/benh_nhan.csv'
-THUOC_FILE_PATH = 'data/kham_benh/thuoc.csv'
+PHONG_KHAM_FILE_PATH = get_file_path('data/kham_benh/phong_kham.csv')
+DOI_TUONG_FILE_PATH = get_file_path('data/kham_benh/doi_tuong.csv')
+GIAI_QUYET_FILE_PATH = get_file_path('data/kham_benh/cach_giai_quyet.csv')
+ICD_FILE_PATH = get_file_path('data/kham_benh/icd.csv')
+BENH_NHAN_FILE_PATH = get_file_path('data/kham_benh/benh_nhan.csv')
+THUOC_FILE_PATH = get_file_path('data/kham_benh/thuoc.csv')
+
+# --- CẤU HÌNH TÊN CÁC CỘT TRONG FILE EXCEL BỆNH NHÂN (kham_benh/benh_nhan.csv) ---
+class ExcelBenhNhan:
+    COL_MA_Y_TE = 'MaYTe'
+    COL_HO_TEN = 'HoTen'
+    COL_MA_DOI_TUONG = 'MaDoiTuong'
+    COL_GIOI_TINH = 'GioiTinh'
+    COL_SO_BHYT = 'SoBHYT'
+    COL_BH_TU_NGAY = 'BHTuNgay'
+    COL_BH_DEN_NGAY = 'BHDenNgay'
+    COL_SDT = 'SoDienThoai'
+    COL_DIA_CHI = 'DiaChi'
+    COL_NGAY_SINH = 'NgaySinh'
 
 # --- CẤU HÌNH BẢNG THUỐC ---
 HEADER_THUOC = [

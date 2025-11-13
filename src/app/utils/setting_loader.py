@@ -1,0 +1,72 @@
+import configparser
+from pathlib import Path
+import sys
+import os
+
+def get_config_path(filename='settings.ini'):
+    # 1. Nếu đang chạy từ PyInstaller (--onefile)
+    if getattr(sys, 'frozen', False):
+        # sys.executable: /path/to/dist/main/main.exe
+        # Path(sys.executable).parent: /path/to/dist/main/
+        # .parent: /path/to/dist/  <-- Đây là thư mục chứa settings.ini và data/
+
+        # Đảm bảo lấy được đường dẫn tuyệt đối của thư mục dist/
+        DIST_DIR = Path(sys.executable).resolve().parent.parent
+
+        return DIST_DIR / filename
+    # 2. Nếu đang chạy code Python bình thường (trong PyCharm)
+    else:
+        # Sử dụng logic cũ: tìm thư mục 'src' từ vị trí file hiện tại
+        PROJECT_ROOT = Path(__file__).resolve().parents[2]
+        return PROJECT_ROOT / filename
+
+
+CONFIG_FILE = get_config_path()
+
+class AppConfig:
+    SO_Y_TE = 'Chưa xác định'
+    TEN_DON_VI = "Chưa xác định"
+    MA_SO_THUE = "Chưa xác định"
+    DIA_CHI = "Chưa xác định"
+    SDT = "Chưa xác định"
+    LOGO_FILE_NAME = 'logo.png'
+
+    LUONG_CO_SO = 2340000.000
+    PHAN_TRAM_THANH_TOAN = 0.15
+
+
+def load_config():
+    # 1. Khởi tạo ConfigParser
+    parser = configparser.ConfigParser()
+
+    # 2. Kiểm tra file
+    if not os.path.exists(CONFIG_FILE):
+        print(f"Lỗi: Không tìm thấy file cấu hình '{CONFIG_FILE}'. Sử dụng giá trị mặc định.")
+        print(f"Đang tìm kiếm tại: {os.path.abspath(CONFIG_FILE)}")
+        return
+
+    # 3. Đọc file
+    parser.read(CONFIG_FILE, encoding='utf-8')
+
+    # 4. Gán các giá trị từ file vào class AppConfig
+    AppConfig.SO_Y_TE = parser.get('THONG_TIN_CHUNG', 'SO_Y_TE', fallback=AppConfig.SO_Y_TE)
+    AppConfig.TEN_DON_VI = parser.get('THONG_TIN_CHUNG', 'TEN_DON_VI', fallback=AppConfig.TEN_DON_VI)
+    AppConfig.MA_SO_THUE = parser.get('THONG_TIN_CHUNG', 'MA_SO_THUE', fallback=AppConfig.MA_SO_THUE)
+    AppConfig.DIA_CHI = parser.get('THONG_TIN_CHUNG', 'DIA_CHI', fallback=AppConfig.DIA_CHI)
+    AppConfig.SDT = parser.get('THONG_TIN_CHUNG', 'SDT', fallback=AppConfig.SDT)
+    AppConfig.LOGO_FILE_NAME = parser.get('THONG_TIN_CHUNG', 'LOGO_FILE_NAME', fallback=AppConfig.LOGO_FILE_NAME)
+
+    try:
+        AppConfig.LUONG_CO_SO = parser.getfloat('CHINH_SACH_TIEN_LUONG', 'LUONG_CO_SO', fallback=AppConfig.LUONG_CO_SO)
+    except ValueError:
+        print("Cảnh báo: LUONG_CO_SO không phải là số hợp lệ.")
+
+    try:
+        AppConfig.PHAN_TRAM_THANH_TOAN = parser.getfloat('CHINH_SACH_TIEN_LUONG', 'PHAN_TRAM_THANH_TOAN',
+                                                          fallback=AppConfig.PHAN_TRAM_THANH_TOAN)
+    except ValueError:
+        print("Cảnh báo: Giá trị phần trăm thanh toán không phải là số hợp lệ.")
+
+
+# Thực hiện tải cấu hình ngay khi module này được import
+load_config()
