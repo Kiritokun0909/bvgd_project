@@ -31,10 +31,13 @@ class Ui_mainWidget(object):
         self.tab_dkdv = QtWidgets.QWidget()
         self.tab_dkdv.setObjectName("tab_dkdv")
         self.tabWidget.addTab(self.tab_dkdv, "")
+        self.tab_tai_vu = QtWidgets.QWidget()
+        self.tab_tai_vu.setObjectName("tab_tai_vu")
+        self.tabWidget.addTab(self.tab_tai_vu, "")
         self.verticalLayout.addWidget(self.tabWidget)
 
         self.retranslateUi(mainWidget)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(mainWidget)
 
     def retranslateUi(self, mainWidget):
@@ -42,3 +45,4 @@ class Ui_mainWidget(object):
         mainWidget.setWindowTitle(_translate("mainWidget", "PhanMemBenhVien"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_kham_benh), _translate("mainWidget", "Khám bệnh"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_dkdv), _translate("mainWidget", "Đăng ký dịch vụ"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_tai_vu), _translate("mainWidget", "Tài vụ"))

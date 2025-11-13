@@ -2,11 +2,14 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtWidgets import QMessageBox
 from PyQt6.uic.Compiler.qtproxies import QtGui
 
-from app.controllers.dk_dich_vu_controller import DangKyDichVuTabController
+from app.controllers.dich_vu_controller import DangKyDichVuTabController
+from app.controllers.tai_vu_controller import TaiVuTabController
 # Import UI cha
 from app.ui.MainWindow import Ui_mainWidget
 # Import Controller con
 from app.controllers.kham_benh_controller import KhamBenhTabController
+
+from app.utils.constants import CLS_CODE
 
 
 class AppController(QtWidgets.QWidget):
@@ -31,13 +34,18 @@ class AppController(QtWidgets.QWidget):
             tab_widget_container=self.ui_main.tab_dkdv
         )
 
+        self.tai_vu_controller = TaiVuTabController(
+            tab_widget_container=self.ui_main.tab_tai_vu
+        )
+
         # Áp dụng Stylesheet cho QTabWidget
         self._apply_tab_stylesheet()
+
+        self.dich_vu_controller.dich_vu_completed.connect(self.handle_dich_vu_completed)
 
         self.ui_main.tabWidget.setCurrentIndex(0)
         self.showMaximized()
 
-    CLS_CODE = 'GQ02'
 
     def _apply_tab_stylesheet(self):
         """Áp dụng stylesheet cho QTabWidget."""
@@ -96,6 +104,7 @@ class AppController(QtWidgets.QWidget):
         """
         self.ui_main.tabWidget.setStyleSheet(stylesheet)
 
+
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         """Xử lý sự kiện nhấn phím toàn cục."""
         if event.key() == QtCore.Qt.Key.Key_F5:
@@ -107,6 +116,7 @@ class AppController(QtWidgets.QWidget):
 
         super().keyPressEvent(event)
 
+
     def handle_f5_shortcut(self):
         """Xử lý chuyển đổi sang Đăng ký Dịch vụ khi nhấn F5."""
 
@@ -114,9 +124,13 @@ class AppController(QtWidgets.QWidget):
         hanh_chinh_data = self.kham_benh_controller.get_hanh_chinh_data()
 
         # 2. KIỂM TRA ĐIỀU KIỆN CẬN LÂM SÀNG
+        if not self.kham_benh_controller.validate_patient_info():
+            return
+
+
         cach_giai_quyet_code = hanh_chinh_data.get('MaGiaiQuyet')
 
-        if cach_giai_quyet_code != self.CLS_CODE:
+        if cach_giai_quyet_code != CLS_CODE:
             QMessageBox.warning(self,
                                 "Thông báo",
                                 f"Chỉ chuyển màn hình khi Cách Giải Quyết là 'Cận Lâm Sàng'.")
@@ -130,3 +144,17 @@ class AppController(QtWidgets.QWidget):
             self.ui_main.tabWidget.setCurrentIndex(dich_vu_tab_index)
         else:
             QMessageBox.critical(self, "Lỗi", "Tab Đăng ký Dịch vụ không tồn tại.")
+
+
+    @QtCore.pyqtSlot()
+    def handle_dich_vu_completed(self):
+        """Slot được gọi khi tab Dịch vụ hoàn tất công việc."""
+
+        kham_benh_tab_index = 0
+
+        # 2. Quay về Tab Khám bệnh (index 0)
+        if self.ui_main.tabWidget.currentIndex() != kham_benh_tab_index:
+            self.ui_main.tabWidget.setCurrentIndex(kham_benh_tab_index)
+
+        # TODO: Nếu cần, bạn có thể gọi hàm refresh_data() của kham_benh_controller ở đây
+        self.kham_benh_controller.reset_all()

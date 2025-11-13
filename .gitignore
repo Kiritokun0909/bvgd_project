@@ -16,3 +16,8 @@ dist/
 build/
 
 main.spec
+
+src/data/
+
+src/logo.png
+src/settings.ini

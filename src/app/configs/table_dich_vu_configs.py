@@ -1,8 +1,15 @@
 # --- HẰNG SỐ FILE PATH ---
-PHONG_KHAM_FILE_PATH = 'data/kham_benh/phong_kham.csv'
-DANH_MUC_FILE_PATH = 'data/dich_vu/danh_muc_dich_vu.csv'
-DICH_VU_FILE_PATH = 'data/dich_vu/dich_vu.csv'
-DOI_TUONG_FILE_PATH = 'data/kham_benh/doi_tuong.csv'
+from app.utils.get_file_path import get_file_path
+
+PHONG_KHAM_FILE_PATH = get_file_path('data/kham_benh/phong_kham.csv')
+DOI_TUONG_FILE_PATH = get_file_path('data/kham_benh/doi_tuong.csv')
+
+DANH_MUC_FILE_PATH = get_file_path('data/dich_vu/danh_muc_dich_vu.csv')
+DICH_VU_FILE_PATH = get_file_path('data/dich_vu/dich_vu.csv')
+
+LOAI_GIA_FILE_PATH = get_file_path('data/dich_vu/loai_gia.csv')
+DON_GIA_FILE_PATH = get_file_path('data/dich_vu/don_gia.csv')
+DOI_TUONG_LOAI_GIA_FILE_PATH = get_file_path('data/dich_vu/doi_tuong_loai_gia.csv')
 
 # Giả định các cột cần thiết trong DICH_VU_FILE_PATH
 SERVICE_CODE_COLUMN = 'MaDichVu'
@@ -13,7 +20,7 @@ DICH_VU_NAME_COLUMN = 'TenDichVu'
 
 SERVICE_CAT_COLUMN = 'MaDanhMuc'
 SERVICE_PRICE_COLUMN = 'DonGia'
-SERVICE_TEN_KHONG_DAU_COLUMN = 'TenDichVuKhongDau'
+SERVICE_TEN_KHONG_DAU_COLUMN = 'TenKhongDau'
 
 # --- CẤU HÌNH BẢNG DỊCH VỤ ---
 HEADER_DICH_VU = [
@@ -89,3 +96,43 @@ TREE_COL_DICH_VU = 1
 
 SEARCHING_AFTER_NUM_OF_CHAR = 1
 SEARCH_TIMEOUT = 200
+
+COL_MA_DANH_MUC_HEADER = 'MaDanhMuc'
+COL_TEN_DANH_MUC_HEADER = 'TenDanhMuc'
+
+class DANH_MUC:
+    COL_MA_DANH_MUC_HEADER = 'MaDanhMuc'
+    COL_TEN_DANH_MUC_HEADER = 'TenDanhMuc'
+
+class LOAI_GIA:
+    COL_MA_LOAI_GIA_HEADER = 'MaLoaiGia'
+    COL_TEN_LOAI_GIA_HEADER = 'TenLoaiGia'
+
+class DOI_TUONG_LOAI_GIA:
+    COL_MA_DOI_TUONG_HEADER = 'MaDoiTuong'
+    COL_MA_LOAI_GIA_HEADER = 'MaLoaiGia'
+    ThuTuUuTien = 'ThuTuUuTien'
+
+class DON_GIA:
+    COL_MA_DICH_VU_HEADER = 'MaDichVu'
+    COL_MA_LOAI_GIA_HEADER = 'MaLoaiGia'
+    COL_DON_GIA_HEADER = 'DonGia'
+
+FIELD_MAPPING = {
+    'Mã dịch vụ': 'MaDichVu',
+    'Mã nhóm dịch vụ': 'MaNhomDichVu',
+    'Tên dịch vụ': 'TenDichVu',
+    'Số lượng': 'SoLuong',
+    'Đơn giá doanh thu': 'DonGiaDoanhThu',
+    'Tỷ lệ TT': 'TyLeTT',
+    'Thành tiền doanh thu': 'TTDoanhThu',
+    'Loại giá': 'LoaiGia',
+    'Bảo hiểm thanh toán': 'BaoHiemTT',
+    'Bệnh nhân thanh toán': 'BenhNhanTT',
+    'Không thu tiền': 'KhongThuTien',
+    'Không hỗ trợ': 'KhongHoTro',
+    'Chọn in': 'ChonIn',
+    'Nơi thực hiện': 'NoiThucHien',
+    'Số phiếu': 'SoPhieu',
+    'Lý do không thu': 'LyDoKhongThu',
+}
