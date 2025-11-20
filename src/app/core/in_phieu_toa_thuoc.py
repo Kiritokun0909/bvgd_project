@@ -5,7 +5,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 import os
 import sys
 
-from app.configs.table_thuoc_configs import SO_Y_TE
 from app.utils.create_barcode import generate_ma_y_te_barcode
 from app.utils.create_qr_code import generate_medical_qr_code
 from app.utils.get_file_path import get_file_path
@@ -101,15 +100,15 @@ def draw_drug_form(c, data, ma_y_te_barcode, thong_tin_qrcode):
     c.setFont(VIET_FONT, 9)
     c.drawString(margin_left, y_start - 20, data.get('PhongKham', ''))
 
-    try:
-        x_barcode = width - margin_left - BARCODE_WIDTH
-        c.drawImage(ma_y_te_barcode, x_barcode, y_start - 10, BARCODE_WIDTH, BARCODE_HEIGHT)
-    except FileNotFoundError:
-        pass
+    # try:
+    #     x_barcode = width - margin_left - BARCODE_WIDTH
+    #     c.drawImage(ma_y_te_barcode, x_barcode, y_start - 10, BARCODE_WIDTH, BARCODE_HEIGHT)
+    # except FileNotFoundError:
+    #     pass
 
     try:
-        x_barcode = width - margin_left - BARCODE_WIDTH
-        c.drawImage(thong_tin_qrcode, x_barcode - 100, y_start - 15, 40, 40)
+        x_barcode = width - margin_left * 2
+        c.drawImage(thong_tin_qrcode, x_barcode, y_start - 12, 40, 40)
     except FileNotFoundError:
         pass
 
@@ -287,7 +286,7 @@ def create_and_open_pdf_for_printing(data):
         thong_tin_qrcode = generate_medical_qr_code(
             ma_y_te=data.get('MaYTe', ''),
             so_bhyt=data.get('BHYT', ''),
-            doi_tuong=data.get('DoiTuong', ''),
+            doi_tuong=data.get('MaDoiTuong', ''),
             ho_ten=data.get('HoTen', ''),
             tuoi=data.get('Tuoi', ''),
             gioi_tinh=data.get('GioiTinh', ''),

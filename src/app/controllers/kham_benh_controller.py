@@ -1,20 +1,27 @@
-from wsgiref.validate import validator
-
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import QRegularExpression, QDate
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QMessageBox, QLineEdit
 
 from app.core.in_phieu_toa_thuoc import create_and_open_pdf_for_printing
+
+from app.services.BenhNhanService import get_benh_nhan_by_id
+from app.services.DoiTuongService import get_list_doi_tuong
+from app.services.PhongBanService import get_list_phong_ban
+
 from app.styles.styles import DELETE_BTN_STYLE, ADD_BTN_STYLE, TUOI_STYLE, COMPLETER_THUOC_STYLE
+
 from app.ui.TabKhamBenh import Ui_formKhamBenh
+
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
 from app.utils.constants import MA_Y_TE_LENGTH
-from app.utils.utils import populate_combobox, load_data_from_csv, filter_data_by_foreign_key, get_first_row_data, \
-    calculate_age, format_currency_vn, unformat_currency_to_float
+from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
+from app.utils.utils import populate_combobox, \
+    calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
 
 from app.configs.table_thuoc_configs import *
+from app.utils.constants import GIAI_QUYET_FILE_PATH
 
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
@@ -39,29 +46,21 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         self.input_drug_name = None
         self.input_drug_so_luong = None
-        self.ds_thuoc_df = None
 
-        # <editor-fold desc="Init model search completer">
-        # KHỞI TẠO MODEL VÀ COMPLETER
-        self.drug_model = QtCore.QStringListModel()
-        self.drug_completer = QtWidgets.QCompleter(self.drug_model, self)
-        self.drug_completer.setFilterMode(QtCore.Qt.MatchFlag.MatchContains)
-        self.drug_completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
-
-        # BỘ ĐẾM THỜI GIAN DEBOUNCE
-        self.search_timer = QtCore.QTimer(self)
-        self.search_timer.setSingleShot(True)
-        self.search_timer.timeout.connect(self._perform_autocomplete_search)
-
-        self._current_search_text = ""
-        # </editor-fold>
+        self.duoc_handler = None
+        self.icd_handler = IcdCompleterHandler(self)
 
         # <editor-fold desc="Init UI">
         self.ui_kham = Ui_formKhamBenh()
         self.ui_kham.setupUi(tab_widget_container)
-        self.ui_kham.so_ngay_hen.setReadOnly(True)
-        self.ui_kham.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{10}$')))
+        self.ui_kham.ds_benh_nhan_cho.clear()
         # </editor-fold>
+
+        self.duoc_handler = DuocCompleterHandler(
+            table_widget=self.ui_kham.ds_thuoc,
+            parent=self,
+            min_search_length=1,
+            popup_min_width=1000)
 
         # <editor-fold desc="Load data, connect signals,...">
         self.init()
@@ -70,13 +69,13 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         self.config_manager = ConfigManager()
         self._load_saved_settings()
-        self.apply_stylesheet()
         self._connect_signals()
+        self.apply_stylesheet()
         # </editor-fold>
+
     # </editor-fold>
 
-
-    # <editor-fold desc="Reset & Load thong tin lan dau khoi tao man hinh">
+    # <editor-fold desc="Reset thông tin màn hình">
     def reset_data(self):
         self.ma_y_te = ''
         self.ui_kham.ma_y_te.clear()
@@ -103,21 +102,30 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.spo2.clear()
 
         self.ui_kham.chan_doan.clear()
-        self.ui_kham.cb_ma_icd.setCurrentIndex(0)
+        self.ui_kham.ma_icd.clear()  # Đã thay đổi
         self.ui_kham.ma_icd_phu.clear()
         self.ui_kham.cb_cach_giai_quyet.setCurrentIndex(0)
 
         self.ui_kham.is_hen_kham.setChecked(False)
         self.ui_kham.so_ngay_hen.clear()
         self.ui_kham.ngay_hen_kham.setDate(QtCore.QDate.currentDate())
+    # </editor-fold>
 
+    # <editor-fold desc="Load thong tin lan dau khoi tao man hinh">
     def init(self):
         """Đổ dữ liệu ban đầu vào các combo_box."""
-        populate_combobox(self.ui_kham.cb_phong_kham, 'TenPhong', 'MaPhong', PHONG_KHAM_FILE_PATH)
-        populate_combobox(self.ui_kham.cb_doi_tuong, 'TenDT', 'MaDT', DOI_TUONG_FILE_PATH)
         populate_combobox(self.ui_kham.cb_cach_giai_quyet, 'TenGiaiQuyet', 'MaGiaiQuyet', GIAI_QUYET_FILE_PATH)
-        populate_combobox(self.ui_kham.cb_ma_icd, 'MaICD', 'MaICD', ICD_FILE_PATH)
 
+        doi_tuong_data = get_list_doi_tuong()
+        populate_list_to_combobox(self.ui_kham.cb_doi_tuong,
+                                  data=doi_tuong_data,
+                                  display_col=2, key_col=0)
+        phong_ban_data = get_list_phong_ban()
+        populate_list_to_combobox(self.ui_kham.cb_phong_kham,
+                                  data=phong_ban_data,
+                                  display_col=2, key_col=0)
+
+        # <editor-fold desc="set validator">
         int_validator = QIntValidator(0, 9999)
         self.ui_kham.so_ngay_hen.setValidator(int_validator)
         self.ui_kham.mach.setValidator(int_validator)
@@ -129,12 +137,14 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.can_nang.setValidator(int_validator)
         self.ui_kham.duong_huyet.setValidator(int_validator)
         self.ui_kham.spo2.setValidator(int_validator)
+        self.ui_kham.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{10}$')))
 
-        self.ds_thuoc_df = load_data_from_csv(THUOC_FILE_PATH)
+        self.ui_kham.so_ngay_hen.setReadOnly(True)
+        # </editor-fold>
 
         self.reset_data()
-    # </editor-fold>
 
+    # </editor-fold>
 
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
     def _connect_signals(self):
@@ -147,10 +157,13 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_in_phieu.clicked.connect(self.print_drug_bill)
         self.ui_kham.btn_reset_all.clicked.connect(self.reset_all)
 
+        self.ui_kham.ngay_sinh.dateChanged.connect(self.update_tuoi)
+
+        self.icd_handler.connect_to(self.ui_kham.ma_icd)
+        self.icd_handler.activated_with_data.connect(self._on_icd_selected)
     # </editor-fold>
 
-
-    # <editor-fold desc="Load setting cũ của phòng khám">
+    # <editor-fold desc="Load & Save setting phòng khám">
     def _save_settings(self):
         """Lưu Mã phòng khám và Tên bác sĩ hiện tại vào QSettings."""
         phong_kham_code = self.ui_kham.cb_phong_kham.currentText()
@@ -168,82 +181,60 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         if bac_si_saved:
             self.ui_kham.ten_bac_si.setText(bac_si_saved)
-    # </editor-fold>
 
+    # </editor-fold>
 
     def apply_stylesheet(self):
         self.ui_kham.btn_in_phieu.setStyleSheet(ADD_BTN_STYLE)
         self.ui_kham.btn_reset_all.setStyleSheet(ADD_BTN_STYLE)
         self.ui_kham.cb_phong_kham.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_doi_tuong.setStyleSheet(COMPLETER_THUOC_STYLE)
-        self.ui_kham.cb_ma_icd.setStyleSheet(COMPLETER_THUOC_STYLE)
+        self.ui_kham.ma_icd.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_gioi_tinh.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_cach_giai_quyet.setStyleSheet(COMPLETER_THUOC_STYLE)
-
+        # self.ui_kham.ma_icd.completer().popup().setStyleSheet(COMPLETER_THUOC_STYLE)
 
     # <editor-fold desc="Load thông tin bệnh nhân">
-    def set_thong_tin_benh_nhan(self, patient_data: dict):
+    def update_tuoi(self):
+        ui = self.ui_kham
+        ngay_sinh = ui.ngay_sinh.date()
+        tuoi = str(calculate_age(ngay_sinh.toString('dd/MM/yyyy')))
+        ui.tuoi.setText(tuoi)
+        ui.tuoi.setStyleSheet(TUOI_STYLE)
+
+    def set_thong_tin_benh_nhan(self, benh_nhan_data: tuple):
         ui = self.ui_kham
 
-        self.ma_y_te = str(patient_data.get(ExcelBenhNhan.COL_MA_Y_TE, '')).upper()
+        self.ma_y_te = str(benh_nhan_data[0]).upper()
+        ho_ten = benh_nhan_data[1]
+        gioi_tinh = benh_nhan_data[2]
+        nam_sinh = benh_nhan_data[3]
+        sdt = benh_nhan_data[4]
+        dia_chi = benh_nhan_data[5]
+
+        ngay_sinh = QDate(int(nam_sinh), 1, 1) if nam_sinh is not None else QDate.currentDate()
+
         ui.ma_y_te.setText(self.ma_y_te)
-        ui.ho_ten_bn.setText(str(patient_data.get(ExcelBenhNhan.COL_HO_TEN, '')))
-        ui.cb_gioi_tinh.setCurrentText(str(patient_data.get(ExcelBenhNhan.COL_GIOI_TINH, '')))
-
-        so_bhyt = str(patient_data.get(ExcelBenhNhan.COL_SO_BHYT, ''))
-        if so_bhyt == 'nan':
-            so_bhyt = 'Không'
-        ui.so_bhyt.setText(so_bhyt)
-
-        date_format = "dd/MM/yyyy"
-        current_date = QDate.currentDate()
-        bhyt_from_date = QtCore.QDate.fromString(str(patient_data.get(ExcelBenhNhan.COL_BH_TU_NGAY, current_date)), date_format)
-        bhyt_to_date = QtCore.QDate.fromString(str(patient_data.get(ExcelBenhNhan.COL_BH_DEN_NGAY, current_date)), date_format)
-        ngay_sinh = QtCore.QDate.fromString(str(patient_data.get(ExcelBenhNhan.COL_NGAY_SINH, '')), date_format)
-
-        if bhyt_from_date.isValid():
-            ui.bhyt_from.setDate(bhyt_from_date)
-        if bhyt_to_date.isValid():
-            ui.bhyt_to.setDate(bhyt_to_date)
-        if ngay_sinh.isValid():
-            ui.ngay_sinh.setDate(ngay_sinh)
-
-        ui.dia_chi.setText(str(patient_data.get(ExcelBenhNhan.COL_DIA_CHI, '')))
-        ui.sdt.setText('0' + str(patient_data.get(ExcelBenhNhan.COL_SDT, '')))
-
-        ma_doi_tuong = str(patient_data.get(ExcelBenhNhan.COL_MA_DOI_TUONG, ''))
-        index = ui.cb_doi_tuong.findData(ma_doi_tuong)
-        if index != -1:
-            ui.cb_doi_tuong.setCurrentIndex(index)
-        else:
-            ui.cb_doi_tuong.setCurrentIndex(0)
-
-        ui.tuoi.setText(str(calculate_age(ngay_sinh.toString('dd/MM/yyyy'))))
-        ui.tuoi.setStyleSheet(TUOI_STYLE)
+        ui.ho_ten_bn.setText(str(ho_ten) if ho_ten is not None else '')
+        ui.cb_gioi_tinh.setCurrentText('Nữ' if gioi_tinh == 'G' else 'Nam')
+        ui.ngay_sinh.setDate(ngay_sinh)
+        ui.sdt.setText(str(sdt) if sdt is not None else '')
+        ui.dia_chi.setText(str(dia_chi) if dia_chi is not None else '')
+        self.update_tuoi()
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):
         """Lọc dữ liệu bệnh nhân và cập nhật giao diện."""
         if len(ma_y_te) != MA_Y_TE_LENGTH:
             return
 
-        try:
-            benh_nhan_df = load_data_from_csv(BENH_NHAN_FILE_PATH)
-            filtered_df = filter_data_by_foreign_key(
-                data_frame=benh_nhan_df,
-                fk_key_value=ma_y_te,
-                fk_column_name='MaYTe'
-            )
+        benh_nhan_data = get_benh_nhan_by_id(ma_y_te)
+        if benh_nhan_data is None:
+            print(f'Không tìm thấy bệnh nhân với mã {ma_y_te}')
+            return
 
-            if len(filtered_df) < 1:
-                print(f'Không tìm thấy bênh nhân với mã {ma_y_te}')
-                return
+        self.set_thong_tin_benh_nhan(benh_nhan_data)
 
-            patient_data = get_first_row_data(filtered_df)
-            self.set_thong_tin_benh_nhan(patient_data)
-        except Exception as e:
-            print(f"Lỗi xảy ra trong quá trình cập nhật thông tin bệnh nhân: {e}")
     # </editor-fold>
-
 
     # <editor-fold desc="Setup đồng hồ ngày giờ khám">
     def setup_ngay_gio_kham_realtime_clock(self):
@@ -256,8 +247,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
     def update_ngay_gio_kham_datetime_edit(self):
         """Hàm cập nhật QDateTimeEdit với thời gian hệ thống."""
         self.ui_kham.ngay_gio_kham.setDateTime(QtCore.QDateTime.currentDateTime())
-    # </editor-fold>
 
+    # </editor-fold>
 
     # <editor-fold desc="Handle & Cập nhật ngày hẹn khám">
     def update_ngay_hen(self):
@@ -284,8 +275,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
             if not days_text:
                 self.ui_kham.ngay_hen_kham.setDate(QtCore.QDate.currentDate())
             pass  # Giữ giá trị cũ nếu nhập ký tự không phải số
-    # </editor-fold>
 
+    # </editor-fold>
 
     # <editor-fold desc="Setup table toa thuôc">
     def setup_prescription_table(self):
@@ -300,48 +291,66 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ds_thuoc.setColumnWidth(COL_TEN_THUOC, COL_TEN_THUOC_WIDTH)
 
         self.add_input_row()
+
     # </editor-fold>
 
-
-    # <editor-fold desc="Load thông tin thuốc sau khi chọn thuốc vào dòng input">
-    def load_drug_details(self, drug_name: str, row_index: int):
-        """Tra cứu đơn vị tính, đơn giá, và MÃ THUỐC rồi cập nhật các ô."""
-        if not drug_name:
+    # <editor-fold desc="Hàm xử lý chọn thuốc">
+    def _on_duoc_selected(self, raw_data: tuple, row_index: int):
+        """
+        Xử lý khi một thuốc được chọn từ completer.
+        Điền dữ liệu vào dòng nhập liệu (dòng 0).
+        """
+        if not raw_data or row_index != 0:
             return
 
         table = self.ui_kham.ds_thuoc
-        cleaned_drug_name = drug_name.lower().strip()
 
-        # 1. Tra cứu dữ liệu
-        filtered_df = self.ds_thuoc_df[self.ds_thuoc_df['TenThuoc'].str.lower() == cleaned_drug_name]
-
-        if filtered_df.empty:
+        # Data từ DuocService:
+        # (Duoc_Id, MaDuoc, TenDuocDayDu, DonGia, TenDonViTinh, CachDung)
+        try:
+            ma_duoc = str(raw_data[1])
+            ten_duoc = str(raw_data[2])
+            don_gia = float(raw_data[3])
+            don_vi_tinh = str(raw_data[4])
+            cach_dung = str(raw_data[5])
+        except (IndexError, TypeError, ValueError) as e:
+            print(f"Lỗi xử lý dữ liệu dược: {e}, data: {raw_data}")
             return
 
-        drug_data = filtered_df.iloc[0]
-
-        ma_thuoc = drug_data.get('MaThuoc', '')
-        don_vi_tinh = drug_data.get('DonVi', '')
-        don_gia = format_currency_vn(float(drug_data.get('DonGia', '')))
-
-        # 2. Cập nhật giao diện
-        # Cột MÃ THUỐC (COL_MA_THUOC)
+        # 1. Cột MÃ THUỐC (COL_MA_THUOC) - ẨN
         ma_thuoc_widget = table.cellWidget(row_index, COL_MA_THUOC)
         if ma_thuoc_widget and isinstance(ma_thuoc_widget, QLineEdit):
-            ma_thuoc_widget.setText(str(ma_thuoc))
+            ma_thuoc_widget.setText(ma_duoc)
 
-        # Cột Đơn vị tính (COL_DON_VI_TINH)
+        # 2. Cột TÊN THUỐC (COL_TEN_THUOC)
+        ten_thuoc_widget = table.cellWidget(row_index, COL_TEN_THUOC)
+        if ten_thuoc_widget and isinstance(ten_thuoc_widget, QLineEdit):
+            # Block signal để tránh kích hoạt lại tìm kiếm
+            ten_thuoc_widget.blockSignals(True)
+            ten_thuoc_widget.setText(ten_duoc)
+            ten_thuoc_widget.blockSignals(False)
+
+        # 3. Cột Đơn vị tính (COL_DON_VI_TINH)
         unit_widget = table.cellWidget(row_index, COL_DON_VI_TINH)
         if unit_widget and isinstance(unit_widget, QLineEdit):
-            unit_widget.setText(str(don_vi_tinh))
+            unit_widget.setText(don_vi_tinh)
 
-        # Cột Đơn giá (COL_DON_GIA)
+        # 4. Cột Đơn giá (COL_DON_GIA)
         price_widget = table.cellWidget(row_index, COL_DON_GIA)
         if price_widget and isinstance(price_widget, QLineEdit):
-            price_widget.setText(str(don_gia))
+            price_widget.setText(format_currency_vn(don_gia))
+
+        # 5. Cột Đường dùng (COL_DUONG_DUNG)
+        duong_dung_widget = table.cellWidget(row_index, COL_DUONG_DUNG)
+        if duong_dung_widget and isinstance(duong_dung_widget, QLineEdit):
+            duong_dung_widget.setText(cach_dung)
+
+        # Tự động focus vào ô tiếp theo (Sáng)
+        sang_widget = table.cellWidget(row_index, COL_SANG)
+        if sang_widget:
+            sang_widget.setFocus()
 
     # </editor-fold>
-
 
     # <editor-fold desc="Cập nhật tính toán số lượng thuốc">
     def calculate_quantity(self, input_row_index: int) -> int:
@@ -361,7 +370,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
     # </editor-fold>
 
-
     # <editor-fold desc="Thêm dòng input row mới vào đầu bảng">
     def add_input_row(self):
         """Tạo dòng nhập liệu mới tại index 0 (luôn là dòng đầu tiên)."""
@@ -378,20 +386,15 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         # 1b. Tạo QLineEdit TÊN THUỐC và gán QCompleter
         input_drug_name = QLineEdit()
-        self._update_completer_model()
 
-        # Áp dụng Stylesheet trực tiếp lên popup (là QListView)
-        self.drug_completer.popup().setStyleSheet(COMPLETER_THUOC_STYLE)
+        # Kết nối QLineEdit với DuocCompleterHandler
+        self.duoc_handler.connect_to(input_drug_name)
 
-        # Gán QCompleter cho QLineEdit
-        input_drug_name.setCompleter(self.drug_completer)
-
-        # Kết nối sự kiện Gõ phím
-        input_drug_name.textEdited.connect(self._start_autocomplete_search)
-
-        # Kết nối load details (cần load cả Mã thuốc ở load_drug_details)
-        self.drug_completer.activated.connect(lambda text: self.load_drug_details(text, 0))
-        input_drug_name.editingFinished.connect(lambda: self.load_drug_details(self.input_drug_name.text(), 0))
+        # Kết nối tín hiệu khi chọn một mục
+        # Chúng ta cần `raw_data` và `row_index` (luôn là 0)
+        self.duoc_handler.activated_with_data.connect(
+            lambda text, raw_data: self._on_duoc_selected(raw_data, 0)
+        )
 
         # Gán LineEdit vào ô TÊN THUỐC
         table.setCellWidget(0, COL_TEN_THUOC, input_drug_name)
@@ -428,7 +431,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
     # </editor-fold>
 
-
     # <editor-fold desc="Thêm dòng thuốc mới vào bảng thuốc">
     def validate_drug_entry(self, input_row_index: int) -> bool:
         """Xác thực dữ liệu nhập vào trước khi thêm vào bảng tĩnh."""
@@ -442,15 +444,13 @@ class KhamBenhTabController(QtWidgets.QWidget):
             drug_name_widget.setFocus()
             return False
 
-        entered_drug_name = drug_name_widget.text().strip()
 
-        # Lấy danh sách tên thuốc chuẩn để so sánh
-        # Chuyển về chữ thường để so sánh không phân biệt chữ hoa/thường
-        valid_drug_names_lower = self.ds_thuoc_df['TenThuoc'].str.lower().tolist()
-
-        if entered_drug_name.lower() not in valid_drug_names_lower:
+        # 2. Kiểm tra Mã Thuốc
+        ma_thuoc_widget = table.cellWidget(input_row_index, COL_MA_THUOC)
+        if not ma_thuoc_widget or not ma_thuoc_widget.text().strip():
             QMessageBox.warning(self, "Lỗi xác thực",
-                                 f"Tên thuốc '{entered_drug_name}' không hợp lệ hoặc không có trong danh mục thuốc.")
+                                f"Tên thuốc '{drug_name_widget.text()}' không hợp lệ. \n"
+                                f"Vui lòng chọn thuốc từ danh sách gợi ý.")
             drug_name_widget.setFocus()
             drug_name_widget.selectAll()
             return False
@@ -545,7 +545,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
     # </editor-fold>
 
-
     # <editor-fold desc="Xoá dòng thuốc trong bảng thuốc">
     def handle_delete_row(self):
         """Xử lý sự kiện khi nút Hủy (xóa dòng) được click."""
@@ -570,10 +569,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
         if reply == QMessageBox.StandardButton.Yes:
             table.removeRow(row_index)
 
-        self._update_completer_model()
         self.update_row_numbers()
-    # </editor-fold>
 
+    # </editor-fold>
 
     # <editor-fold desc="Cập nhật số dòng thuốc trong bảng">
     def update_row_numbers(self):
@@ -583,86 +581,44 @@ class KhamBenhTabController(QtWidgets.QWidget):
         for i in range(1, table.rowCount()):
             item = QtWidgets.QTableWidgetItem(str(i))
             table.setVerticalHeaderItem(i, item)
+
     # </editor-fold>
 
+    def _on_icd_selected(self, selected_text: str, raw_data: object):
+        """
+        Xử lý khi một mục ICD được chọn từ handler.
+        raw_data chính là tuple ('A01', 'Bệnh tả')
+        """
+        if raw_data:
+            ma_icd = raw_data[0] # Lấy mã
+            self.ui_kham.ma_icd.blockSignals(True)
+            self.ui_kham.ma_icd.setText(ma_icd)
+            self.ui_kham.ma_icd.blockSignals(False)
+        else:
+            # Fallback nếu không có raw data
+            ma_icd = selected_text.split(' - ')[0].strip()
+            self.ui_kham.ma_icd.blockSignals(True)
+            self.ui_kham.ma_icd.setText(ma_icd)
+            self.ui_kham.ma_icd.blockSignals(False)
 
-    # <editor-fold desc="Cập nhật model những thuốc chưa chọn trong danh sách thuốc">
-    def _get_available_drug_names(self) -> list:
-        """Hàm tiện ích: Lấy danh sách tên thuốc khả dụng (chưa thêm vào bảng)."""
+    def reset_prescription_table(self):
+        """Xóa tất cả các dòng thuốc tĩnh (từ dòng 1 trở đi) và giữ lại dòng nhập liệu."""
         table = self.ui_kham.ds_thuoc
-        added_drugs = set()
-        for row in range(1, table.rowCount()):
-            item = table.item(row, COL_TEN_THUOC)
-            if item:
-                added_drugs.add(item.text().strip())
 
-        all_drug_names = self.ds_thuoc_df['TenThuoc'].tolist()
+        # Xóa tất cả các dòng (ngoại trừ dòng nhập liệu tại index 0)
+        # Bắt đầu từ dòng cuối cùng (rowCount() - 1) lùi về dòng 1
+        for i in range(table.rowCount() - 1, 0, -1):
+            table.removeRow(i)
 
-        available_drugs = [name for name in all_drug_names if name not in added_drugs]
-        return available_drugs
+        # Đảm bảo rằng luôn có đúng 1 dòng nhập liệu sau khi reset
+        if table.rowCount() == 0:
+            self.add_input_row()
 
-    def _update_completer_model(self):
-        """Cập nhật Model với TẤT CẢ thuốc khả dụng."""
-        available_drugs = self._get_available_drug_names()
-        self.drug_model.setStringList(available_drugs)
+        self.update_row_numbers()
 
-    # </editor-fold>
-
-
-    # <editor-fold desc="Xử lý debounce tìm kiếm tên thuốc">
-    def _start_autocomplete_search(self, text: str):
-        """
-        Bắt đầu đếm ngược cho Debounce, chỉ thực hiện tìm kiếm nếu người dùng ngừng gõ
-        và đã nhập TỪ HAI ký tự trở lên.
-        """
-        self._current_search_text = text.strip()
-        search_len = len(self._current_search_text)
-
-        # Luôn dừng timer cũ để reset debounce
-        self.search_timer.stop()
-
-        if search_len == 0:
-            # Nếu rỗng, hiển thị lại toàn bộ danh sách có sẵn (hoặc 50 mục đầu)
-            self._perform_autocomplete_search()
-            return
-
-        if search_len == 1:
-            # Nếu chỉ có 1 ký tự, dừng tìm kiếm và ẩn popup
-            self.drug_model.setStringList([])  # Xóa model để không có kết quả
-            self.drug_completer.popup().hide()  # Ẩn popup ngay lập tức
-            return
-
-        if search_len > 1:
-            # Nếu có 2 ký tự trở lên, bắt đầu debounce 200ms
-            self.search_timer.start(200)
-
-    def _perform_autocomplete_search(self):
-        """Thực hiện tìm kiếm thủ công, cập nhật model và hiển thị popup."""
-        text = self._current_search_text
-        available_drugs_all = self._get_available_drug_names()
-
-        if not text:
-            # Hiển thị tất cả thuốc khả dụng (khi ô nhập liệu rỗng)
-            filtered_drugs = available_drugs_all
-        else:
-            text_lower = text.lower()
-
-            # Lọc thủ công (MatchContains logic) và GIỚI HẠN KẾT QUẢ ĐẦU TIÊN
-            filtered_drugs = [
-                                 name for name in available_drugs_all
-                                 if text_lower in name.lower()
-                             ][:50]  # Chỉ lấy tối đa 50 kết quả
-
-        self.drug_model.setStringList(filtered_drugs)
-
-        # Cập nhật và tự động chọn dòng đầu tiên
-        if self.drug_model.rowCount() > 0:
-            self.drug_completer.complete()
-        else:
-            self.drug_completer.popup().hide()  # Ẩn nếu không có kết quả
-
-    # </editor-fold>
-
+    def reset_all(self):
+        self.reset_data()
+        self.reset_prescription_table()
 
     # <editor-fold desc="Xử lý nút in toa thuốc">
     def get_thong_tin_kham(self):
@@ -704,12 +660,10 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         mapped_drugs = []
         for idx, drug in enumerate(drug_list):
-            ghi_chu = drug.get('GhiChu', '')
-
             mapped_drugs.append({
                 'STT': str(idx + 1),
                 'TenThuoc': drug.get('TenThuoc', ''),
-                'TenThuocPhu': ghi_chu,
+                'TenThuocPhu': drug.get('DuongDung', ''),
                 'DonViTinh': drug.get('DonViTinh', ''),
                 'Sang': drug.get('Sang', '0'),
                 'Trua': drug.get('Trua', '0'),
@@ -743,6 +697,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'DiaChi': ui.dia_chi.text().strip(),
             'SDT': ui.sdt.text().strip(),
             'BHYT': ui.so_bhyt.text().strip().upper(),
+            'MaDoiTuong': ui.cb_doi_tuong.currentData(),
             'DoiTuong': ui.cb_doi_tuong.currentText(),
 
             'ChanDoan': ui.chan_doan.text().strip(),
@@ -762,26 +717,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         return data
 
-    def reset_prescription_table(self):
-        """Xóa tất cả các dòng thuốc tĩnh (từ dòng 1 trở đi) và giữ lại dòng nhập liệu."""
-        table = self.ui_kham.ds_thuoc
-
-        # Xóa tất cả các dòng (ngoại trừ dòng nhập liệu tại index 0)
-        # Bắt đầu từ dòng cuối cùng (rowCount() - 1) lùi về dòng 1
-        for i in range(table.rowCount() - 1, 0, -1):
-            table.removeRow(i)
-
-        # Đảm bảo rằng luôn có đúng 1 dòng nhập liệu sau khi reset
-        if table.rowCount() == 0:
-            self.add_input_row()
-
-        self.update_row_numbers()
-        self._update_completer_model()
-
-    def reset_all(self):
-        self.reset_data()
-        self.reset_prescription_table()
-
     def validate_patient_info(self) -> bool:
         """
         Xác thực thông tin hành chính bệnh nhân: Họ tên, Địa chỉ, SĐT, Số BHYT.
@@ -794,7 +729,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
             (ui.ho_ten_bn, "Họ tên bệnh nhân"),
             (ui.dia_chi, "Địa chỉ"),
             (ui.sdt, "Số điện thoại"),
-            (ui.so_bhyt, "Số BHYT"),
+            (ui.chan_doan, "Chẩn đoán")
+            # (ui.so_bhyt, "Số BHYT"),
         ]
 
         if not ui.ngay_sinh.date().isValid():
@@ -821,7 +757,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         data = self.get_thong_tin_kham()
 
-        # --- HIỂN THỊ DỮ LIỆU THU THẬP ĐƯỢC (ĐỂ TEST) ---
         # print("--- DỮ LIỆU FORM ĐÃ THU THẬP ---")
         # import json
         # print(json.dumps(data, indent=4, ensure_ascii=False))
@@ -846,7 +781,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
             self.reset_all()
 
     # </editor-fold>
-
 
     # <editor-fold desc="Lấy thông tin bệnh nhân và phòng khám chuyển sang màn hình đăng ký dịch vụ">
     def get_hanh_chinh_data(self) -> dict:

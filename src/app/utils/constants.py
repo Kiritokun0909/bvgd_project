@@ -1,13 +1,13 @@
-# --- CẤU HÌNH HỆ THỐNG ---
+from app.utils.get_file_path import get_file_path
+from app.utils.setting_loader import AppConfig
 
-# Số lượng kết quả tối đa cho tìm kiếm tự động
-MAX_AUTOCOMPLETE_RESULTS = 50
-
-# --- HẰNG SỐ ỨNG DỤNG ---
-MA_Y_TE_LENGTH = 6
+MA_Y_TE_LENGTH = 8
 
 # --- THÔNG TIN BỆNH VIỆN ---
-HOSPITAL_NAME = "BỆNH VIỆN ABC"
-SO_Y_TE = "SỞ Y TẾ XYZ"
+SO_Y_TE = AppConfig.SO_Y_TE
+TEN_BENH_VIEN = AppConfig.TEN_DON_VI
 
-CLS_CODE = 'GQ02'
+CLS_CODE = f'{AppConfig.CLS_CODE}'
+DB_FILE_PATH = get_file_path(f'data/{AppConfig.DB_FILE_NAME}')
+
+GIAI_QUYET_FILE_PATH = get_file_path('data/cach_giai_quyet.csv')

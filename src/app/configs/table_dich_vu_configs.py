@@ -1,15 +1,3 @@
-# --- HẰNG SỐ FILE PATH ---
-from app.utils.get_file_path import get_file_path
-
-PHONG_KHAM_FILE_PATH = get_file_path('data/kham_benh/phong_kham.csv')
-DOI_TUONG_FILE_PATH = get_file_path('data/kham_benh/doi_tuong.csv')
-
-DANH_MUC_FILE_PATH = get_file_path('data/dich_vu/danh_muc_dich_vu.csv')
-DICH_VU_FILE_PATH = get_file_path('data/dich_vu/dich_vu.csv')
-
-LOAI_GIA_FILE_PATH = get_file_path('data/dich_vu/loai_gia.csv')
-DON_GIA_FILE_PATH = get_file_path('data/dich_vu/don_gia.csv')
-DOI_TUONG_LOAI_GIA_FILE_PATH = get_file_path('data/dich_vu/doi_tuong_loai_gia.csv')
 
 # Giả định các cột cần thiết trong DICH_VU_FILE_PATH
 SERVICE_CODE_COLUMN = 'MaDichVu'
@@ -136,3 +124,9 @@ FIELD_MAPPING = {
     'Số phiếu': 'SoPhieu',
     'Lý do không thu': 'LyDoKhongThu',
 }
+
+MIN_COLUMN_WIDTH = 80
+MIN_COLUMN_HEIGHT = 50
+
+SEARCH_BY_INPUT_CODE = 0
+SEARCH_BY_DICH_VU_ID = 1

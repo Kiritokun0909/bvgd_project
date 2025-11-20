@@ -1,9 +1,10 @@
 import qrcode
-from qrcode.constants import ERROR_CORRECT_M
+from qrcode.constants import ERROR_CORRECT_M, ERROR_CORRECT_Q
 from pathlib import Path
 import os
 
 from app.utils.get_file_path import get_file_path
+from app.utils.utils import convert_to_unsigned_preserve_case
 
 # ĐỊNH NGHĨA THƯ MỤC ĐẦU RA CỤ THỂ
 OUTPUT_DIR = get_file_path('data/hinh_anh')
@@ -25,16 +26,20 @@ def generate_medical_qr_code(
     Sử dụng định dạng chuỗi phân cách '|' để tối ưu.
     """
 
+    ho_ten = convert_to_unsigned_preserve_case(ho_ten)
+    gioi_tinh = convert_to_unsigned_preserve_case(gioi_tinh)
+    dia_chi = convert_to_unsigned_preserve_case(dia_chi)
+
     # 1. Tạo chuỗi dữ liệu có cấu trúc (sử dụng '|' làm ký tự phân cách)
     data_parts = [
         f'MaYTe:{ma_y_te}',
         f"BHYT:{so_bhyt}",
-        f"DTuong:{doi_tuong}",
+        f"MaDT:{doi_tuong}",
         f"Ten:{ho_ten}",
         f"Tuoi:{tuoi}",
         f"GT:{gioi_tinh}",
         f"DC:{dia_chi}",
-        f"SĐT:{so_dien_thoai}",
+        f"SDT:{so_dien_thoai}",
         f"Tien:{so_tien}"
     ]
     data_to_encode = "|".join(data_parts)
@@ -51,7 +56,7 @@ def generate_medical_qr_code(
         # Thiết lập QR Code (Mức sửa lỗi M là cân bằng tốt nhất)
         qr = qrcode.QRCode(
             version=None,
-            error_correction=ERROR_CORRECT_M,
+            error_correction=ERROR_CORRECT_Q,
             box_size=10,
             border=4,
         )
@@ -87,7 +92,7 @@ if __name__ == '__main__':
         ho_ten="Trần Thị Bích",
         tuoi=45,
         gioi_tinh="Nữ",
-        dia_chi="12/A Cách mạng tháng 8, Quận 3, TP.HCM",
+        dia_chi="12/A Cách Mạng Tháng 8, Quận 3, TP.HCM",
         so_dien_thoai="0901234567",
         so_tien="350.500 VND"
     )

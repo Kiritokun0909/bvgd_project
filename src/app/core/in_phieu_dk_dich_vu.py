@@ -168,25 +168,25 @@ def draw_header_info(c, data,  barcode_ma_y_te_path, qr_thong_tin):
     c.drawString(MARGIN_LEFT, y_start - 10, data["PhongKham"])
 
     # Mã vạch (Barcode)
-    try:
-        x_barcode = PAGE_WIDTH - MARGIN_LEFT - BARCODE_WIDTH
-        c.drawImage( barcode_ma_y_te_path, x_barcode, y_start - 10, BARCODE_WIDTH, BARCODE_HEIGHT)
-    except FileNotFoundError:
-        pass
+    # try:
+    #     x_barcode = PAGE_WIDTH - MARGIN_LEFT - BARCODE_WIDTH
+    #     c.drawImage( barcode_ma_y_te_path, x_barcode, y_start - 10, BARCODE_WIDTH, BARCODE_HEIGHT)
+    # except FileNotFoundError:
+    #     pass
 
     # QR code thông tin bệnh nhân
     try:
         x_barcode = PAGE_WIDTH - MARGIN_LEFT - BARCODE_WIDTH
-        c.drawImage(qr_thong_tin, x_barcode +30, y_start - 165, 45, 45)
+        c.drawImage(qr_thong_tin, x_barcode + 30, y_start - 20, 45, 45)
     except FileNotFoundError:
         pass
 
     # Thông tin Mã YT/BHYT/Đối tượng
-    c.setFont(VIET_FONT_BOLD, 10)
-    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT, y_start - 20, f'Mã y tế: {data.get('MaYTe', '')}')
-    c.setFont(VIET_FONT, 9)
-    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT, y_start - 35, f'Số BHYT: {data["MaBHYT"]}')
-    c.setFont(VIET_FONT_BOLD, 10)
+    c.setFont(VIET_FONT_BOLD, 8)
+    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT, y_start - 30, f'Mã y tế: {data.get('MaYTe', '')}')
+    c.setFont(VIET_FONT, 8)
+    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT, y_start - 40, f'Số BHYT: {data["MaBHYT"]}')
+    c.setFont(VIET_FONT_BOLD, 8)
     c.drawRightString(PAGE_WIDTH - MARGIN_LEFT, y_start - 50, f'Đối tượng: {data["DoiTuong"]}')
 
     # Tiêu đề Form
@@ -336,13 +336,10 @@ def draw_footer_info(c, data, y_table_end, barcode_tien_path):
     ngay_tao_date = data['NgayTao']
     c.drawCentredString(center_right_x, y_footer_start, f'Ngày {ngay_tao_date}')
 
-    # Chữ ký
-    c.setFont(VIET_FONT, 9)
-    c.drawCentredString(center_right_x, y_footer_start - 15, f'Bác sĩ chỉ định')
 
     # Bác sĩ
     c.setFont(VIET_FONT_BOLD, 9)
-    c.drawCentredString(center_right_x, y_footer_start - 65, data["BacSi"])
+    c.drawCentredString(center_right_x, y_footer_start - 55, data["BacSi"])
 
     return y_footer_start - 55
 
@@ -472,7 +469,7 @@ def create_and_open_pdf_for_printing(data):
             gioi_tinh=data.get('GioiTinh', ''),
             dia_chi=data.get('DiaChi', ''),
             so_dien_thoai=data.get('SDT', ''),
-            so_tien=data.get('TongBenhNhanTra', '')
+            so_tien=data.get('TongBenhNhanTra', '0,000') + ' VND'
         )
 
         for i in range(len(data.get('DichVu', 0))):
