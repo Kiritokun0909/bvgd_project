@@ -2,7 +2,6 @@ import pandas as pd
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QComboBox
 import re
-import locale
 
 from pandas.core.interchange.dataframe_protocol import DataFrame
 
@@ -120,6 +119,22 @@ def populate_df_to_combobox(combobox: QComboBox, df: DataFrame, display_col: str
             print("Lỗi: Tên cột hiển thị (display_col) hoặc cột khóa (key_col) không chính xác.")
             return
 
+def populate_list_to_combobox(combobox: QComboBox, data: list[tuple],
+                              display_col: int, key_col: int):
+    combobox.clear()
+    length = len(data)
+    for index in range(length):
+        try:
+            display_val = str(data[index][display_col])
+            key_val = str(data[index][key_col])
+
+            combobox.addItem(display_val)
+            combobox.setItemData(combobox.count() - 1, key_val)
+        except KeyError:
+            print("Lỗi: Cột hiển thị (display_col) hoặc cột khóa (key_col) không chính xác.")
+            return
+
+
 def get_combobox_key(combobox: QComboBox):
     """Lấy giá trị khóa (key value) của mục hiện tại."""
     return combobox.currentData()
@@ -144,26 +159,41 @@ def calculate_age(birthday):
     return age
 
 
-def convert_to_unsigned(text):
+import re
+
+
+def convert_to_unsigned_preserve_case(text):
     """
-    Chuyển đổi chuỗi tiếng Việt có dấu sang không dấu và lowercase
-    (Nên đặt trong app.utils.utils để sử dụng chung)
+    Chuyển đổi chuỗi tiếng Việt có dấu sang không dấu,
+    nhưng giữ nguyên trạng thái in hoa/thường của ký tự gốc.
     """
     if not isinstance(text, str):
         return ""
-    text = text.lower()
+
+    # Ký tự Á/á, À/à, Ả/ả, ... sẽ được thay thế bằng A/a
     text = re.sub(r'[áàảãạăắằẳẵặâấầẩẫậ]', 'a', text)
+    text = re.sub(r'[ÁÀẢÃẠĂẮẰẲẴẶÂẤẦẨẪẬ]', 'A', text)
+
     text = re.sub(r'[éèẻẽẹêếềểễệ]', 'e', text)
+    text = re.sub(r'[ÉÈẺẼẸÊẾỀỂỄỆ]', 'E', text)
+
     text = re.sub(r'[íìỉĩị]', 'i', text)
+    text = re.sub(r'[ÍÌỈĨỊ]', 'I', text)
+
     text = re.sub(r'[óòỏõọôốồổỗộơớờởỡợ]', 'o', text)
+    text = re.sub(r'[ÓÒỎÕỌÔỐỒỔỖỘƠỚỜỞỠỢ]', 'O', text)
+
     text = re.sub(r'[úùủũụưứừửữự]', 'u', text)
+    text = re.sub(r'[ÚÙỦŨỤƯỨỪỬỮỰ]', 'U', text)
+
     text = re.sub(r'[ýỳỷỹỵ]', 'y', text)
+    text = re.sub(r'[ÝỲỶỸỴ]', 'Y', text)
+
+    # Chữ Đ/đ
     text = re.sub(r'đ', 'd', text)
+    text = re.sub(r'Đ', 'D', text)
 
     return text.strip()
-
-
-
 
 
 def format_currency_vn(amount, decimal_places=3):

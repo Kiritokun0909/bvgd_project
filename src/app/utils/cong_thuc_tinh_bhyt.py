@@ -1,28 +1,24 @@
-from app.configs.table_dich_vu_configs import DOI_TUONG_FILE_PATH
-from app.utils.utils import load_data_from_csv, get_first_row_data, unformat_currency_to_float
-from app.utils.setting_loader import AppConfig
-
-MLCS = AppConfig.LUONG_CO_SO
-PHAN_TRAM_THANH_TOAN = AppConfig.PHAN_TRAM_THANH_TOAN
-
-NGUONG_MIEN_CHI_TRA = MLCS * PHAN_TRAM_THANH_TOAN
-doi_tuong_df = load_data_from_csv(DOI_TUONG_FILE_PATH)
+from app.services.DoiTuongService import get_doi_tuong_by_id
 
 def tinh_tien_mien_giam(tong_tien: float,
                         tien_dich_vu: float,
                         ma_doi_tuong: str) -> float:
+    doi_tuong_data = get_doi_tuong_by_id(ma_doi_tuong)
+    gioi_han = doi_tuong_data[3]
+    ty_le_2 = doi_tuong_data[5]
 
-    # Neu benh nhan có bhyt
-    filter_df = doi_tuong_df[
-        doi_tuong_df['MaDT'].astype(str).str
-        .contains(ma_doi_tuong, na=False)
-    ]
-    doi_tuong = get_first_row_data(filter_df)
-    ti_le_mien_giam = float(doi_tuong.get('PhanTramBHYT')) * 0.01
+    if gioi_han is None or gioi_han == 0:
+        return 0
 
-    if ti_le_mien_giam > 0:
-        if tong_tien <= NGUONG_MIEN_CHI_TRA:
-            return tien_dich_vu
-        return tien_dich_vu * ti_le_mien_giam
+    if tong_tien <= float(gioi_han):
+        return tien_dich_vu
 
-    return 0
+    if ty_le_2 is None:
+        return 0
+
+    tien_mien_giam = tien_dich_vu * float(ty_le_2)
+    return tien_mien_giam
+
+if __name__ == '__main__':
+    mien_giam = tinh_tien_mien_giam(315000, 30000, '50')
+    print(mien_giam)

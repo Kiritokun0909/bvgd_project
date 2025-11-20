@@ -96,5 +96,5 @@ COMPLETER_THUOC_STYLE = """
 
 TAI_VU_STYLE = """
     font-weight: 700; 
-    font-size: 16px;
+    font-size: 14px;
 """

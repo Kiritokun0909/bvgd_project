@@ -20,12 +20,9 @@ class AppController(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
-        # Set up the main window UI into this widget
         self.ui_main = Ui_mainWidget()
         self.ui_main.setupUi(self)
 
-        # Khởi tạo Controller cho tab Khám bệnh
-        # self.ui_main.tabKhamBenh là container QWidget rỗng cho tab "Khám bệnh"
         self.kham_benh_controller = KhamBenhTabController(
             tab_widget_container=self.ui_main.tab_kham_benh
         )
@@ -38,7 +35,6 @@ class AppController(QtWidgets.QWidget):
             tab_widget_container=self.ui_main.tab_tai_vu
         )
 
-        # Áp dụng Stylesheet cho QTabWidget
         self._apply_tab_stylesheet()
 
         self.dich_vu_controller.dich_vu_completed.connect(self.handle_dich_vu_completed)
@@ -48,7 +44,6 @@ class AppController(QtWidgets.QWidget):
 
 
     def _apply_tab_stylesheet(self):
-        """Áp dụng stylesheet cho QTabWidget."""
         stylesheet = """
         QTabBar::tab {
             background-color: #E0E0E0;
@@ -123,7 +118,7 @@ class AppController(QtWidgets.QWidget):
         # 1. Thu thập dữ liệu hành chính
         hanh_chinh_data = self.kham_benh_controller.get_hanh_chinh_data()
 
-        # 2. KIỂM TRA ĐIỀU KIỆN CẬN LÂM SÀNG
+        # 2. KIỂM TRA ĐIỀU KIỆN CHUYỂN SANG CẬN LÂM SÀNG
         if not self.kham_benh_controller.validate_patient_info():
             return
 
@@ -148,13 +143,10 @@ class AppController(QtWidgets.QWidget):
 
     @QtCore.pyqtSlot()
     def handle_dich_vu_completed(self):
-        """Slot được gọi khi tab Dịch vụ hoàn tất công việc."""
-
         kham_benh_tab_index = 0
 
         # 2. Quay về Tab Khám bệnh (index 0)
         if self.ui_main.tabWidget.currentIndex() != kham_benh_tab_index:
             self.ui_main.tabWidget.setCurrentIndex(kham_benh_tab_index)
 
-        # TODO: Nếu cần, bạn có thể gọi hàm refresh_data() của kham_benh_controller ở đây
         self.kham_benh_controller.reset_all()

@@ -30,9 +30,8 @@ class AppConfig:
     DIA_CHI = "Chưa xác định"
     SDT = "Chưa xác định"
     LOGO_FILE_NAME = 'logo.png'
-
-    LUONG_CO_SO = 2340000.000
-    PHAN_TRAM_THANH_TOAN = 0.15
+    DB_FILE_NAME = 'hospital.db'
+    CLS_CODE = 'GQ06'
 
 
 def load_config():
@@ -55,17 +54,8 @@ def load_config():
     AppConfig.DIA_CHI = parser.get('THONG_TIN_CHUNG', 'DIA_CHI', fallback=AppConfig.DIA_CHI)
     AppConfig.SDT = parser.get('THONG_TIN_CHUNG', 'SDT', fallback=AppConfig.SDT)
     AppConfig.LOGO_FILE_NAME = parser.get('THONG_TIN_CHUNG', 'LOGO_FILE_NAME', fallback=AppConfig.LOGO_FILE_NAME)
-
-    try:
-        AppConfig.LUONG_CO_SO = parser.getfloat('CHINH_SACH_TIEN_LUONG', 'LUONG_CO_SO', fallback=AppConfig.LUONG_CO_SO)
-    except ValueError:
-        print("Cảnh báo: LUONG_CO_SO không phải là số hợp lệ.")
-
-    try:
-        AppConfig.PHAN_TRAM_THANH_TOAN = parser.getfloat('CHINH_SACH_TIEN_LUONG', 'PHAN_TRAM_THANH_TOAN',
-                                                          fallback=AppConfig.PHAN_TRAM_THANH_TOAN)
-    except ValueError:
-        print("Cảnh báo: Giá trị phần trăm thanh toán không phải là số hợp lệ.")
+    AppConfig.DB_FILE_NAME = parser.get('THONG_TIN_CHUNG', 'DB_FILE_NAME', fallback=AppConfig.DB_FILE_NAME)
+    AppConfig.CLS_CODE = parser.get('THONG_TIN_CHUNG', 'CLS_CODE', fallback=AppConfig.CLS_CODE)
 
 
 # Thực hiện tải cấu hình ngay khi module này được import
