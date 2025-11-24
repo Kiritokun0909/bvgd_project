@@ -27,6 +27,21 @@ def get_doi_tuong_by_id(doi_tuong_id: str) -> tuple | None:
 
     return data
 
+def get_doi_tuong_by_keyword(keyword: str) -> list[tuple] | None:
+    data = fetch_all_rows(
+        query=f"""  
+                SELECT 
+                    DoiTuong_Id, MaDoiTuong
+                FROM 
+                    DoiTuong
+                WHERE 
+                    MaDoiTuong LIKE ?
+            """,
+        params=('%' + keyword + '%',)
+    )
+
+    return data
+
 if __name__ == '__main__':
     data = get_list_doi_tuong()
 

@@ -3,6 +3,7 @@ from PyQt6 import QtCore, QtWidgets
 
 from app.configs.table_thuoc_configs import COL_MA_THUOC
 from app.services.DichVuService import get_list_dich_vu_by_keyword
+from app.services.DoiTuongService import get_doi_tuong_by_keyword
 from app.services.ICDService import get_list_icd
 from app.services.DuocService import get_list_duoc
 from app.styles.styles import COMPLETER_THUOC_STYLE
@@ -94,6 +95,22 @@ class BaseCompleterHandler(QtCore.QObject):
         self.activated_with_data.emit(selected_text, None)
 
 
+# --- Lớp con cho DoiTuong ---
+
+class DoiTuongCompleterHandler(BaseCompleterHandler):
+    def __init__(self, parent=None, **kwargs):
+        super().__init__(parent=parent, **kwargs)
+
+    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
+        raw_data_list = get_doi_tuong_by_keyword(keyword=keyword)
+        results = []
+        for raw_item in raw_data_list:
+            if len(raw_item) >= 1:
+                display_string = f"{raw_item[1]}"
+                results.append((display_string, raw_item))
+        return results
+
+
 # --- Lớp con cho ICD ---
 
 class IcdCompleterHandler(BaseCompleterHandler):
@@ -104,7 +121,7 @@ class IcdCompleterHandler(BaseCompleterHandler):
         raw_data_list = get_list_icd(keyword=keyword)
         results = []
         for raw_item in raw_data_list:
-            if len(raw_item) >= 2:
+            if len(raw_item) >= 1:
                 display_string = f"{raw_item[0]} - {raw_item[1]}"  # <-- ĐÃ SỬA
                 results.append((display_string, raw_item))
         return results

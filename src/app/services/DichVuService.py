@@ -83,7 +83,7 @@ def get_dich_vu_by_input_code(doi_tuong_id: str, input_code: str) -> tuple | Non
                 {Schema.DMDichVu.TABLE_NAME} AS T5 ON T4.{Schema.GiaDichVu.DICH_VU_ID} = T5.{Schema.DMDichVu.DICH_VU_ID}
             WHERE
                 T1.{Schema.DoiTuong.DOI_TUONG_ID} = ? AND 
-                T5.{Schema.DMDichVu.INPUT_CODE} = ?
+                T5.{Schema.DMDichVu.INPUT_CODE} LIKE ?
             """,
         params=(doi_tuong_id, input_code,)
     )

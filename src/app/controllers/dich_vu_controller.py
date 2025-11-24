@@ -174,7 +174,10 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         ui.so_luong.textEdited.connect(self.calculate_thanh_tien)
         ui.don_gia.textEdited.connect(self.calculate_thanh_tien)
         ui.table_dich_vu.cellClicked.connect(self.handle_table_cell_clicked)
+
         ui.so_luong.returnPressed.connect(self.btn_them_handle)
+        ui.ma_dich_vu.returnPressed.connect(self.btn_them_handle)
+
         ui.btn_them.clicked.connect(self.btn_them_handle)
         ui.btn_huy.clicked.connect(self._clear_input_fields)
         ui.btn_in_phieu.clicked.connect(self.btn_in_phieu_handle)
@@ -975,10 +978,12 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         # print(json.dumps(data, indent=4, ensure_ascii=False))
 
         create_and_open_pdf_for_printing(data)
-        reply = QMessageBox.question(self, "Xác nhận",
-                                     f"Quay lại màn hình khám bệnh và reset bệnh nhân?",
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if reply == QMessageBox.StandardButton.Yes:
-            self.reset_all()
-            self.dich_vu_completed.emit()
+
+        # --- THÔNG BÁO HỎI RESET MÀN HÌNH ---
+        # reply = QMessageBox.question(self, "Xác nhận",
+        #                              f"Quay lại màn hình khám bệnh và reset bệnh nhân?",
+        #                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        # if reply == QMessageBox.StandardButton.Yes:
+        #     self.reset_all()
+        #     self.dich_vu_completed.emit()
     # </editor-fold>
