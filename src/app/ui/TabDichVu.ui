@@ -50,7 +50,8 @@
       <widget class="QLabel" name="gioi_tinh">
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -64,7 +65,8 @@
       <widget class="QLabel" name="ho_ten_bn">
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -135,7 +137,8 @@
       <widget class="QLabel" name="tuoi">
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -241,7 +244,8 @@
       <widget class="QLabel" name="nam_sinh">
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -255,6 +259,8 @@
       <widget class="QLabel" name="dia_chi">
        <property name="font">
         <font>
+         <family>Arial</family>
+         <pointsize>9</pointsize>
          <weight>75</weight>
          <bold>true</bold>
         </font>
@@ -274,7 +280,7 @@
      <item row="0" column="14">
       <widget class="QPushButton" name="btn_reset_all">
        <property name="text">
-        <string>Reset all</string>
+        <string>Reset</string>
        </property>
       </widget>
      </item>
@@ -479,7 +485,7 @@
        <item row="1" column="1">
         <widget class="QPushButton" name="btn_in_phieu">
          <property name="text">
-          <string>In phiếu</string>
+          <string>Lưu và In phiếu</string>
          </property>
         </widget>
        </item>

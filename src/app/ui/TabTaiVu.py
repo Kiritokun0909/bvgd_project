@@ -210,6 +210,8 @@ class Ui_formTaiVu(object):
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(10)
+        font.setBold(True)
+        font.setWeight(75)
         self.lb_ma_y_te.setFont(font)
         self.lb_ma_y_te.setObjectName("lb_ma_y_te")
         self.thongTinLayout.addWidget(self.lb_ma_y_te, 0, 0, 1, 1)

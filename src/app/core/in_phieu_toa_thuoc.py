@@ -5,16 +5,20 @@ from reportlab.pdfbase.ttfonts import TTFont
 import os
 import sys
 
+# --- IMPORT UTILS ---
+try:
+    from app.core.utils import draw_multi_column_table
+except ImportError:
+    from utils import draw_multi_column_table
+
 from app.utils.create_barcode import generate_ma_y_te_barcode
 from app.utils.create_qr_code import generate_medical_qr_code
 from app.utils.get_file_path import get_file_path
 from app.utils.setting_loader import AppConfig
 
-
 TARGET_DIR = get_file_path('data/in_phieu_toa_thuoc')
 
 # ----------------- CẤU HÌNH TIẾNG VIỆT -----------------
-# 1. Tên font sẽ sử dụng trong ReportLab
 VIET_FONT = 'TimesNewRomanVN'
 VIET_FONT_BOLD = 'TimesNewRomanVNBold'
 VIET_FONT_ITALIC = 'TimesNewRomanVNItalic'
@@ -23,24 +27,16 @@ PHIEU_TOA_THUOC_HEADER = 'ĐƠN THUỐC BHYT'
 SO_Y_TE = AppConfig.SO_Y_TE
 TEN_DON_VI = AppConfig.TEN_DON_VI
 
-# Cấu hình Barcode/QR Code
-BARCODE_WIDTH = 100
-BARCODE_HEIGHT = 30
-
 try:
-    # Font Thường (Regular), Font Đậm (Bold), Font Nghiêng (Italic)
     pdfmetrics.registerFont(TTFont(VIET_FONT, 'C:/Windows/Fonts/times.ttf'))
     pdfmetrics.registerFont(TTFont(VIET_FONT_BOLD, 'C:/Windows/Fonts/timesbd.ttf'))
     pdfmetrics.registerFont(TTFont(VIET_FONT_ITALIC, 'C:/Windows/Fonts/timesi.ttf'))
 except Exception as e:
-    print(f"!!! CẢNH BÁO: Lỗi đăng ký font: {e}")
-    print("Sử dụng font ReportLab mặc định (có thể không hiển thị tiếng Việt).")
-    # Giữ các tên font ReportLab mặc định để tránh lỗi, nhưng sẽ mất hỗ trợ tiếng Việt
     VIET_FONT = 'Times-Roman'
     VIET_FONT_BOLD = 'Times-Bold'
     VIET_FONT_ITALIC = 'Times-Italic'
 
-# ----------------- 2. DỮ LIỆU MẪU -----------------
+# ----------------- 2. DỮ LIỆU MẪU (Test thuốc tên dài) -----------------
 fake_data = {
     "PhongKham": "Nội tim mạch (P112)",
     "TenBacSi": "Bs. Nguyễn Thị C",
@@ -48,68 +44,64 @@ fake_data = {
     "NgayKham": "30",
     "ThangKham": "10",
     "NamKham": "2025",
-
     "MaYTe": "123",
-    "HoTen": "TẠ THỊ HẢI",
+    "HoTen": "NGUYỄN VĂN A",
     "Tuoi": "87",
-    "GioiTinh": "Nữ",
-    "DiaChi": "8 Đồng Thái, Phường Cầu, Tp Hồ Chí Minh",
-    "SDT": "0908637",
+    "GioiTinh": "Nam",
+    "DiaChi": "Số 8 Đường Đồng Thái, Phường Bến Nghé, Quận 1, TP.HCM",
+    "SDT": "0908637xxx",
     "BHYT": "CT27979318716",
     "DoiTuong": "37 BHYT 100%",
-
-    "ChanDoan": "TĂNG HUYẾT ÁP - RỐI LOẠN LIPID MÁU",
-    "Mach": "",
+    "ChanDoan": "Tăng huyết áp - Rối loạn lipid máu",
+    "Mach": "80",
     "HA": "136/62",
-    "NhietDo": "",
+    "NhietDo": "37",
     "CanNang": "65.00",
-
     "SoNgayHenTaiKham": "28",
     "NgayHenTaiKham": "27/11/2025",
-    "DrNote": "",
+    "DrNote": "Hạn chế ăn mặn.",
+
+    # Dữ liệu thuốc test wrap text
     "ToaThuoc": [
         {
-            "Stt": "1",
-            "TenThuoc": "Lercanidipine hydrochloride",
-            "TenThuocPhu": "(Kafedipin), 10mg",
-            "DonViTinh": "Viên - Uống ()",
-            "Sang": "1",
-            "Trua": "0",
-            "Chieu": "0",
-            "Toi": "0",
-            "SoNgay": "28",
-            "SoLuong": "28"
+            "STT": "1",
+            "TenThuoc": "Amoxicillin Trihydrate Clavulanate Potassium",  # Tên rất dài
+            "TenThuocPhu": "(Augmentin 1g), 1000mg",  # Tên phụ
+            "DonViTinh": "Viên",
+            "Sang": "1", "Trua": "0", "Chieu": "0", "Toi": "1",
+            "SoNgay": "7", "SoLuong": "14"
+        },
+        {
+            "STT": "2",
+            "TenThuoc": "Paracetamol",
+            "TenThuocPhu": "(Panadol Extra)",
+            "DonViTinh": "Viên",
+            "Sang": "1", "Trua": "1", "Chieu": "1", "Toi": "1",
+            "SoNgay": "5", "SoLuong": "20"
         },
     ]
 }
 
+
 # ----------------- 3. HÀM VẼ PHIẾU THUỐC -----------------
-def draw_drug_form(c, data, ma_y_te_barcode, thong_tin_qrcode):
+def draw_drug_form(c, data, thong_tin_qrcode):
     width, height = A5
     margin_left = 30
-    drug_line_height = 35
+    w_content = width - (margin_left * 2)
 
-    # ------------------ KHỐI CHUNG ------------------
+    # --- HEADER ---
     c.setFont(VIET_FONT, 9)
     y_start = height - 30
 
-    # Tiêu đề Bệnh viện & PHÒNG KHÁM IN PHIẾU
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawString(margin_left, y_start, SO_Y_TE)
     c.drawString(margin_left, y_start - 10, TEN_DON_VI)
     c.setFont(VIET_FONT, 9)
     c.drawString(margin_left, y_start - 20, data.get('PhongKham', ''))
 
-    # try:
-    #     x_barcode = width - margin_left - BARCODE_WIDTH
-    #     c.drawImage(ma_y_te_barcode, x_barcode, y_start - 10, BARCODE_WIDTH, BARCODE_HEIGHT)
-    # except FileNotFoundError:
-    #     pass
-
     try:
-        x_barcode = width - margin_left * 2
-        c.drawImage(thong_tin_qrcode, x_barcode, y_start - 12, 40, 40)
-    except FileNotFoundError:
+        c.drawImage(thong_tin_qrcode, width - margin_left * 2, y_start - 12, 40, 40)
+    except:
         pass
 
     c.setFont(VIET_FONT_BOLD, 10)
@@ -117,172 +109,175 @@ def draw_drug_form(c, data, ma_y_te_barcode, thong_tin_qrcode):
     c.setFont(VIET_FONT, 9)
     c.drawRightString(width - margin_left, y_start - 30, data.get('DoiTuong', ''))
 
-    # Tiêu đề Form
     c.setFont(VIET_FONT_BOLD, 12)
-    c.drawCentredString(width / 2, y_start - 40, PHIEU_TOA_THUOC_HEADER)
+    c.drawCentredString(width / 2, y_start - 50, PHIEU_TOA_THUOC_HEADER)
 
-    # ------------------ THÔNG TIN BỆNH NHÂN ------------------
-    y_info = y_start - 60
-    line_y_offset = -12
+    # --- THÔNG TIN BỆNH NHÂN ---
+    y_info = y_start - 70
 
+    # Dòng 1: Họ tên - Tuổi...
     c.setFont(VIET_FONT, 9)
-
-    # Họ tên
     c.drawString(margin_left, y_info, "Họ tên: ")
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawString(margin_left + 35, y_info, data.get('HoTen', ''))
-
-    # Tuổi
-    c.setFont(VIET_FONT, 9)  # Quay lại font thường
+    c.setFont(VIET_FONT, 9)
     c.drawString(margin_left + 160, y_info, "Tuổi: ")
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawString(margin_left + 185, y_info, data.get('Tuoi', ''))
-
-    # Cân nặng
     c.setFont(VIET_FONT, 9)
     c.drawString(margin_left + 230, y_info, "Cân nặng: ")
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawString(margin_left + 275, y_info, data.get('CanNang', ''))
-
-    # Giới tính
     c.setFont(VIET_FONT, 9)
     c.drawString(margin_left + 320, y_info, "Giới tính: ")
     c.setFont(VIET_FONT_BOLD, 9)
-    c.drawString(margin_left + 355, y_info,  data.get('GioiTinh', ''))
+    c.drawString(margin_left + 355, y_info, data.get('GioiTinh', ''))
 
-    y_info += line_y_offset
+    y_info -= 12
     c.setFont(VIET_FONT, 9)
-    c.drawString(margin_left, y_info, f"Mã số thẻ BHYT (nếu có): {data.get('BHYT', '')}")
+    c.drawString(margin_left, y_info, f"Mã số thẻ BHYT: {data.get('BHYT', '')}")
+    y_info -= 2
 
-    y_info += line_y_offset
-    c.drawString(margin_left, y_info, f"Địa Chỉ: { data.get('DiaChi', '')}")
+    # Địa chỉ
+    dia_chi_str = f"Địa chỉ: <font name='{VIET_FONT_BOLD}'>{data.get('DiaChi', '')}</font>"
+    y_info = draw_multi_column_table(c, margin_left, y_info, [[dia_chi_str]], [w_content], ['L'], VIET_FONT, 9,
+                                     border_width=0, padding=0)
+    y_info -= 2
 
-    y_info += line_y_offset
-    c.drawString(margin_left, y_info, f"Số ĐT: { data.get('SDT', '')}")
-    c.drawString(margin_left + 110, y_info, f"Ngày tiếp nhận: { data.get('NgayTiepNhan', '')}")
+    # SĐT + Ngày
+    sdt_str = f"Số ĐT: <font name='{VIET_FONT_BOLD}'>{data.get('SDT', '')}</font>"
+    ngay_tn_str = f"Ngày tiếp nhận: <font name='{VIET_FONT_BOLD}'>{data.get('NgayTiepNhan', '')}</font>"
+    y_info = draw_multi_column_table(c, margin_left, y_info, [[sdt_str, ngay_tn_str]],
+                                     [w_content * 0.4, w_content * 0.6], ['L', 'L'], VIET_FONT, 9, border_width=0,
+                                     padding=0)
+    y_info -= 2
 
-    y_info += line_y_offset
-    c.setFont(VIET_FONT, 9)
-    c.drawString(margin_left, y_info, "Chẩn đoán: ")
-    c.setFont(VIET_FONT_BOLD, 7.5)
-    c.drawString(margin_left + 45, y_info,  data.get('ChanDoan', ''))
-    c.setFont(VIET_FONT, 9)
+    # Chẩn đoán
+    chan_doan_str = f"Chẩn đoán: <font name='{VIET_FONT_BOLD}'>{data.get('ChanDoan', '')}</font>"
+    y_info = draw_multi_column_table(c, margin_left, y_info, [[chan_doan_str]], [w_content], ['L'], VIET_FONT, 9,
+                                     border_width=0, padding=0)
+    y_info -= 2
 
-    y_info += line_y_offset  # Tăng khoảng cách
-    c.drawString(margin_left, y_info, f"Mạch: { data.get('Mach', '')} lần/p")
-    c.drawString(margin_left + 100, y_info, f"HA: { data.get('HA', '')} mmHg")
-    c.drawString(margin_left + 210, y_info, f"Nhiệt độ: { data.get('NhietDo', '')} °C")
-    c.drawString(width - margin_left - 25, y_info, f"ĐH: ")
+    # Sinh tồn
+    line_vital = [f"Mạch: {data.get('Mach', '')} l/p", f"HA: {data.get('HA', '')} mmHg",
+                  f"Nhiệt: {data.get('NhietDo', '')} °C", "ĐH: ......"]
+    y_info = draw_multi_column_table(c, margin_left, y_info, [line_vital], [w_content * 0.25] * 4, ['L', 'L', 'L', 'R'],
+                                     VIET_FONT, 9, border_width=0, padding=0)
 
-    # ------------------ DANH SÁCH THUỐC ------------------
+    # --- DANH SÁCH THUỐC ---
+    Y_BREAK_POINT = 50  # Điểm ngắt trang
+    y_drug = y_info - 10
+    # c.setLineWidth(0.5)
+    # c.line(margin_left, y_drug, width - margin_left, y_drug)  # Kẻ ngang phân cách
+    # y_drug -= 5  # Dịch xuống sau dòng kẻ
 
-    # ------------------------------------------------------------------
-    # 2. Xử lý Vòng lặp Thuốc và Phân Trang
-    # ------------------------------------------------------------------
-
-    # Y_BREAK_POINT: Vị trí Y thấp nhất cho phép (chừa khoảng 120pt cho chân trang)
-    Y_BREAK_POINT = 30
-
-    # y_drug: Vị trí Y bắt đầu của danh sách thuốc trên trang hiện tại
-    y_drug = y_info - 20
-
-    # Biến theo dõi STT dòng (Dùng để reset Y khi chuyển trang)
-    y_reset_point = y_drug
+    # Định nghĩa độ rộng các cột cho dòng thuốc
+    # Cấu trúc: [STT, Tên thuốc + Tên phụ, ĐVT, SL]
+    w_stt = 20
+    w_sl = 40
+    w_dvt = 40
+    w_ten = w_content - w_stt - w_sl - w_dvt
+    drug_col_widths = [w_stt, w_ten, w_dvt, w_sl]
+    drug_col_aligns = ['L', 'L', 'L', 'R']  # SL căn phải
 
     for drug in data.get('ToaThuoc', []):
-        # ------------------------------------------------------
-        # KIỂM TRA PHÂN TRANG:
-        # Nếu dòng thuốc mới sẽ chạm hoặc vượt qua điểm ngắt
-        # ------------------------------------------------------
-        if y_drug - drug_line_height < Y_BREAK_POINT:
+        # 1. Check Page Break (Ước lượng an toàn: 40pt cho 1 thuốc)
+        if y_drug < Y_BREAK_POINT + 40:
             c.showPage()
+            y_drug = height - 40
+            c.setFont(VIET_FONT, 9)
 
-            # Reset y_drug về vị trí bắt đầu mới (thường là gần đỉnh trang 2)
-            y_drug = height - 50
+        # 2. Chuẩn bị dữ liệu dòng Tên thuốc
+        # Kết hợp Tên chính (Đậm) và Tên phụ (Nghiêng) vào 1 ô Paragraph
+        ten_thuoc_full = f"<b>{drug.get('TenThuoc', '')}</b> <font name='{VIET_FONT_ITALIC}'>{drug.get('TenThuocPhu', '')}</font>"
 
-        # ------------------------------------------------------
-        # VẼ DÒNG THUỐC
-        # ------------------------------------------------------
+        row_data = [
+            drug.get('STT', ''),
+            ten_thuoc_full,
+            drug.get('DonViTinh', ''),
+            f"SL: <b>{drug.get('SoLuong', '')}</b>"  # In đậm số lượng
+        ]
 
-        # Dòng 1: Tên thuốc, Đơn vị tính, Tên phụ, SL
-        c.setFont(VIET_FONT_BOLD, 9)
-        c.drawString(margin_left, y_drug, drug.get('STT', ''))
-        c.drawString(margin_left + 10, y_drug, f"{drug.get('TenThuoc', '')}  {drug.get('DonViTinh', '')}")
-        c.drawString(margin_left + 230, y_drug, drug.get('TenThuocPhu', ''))
+        # 3. Vẽ dòng Tên thuốc (Row 1)
+        # Hàm này trả về toạ độ Y SAU KHI vẽ xong (đã tính wrap text)
+        y_after_name = draw_multi_column_table(
+            c, margin_left, y_drug,
+            [row_data],
+            drug_col_widths,
+            drug_col_aligns,
+            VIET_FONT, 9,
+            border_width=0, padding=0
+        )
 
-        c.setFont(VIET_FONT, 9)
-        c.drawString(width - margin_left - 30, y_drug, f"SL: {drug.get('SoLuong', '')}")
-        c.line(width - margin_left - 15, y_drug - 2, width - margin_left, y_drug - 2)
+        # 4. Vẽ dòng Cách dùng (Row 2) ngay bên dưới
+        y_usage = y_after_name - 2  # Cách dòng tên thuốc 2pt
 
-        # Dòng 2: Liều dùng Sáng/Trưa/Chiều/Tối & Số ngày
-        y_usage = y_drug - 15
+        c.setFont(VIET_FONT, 8)
+        # Vẽ text hướng dẫn
+        c.drawString(margin_left + 20, y_usage - 8, f"Sáng: {drug.get('Sang', '-')}")
+        c.drawString(margin_left + 80, y_usage - 8, f"Trưa: {drug.get('Trua', '-')}")
+        c.drawString(margin_left + 140, y_usage - 8, f"Chiều: {drug.get('Chieu', '-')}")
+        c.drawString(margin_left + 200, y_usage - 8, f"Tối: {drug.get('Toi', '-')}")
 
-        c.drawString(margin_left + 5, y_usage, f'Sáng: {drug.get('Sang', '')}')
-        c.line(margin_left + 30, y_usage - 2, margin_left + 60, y_usage - 2)
-        c.drawString(margin_left + 70, y_usage, f'Trưa: {drug.get('Trua', '')}')
-        c.line(margin_left + 95, y_usage - 2, margin_left + 125, y_usage - 2)
-        c.drawString(margin_left + 135, y_usage, f'Chiều: {drug.get('Chieu', '')}')
-        c.line(margin_left + 170, y_usage - 2, margin_left + 200, y_usage - 2)
-        c.drawString(margin_left + 210, y_usage, f'Tối: {drug.get('Toi', '')}')
-        c.line(margin_left + 230, y_usage - 2, margin_left + 260, y_usage - 2)
+        # Vẽ các đường kẻ mờ dưới chân số lượng (như mẫu cũ)
+        c.setLineWidth(0.3)
+        c.line(margin_left + 35, y_usage - 10, margin_left + 60, y_usage - 10)  # Line Sáng
+        c.line(margin_left + 95, y_usage - 10, margin_left + 120, y_usage - 10)  # Line Trưa
+        c.line(margin_left + 160, y_usage - 10, margin_left + 180, y_usage - 10)  # Line Chiều
+        c.line(margin_left + 215, y_usage - 10, margin_left + 240, y_usage - 10)  # Line Tối
 
-        c.setFont(VIET_FONT_BOLD, 7.5)
-        c.drawString(margin_left + 270, y_usage, f"Số ngày thuốc: {drug.get('SoNgay', '')}")
+        # Số ngày (Căn phải)
+        c.setFont(VIET_FONT_ITALIC, 8)
+        c.drawRightString(width - margin_left, y_usage - 8, f"({drug.get('SoNgay', '')} ngày)")
 
-        y_drug -= drug_line_height
+        # 5. Cập nhật y_drug cho thuốc tiếp theo
+        # Trừ thêm khoảng cách cho dòng usage (khoảng 15pt) + khoảng cách giữa các thuốc (5pt)
+        y_drug = y_usage - 15
 
-    # ------------------ LỜI DẶN VÀ CHỮ KÝ (ĐÃ CĂN GIỮA Ở NỬA PHẢI) ------------------
+        # --- FOOTER ---
+    if y_drug - 80 < Y_BREAK_POINT:
+        c.showPage()
+        y_drug = height - 40
+
     y_footer = y_drug - 10
+    center_right_x = width * 0.75
 
-    # Tọa độ X căn giữa cho khối chữ ký (Ví dụ: giữa 210 và 390 là 300)
-    center_right_x = 300
+    # c.setFont(VIET_FONT_BOLD, 9)
+    # c.drawString(margin_left, y_footer, "Lời dặn:")
+    note_content = data.get('DrNote', '')
+    tong_tien_thuoc = f'Tổng tiền thuốc: {data.get('TongTienThuoc','0,000')} VNĐ'
+    tong_benh_nhan_tra = f'Bệnh nhân thanh toán: {data.get('TongBenhNhanTra','0,000')} VNĐ'
+    y_note_end = draw_multi_column_table(c, margin_left, y_footer,
+                                         [
+                                             ['Lời dặn:', tong_tien_thuoc],
+                                             [note_content, tong_benh_nhan_tra]
+                                         ],
+                                         [w_content * 0.4, w_content * 0.6],
+                                         ['L', 'R'],
+                                         VIET_FONT, 8, border_width=0, padding=1)
 
-    c.setFont(VIET_FONT, 9)
-    c.drawString(margin_left, y_footer, "Lời dặn của bác sĩ:")
-
-    # Lời dặn cụ thể (Hẹn tái khám) - Giữ căn phải để giống hình ảnh gốc
-    note = data.get('DrNote', '')
-    c.drawRightString(width - margin_left, y_footer, note)
-
-    # Khối Căn giữa ở Nửa Phải (center_right_x)
-    y_center_block = y_footer - 10
-
-    # Ngày tháng
-    c.drawCentredString(center_right_x, y_center_block, f'Ngày {data.get('NgayKham','')} '
-                                                        f'tháng {data.get('ThangKham','')} '
-                                                        f'năm {data.get('NamKham', '')}')
-
-    # Bác sĩ điều trị
-    c.drawCentredString(center_right_x, y_center_block - 15, "Bác sĩ điều trị")
-
-    # Tên bác sĩ
+    y_footer = y_note_end - 10
+    c.setFont(VIET_FONT_ITALIC, 9)
+    c.drawCentredString(center_right_x, y_footer,
+                        f"Ngày {data.get('NgayKham', '')} tháng {data.get('ThangKham', '')} năm {data.get('NamKham', '')}")
+    y_footer -= 12
     c.setFont(VIET_FONT_BOLD, 9)
-    c.drawCentredString(center_right_x, y_center_block - 75, data.get('TenBacSi', ''))
+    c.drawCentredString(center_right_x, y_footer, "Bác sĩ điều trị")
+    y_footer -= 40
+    c.setFont(VIET_FONT_BOLD, 9)
+    c.drawCentredString(center_right_x, y_footer, data.get('TenBacSi', ''))
 
-# ----------------- 4. HÀM TẠO TÊN FILE -----------------
+
+# --- INIT ---
 def create_file_name(data):
-    # 1. Tạo tên file
-    ma_bhyt = data.get('BHYT', 'NO_BHYT')
-    ngay_tiep_nhan = data.get('NgayTiepNhan', 'NO_DATE')
+    return f"DonThuoc_{data.get('BHYT', 'NoID')}_{data.get('NgayKham', '00')}.pdf"
 
-    # Xử lý chuỗi ngày tiếp nhận để loại bỏ ký tự không hợp lệ cho tên file
-    # Thay thế '/', ':', ' ' bằng '_'
-    safe_date_string = ngay_tiep_nhan.replace('/', '_').replace(':', '_').replace(' ', '__')
 
-    # Tên file PDF
-    file_name = f"DonThuoc_{ma_bhyt}_{safe_date_string}.pdf"
-
-    return file_name
-
-# ----------------- 5. HÀM TẠO FILE PDF TOA THUỐC -----------------
 def create_and_open_pdf_for_printing(data):
-    """Tạo file PDF với tên file là mã BHYT và ngày tiếp nhận, sau đó mở file."""
     try:
-        # 1. Tạo thư mục nếu chưa có. exist_ok=True tránh báo lỗi nếu thư mục đã tồn tại
         os.makedirs(TARGET_DIR, exist_ok=True)
         pdf_path = os.path.join(TARGET_DIR, create_file_name(data))
-
-        ma_y_te_barcode = generate_ma_y_te_barcode(ma_y_te=data.get('MaYTe', '00000000'))
+        # Mock QR/Barcode calls if needed
         thong_tin_qrcode = generate_medical_qr_code(
             ma_y_te=data.get('MaYTe', ''),
             so_bhyt=data.get('BHYT', ''),
@@ -295,22 +290,20 @@ def create_and_open_pdf_for_printing(data):
             so_tien=data.get('TongBenhNhanTra', '0,000') + ' VND',
         )
 
-        # 2. Tạo PDF
         c = canvas.Canvas(pdf_path, pagesize=A5)
-        draw_drug_form(c, data, ma_y_te_barcode, thong_tin_qrcode)
+        draw_drug_form(c, data, thong_tin_qrcode)
         c.showPage()
         c.save()
 
-        # 3. Mở file PDF
         if sys.platform == "win32":
             os.startfile(pdf_path)
         elif sys.platform == "darwin":
             os.system(f'open "{pdf_path}"')
         else:
             os.system(f'xdg-open "{pdf_path}"')
-
     except Exception as e:
-        print(f"❌ Đã xảy ra lỗi khi tạo hoặc mở PDF: {e}")
+        print(f"Err: {e}")
+
 
 if __name__ == "__main__":
     create_and_open_pdf_for_printing(fake_data)

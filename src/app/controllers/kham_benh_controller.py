@@ -3,6 +3,7 @@ from PyQt6.QtCore import QRegularExpression, QDate
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QMessageBox, QLineEdit
 
+
 from app.core.in_phieu_toa_thuoc import create_and_open_pdf_for_printing
 
 from app.services.BenhNhanService import get_benh_nhan_by_id
@@ -16,7 +17,7 @@ from app.ui.TabKhamBenh import Ui_formKhamBenh
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
 from app.utils.constants import MA_Y_TE_LENGTH
-from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
+from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler, DoiTuongCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
 
@@ -48,7 +49,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.input_drug_so_luong = None
 
         self.duoc_handler = None
-        self.icd_handler = IcdCompleterHandler(self)
+        self.icd_handler = IcdCompleterHandler(self, min_search_length=1)
 
         # <editor-fold desc="Init UI">
         self.ui_kham = Ui_formKhamBenh()
@@ -189,6 +190,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_reset_all.setStyleSheet(ADD_BTN_STYLE)
         self.ui_kham.cb_phong_kham.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_doi_tuong.setStyleSheet(COMPLETER_THUOC_STYLE)
+
         self.ui_kham.ma_icd.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_gioi_tinh.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_cach_giai_quyet.setStyleSheet(COMPLETER_THUOC_STYLE)
@@ -420,7 +422,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             if COL_SANG <= col <= COL_SO_NGAY:
                 line_edit.textEdited.connect(self.update_quantity)
 
-            if col >= COL_SO_NGAY:
+            if col >= COL_SANG:
                 line_edit.returnPressed.connect(lambda: self.finalize_drug_entry(0))
 
             if col == COL_SO_LUONG:
@@ -773,12 +775,13 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         create_and_open_pdf_for_printing(data)
 
-        reply = QMessageBox.question(self, "Xác nhận",
-                                     f"Khám cho bệnh nhân mới?",
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-
-        if reply == QMessageBox.StandardButton.Yes:
-            self.reset_all()
+        # --- THÔNG BÁO HỎI RESET MÀN HÌNH ---
+        # reply = QMessageBox.question(self, "Xác nhận",
+        #                              f"Khám cho bệnh nhân mới?",
+        #                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        #
+        # if reply == QMessageBox.StandardButton.Yes:
+        #     self.reset_all()
 
     # </editor-fold>
 
@@ -794,7 +797,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'MaYTe': self.ma_y_te,
             'HoTenBN': ui.ho_ten_bn.text().strip(),
             'GioiTinh': ui.cb_gioi_tinh.currentText(),
-            'NgaySinh': ui.ngay_sinh.date().toString('dd/MM/yyyy'),
+            'NgaySinh': ui.ngay_sinh.date().toString('yyyy'),
 
             'SoBHYT': ui.so_bhyt.text().strip(),
             'BHYT_Tu': ui.bhyt_from.date().toString("dd/MM/yyyy"),

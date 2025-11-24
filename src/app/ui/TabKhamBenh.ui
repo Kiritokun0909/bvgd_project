@@ -167,6 +167,12 @@
        </item>
        <item row="2" column="6">
         <widget class="QLabel" name="lb_so_bhyt">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Số BHYT</string>
          </property>
@@ -204,6 +210,12 @@
        </item>
        <item row="0" column="3">
         <widget class="QLabel" name="lb_ma_y_te">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Mã y tế</string>
          </property>
@@ -260,6 +272,12 @@
        </item>
        <item row="2" column="3">
         <widget class="QLabel" name="lb_doi_tuong">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Đối tượng</string>
          </property>
@@ -293,6 +311,12 @@
        </item>
        <item row="1" column="3">
         <widget class="QLabel" name="lb_gioi_tinh">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Giới tính</string>
          </property>
@@ -300,8 +324,14 @@
        </item>
        <item row="0" column="8" alignment="Qt::AlignRight">
         <widget class="QLabel" name="lb_ngay_sinh">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Ngày sinh</string>
+          <string>Năm sinh</string>
          </property>
         </widget>
        </item>
@@ -320,6 +350,9 @@
        </item>
        <item row="0" column="9">
         <widget class="QDateEdit" name="ngay_sinh">
+         <property name="displayFormat">
+          <string>yyyy</string>
+         </property>
          <property name="calendarPopup">
           <bool>true</bool>
          </property>
@@ -327,6 +360,12 @@
        </item>
        <item row="1" column="6">
         <widget class="QLabel" name="lb_dia_chi">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Địa chỉ</string>
          </property>
@@ -351,6 +390,12 @@
        </item>
        <item row="0" column="6">
         <widget class="QLabel" name="lb_ho_ten">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Họ tên</string>
          </property>
@@ -1269,7 +1314,7 @@
             <item>
              <widget class="QPushButton" name="btn_reset_all">
               <property name="text">
-               <string>Reset all</string>
+               <string>Reset</string>
               </property>
              </widget>
             </item>
@@ -1282,7 +1327,7 @@
                </size>
               </property>
               <property name="text">
-               <string>In Toa Thuốc</string>
+               <string>Lưu và In toa thuốc</string>
               </property>
              </widget>
             </item>

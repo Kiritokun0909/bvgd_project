@@ -187,16 +187,12 @@ class TaiVuTabController(QtWidgets.QWidget):
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):
         """Load dữ liệu từ Database khi nhập tay ID"""
-        # Logic cũ giữ nguyên
-        # if len(ma_y_te) != MA_Y_TE_LENGTH: return ...
-        # (Bạn giữ lại logic gọi Database ở đây)
-
         benh_nhan_data = get_benh_nhan_by_id(ma_y_te)
         if benh_nhan_data is None:
             QMessageBox.warning(self, "Không tìm thấy", f"Không tìm thấy bệnh nhân: {ma_y_te}")
             return
 
-        print(benh_nhan_data)
+        # print(benh_nhan_data)
         self.set_thong_tin_benh_nhan(benh_nhan_data)
 
     def set_thong_tin_benh_nhan(self, benh_nhan_data: tuple):
@@ -246,6 +242,7 @@ class TaiVuTabController(QtWidgets.QWidget):
         data['TongTienThanhToan'] = ui.so_tien_text.text()
         data['SoTienBangChu'] = ui.thanh_chu_text.text()
         data['HinhThucThanhToan'] = ui.cb_hinh_thuc_tt.currentText()
+        data['NguoiThuTien'] = ui.ho_ten_nguoi_thu.text().strip()
         return data
 
     def check_required_data(self, data: dict) -> bool:
@@ -268,10 +265,10 @@ class TaiVuTabController(QtWidgets.QWidget):
 
         create_and_open_pdf_for_printing(data)
 
-        reply = QMessageBox.question(self, "Xác nhận", "Reset màn hình?",
-                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        if reply == QMessageBox.StandardButton.Yes:
-            self.reset_all()
+        # reply = QMessageBox.question(self, "Xác nhận", "Reset màn hình?",
+        #                              QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        # if reply == QMessageBox.StandardButton.Yes:
+        #     self.reset_all()
 
     # </editor-fold>
 

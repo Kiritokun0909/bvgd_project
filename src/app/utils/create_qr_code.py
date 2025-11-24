@@ -72,9 +72,9 @@ def generate_medical_qr_code(
         saved_file = str(full_save_path) + '.png'  # Thư viện qrcode không tự thêm đuôi
         img.save(saved_file)
 
-        print(f"✅ Mã QR đã được tạo thành công.")
-        print(f"Dữ liệu mã hóa: {data_to_encode}")
-        print(f"Tệp tin đã lưu: {saved_file}")
+        # print(f"✅ Mã QR đã được tạo thành công.")
+        # print(f"Dữ liệu mã hóa: {data_to_encode}")
+        # print(f"Tệp tin đã lưu: {saved_file}")
 
         # Trả về đường dẫn tuyệt đối
         return str(Path(saved_file).resolve())

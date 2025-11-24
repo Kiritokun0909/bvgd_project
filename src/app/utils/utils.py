@@ -1,9 +1,12 @@
 import pandas as pd
 from PyQt6 import QtCore
-from PyQt6.QtWidgets import QComboBox
+from PyQt6.QtWidgets import QComboBox, QCompleter
+from PyQt6.QtCore import Qt
 import re
 
 from pandas.core.interchange.dataframe_protocol import DataFrame
+
+from app.styles.styles import COMPLETER_THUOC_STYLE
 
 
 def load_data_from_csv(file_path):
@@ -134,6 +137,23 @@ def populate_list_to_combobox(combobox: QComboBox, data: list[tuple],
             print("Lỗi: Cột hiển thị (display_col) hoặc cột khóa (key_col) không chính xác.")
             return
 
+    # 3. Bật tính năng cho phép gõ chữ (Bắt buộc cho Completer)
+    combobox.setEditable(True)
+    combobox.setInsertPolicy(QComboBox.InsertPolicy.NoInsert)  # Không cho user thêm text lạ vào list
+
+    # 4. Khởi tạo Completer sử dụng chính Model của Combobox
+    # Lý do: Khi ta addItem ở bước 2, Combobox đã tự tạo một Model chứa dữ liệu đó rồi.
+    completer = QCompleter()
+    completer.setModel(combobox.model())
+
+    # 5. Cấu hình thuật toán tìm kiếm
+    completer.setFilterMode(Qt.MatchFlag.MatchContains)  # Gõ "Para" hay "mol" đều ra Paracetamol
+    completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)  # Không phân biệt hoa/thường
+
+    # 6. Gán Completer vào Combobox
+    completer.popup().setStyleSheet(COMPLETER_THUOC_STYLE)
+    combobox.setCompleter(completer)
+
 
 def get_combobox_key(combobox: QComboBox):
     """Lấy giá trị khóa (key value) của mục hiện tại."""
@@ -157,9 +177,6 @@ def calculate_age(birthday):
         age -= 1
 
     return age
-
-
-import re
 
 
 def convert_to_unsigned_preserve_case(text):
