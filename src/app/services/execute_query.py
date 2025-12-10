@@ -20,6 +20,7 @@ from app.utils.constants import DB_FILE_PATH
 def fetch_all_rows(query: str, params: tuple | None = None) -> list | None:
     conn = None
     data = None
+
     try:
         conn = sqlite3.connect(DB_FILE_PATH)
         cursor = conn.cursor()

@@ -8,6 +8,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 import os
 import sys
 
+from app.core.print_file import print_file_win32
+
 # --- IMPORT UTILS ---
 try:
     from app.core.utils import draw_multi_column_table
@@ -347,6 +349,7 @@ def create_and_open_pdf_for_printing(data):
 
             c.save()
 
+            print_file_win32(pdf_path)
             if sys.platform == "win32":
                 os.startfile(pdf_path)
             elif sys.platform == "darwin":
