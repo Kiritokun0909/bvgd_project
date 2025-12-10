@@ -2,7 +2,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import QRegularExpression, QDate
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QMessageBox, QLineEdit
-
+import json
 
 from app.core.in_phieu_toa_thuoc import create_and_open_pdf_for_printing
 
@@ -23,6 +23,7 @@ from app.utils.utils import populate_combobox, \
 
 from app.configs.table_thuoc_configs import *
 from app.utils.constants import GIAI_QUYET_FILE_PATH
+from app.utils.write_json_line import write_json_lines, MODE_JSON
 
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
@@ -759,16 +760,14 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         data = self.get_thong_tin_kham()
 
-        # print("--- DỮ LIỆU FORM ĐÃ THU THẬP ---")
-        # import json
-        # print(json.dumps(data, indent=4, ensure_ascii=False))
-        # print("-----------------------------------")
-
         if len(data.get('ToaThuoc')) < 1:
             QMessageBox.warning(self,
                                 "Thông báo",
                                 f"Chưa có thuốc nào trong toa thuốc.")
             return
+
+        json_data = json.dumps(data, indent=4, ensure_ascii=False)
+        write_json_lines(json_data, MODE_JSON.PHIEU_TOA_THUOC_MODE)
 
         # Bổ sung logic in hoặc lưu trữ ở đây
         # QMessageBox.information(self, "Thông báo", "Đã thu thập dữ liệu form thành công. Sẵn sàng cho việc in/lưu.")
