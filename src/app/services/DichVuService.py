@@ -54,7 +54,7 @@ def get_list_dich_vu_by_keyword(doi_tuong_id: str, keyword: str) -> list[tuple] 
                 {Schema.DMDichVu.TABLE_NAME} AS T5 ON T4.{Schema.GiaDichVu.DICH_VU_ID} = T5.{Schema.DMDichVu.DICH_VU_ID}
             WHERE
                 T1.{Schema.DoiTuong.DOI_TUONG_ID} = ? AND 
-                (T5.{Schema.DMDichVu.TEN_DICH_VU} LIKE ?  OR T5.{Schema.DMDichVu.TEN_KHONG_DAU} LIKE ?)
+                (T5.{Schema.DMDichVu.TEN_DICH_VU} LIKE ? OR T5.{Schema.DMDichVu.TEN_KHONG_DAU} LIKE ? )
             ORDER BY
                 T5.{Schema.DMDichVu.DICH_VU_ID} ASC;
             """,

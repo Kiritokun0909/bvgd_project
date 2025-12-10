@@ -17,7 +17,7 @@ from app.ui.TabKhamBenh import Ui_formKhamBenh
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
 from app.utils.constants import MA_Y_TE_LENGTH
-from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler, DoiTuongCompleterHandler
+from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
 

@@ -5,6 +5,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 import os
 import sys
 
+from app.core.print_file import print_file_win32
+
 # --- IMPORT UTILS ---
 try:
     from app.core.utils import draw_multi_column_table
@@ -270,13 +272,18 @@ def draw_drug_form(c, data, thong_tin_qrcode):
 
 # --- INIT ---
 def create_file_name(data):
-    return f"DonThuoc_{data.get('BHYT', 'NoID')}_{data.get('NgayKham', '00')}.pdf"
+    bhyt = data.get('BHYT', 'NoID')
+    ngay_kham = data.get('NgayKham', '00') + '__' + data.get('ThangKham', '00') + '__' + data.get('NamKham', '00')
+
+    return f"DonThuoc_{bhyt}_{ngay_kham}.pdf"
 
 
 def create_and_open_pdf_for_printing(data):
     try:
         os.makedirs(TARGET_DIR, exist_ok=True)
         pdf_path = os.path.join(TARGET_DIR, create_file_name(data))
+        print(pdf_path)
+
         # Mock QR/Barcode calls if needed
         thong_tin_qrcode = generate_medical_qr_code(
             ma_y_te=data.get('MaYTe', ''),
@@ -295,6 +302,7 @@ def create_and_open_pdf_for_printing(data):
         c.showPage()
         c.save()
 
+        print_file_win32(pdf_path)
         if sys.platform == "win32":
             os.startfile(pdf_path)
         elif sys.platform == "darwin":
