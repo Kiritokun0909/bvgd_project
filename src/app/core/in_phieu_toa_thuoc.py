@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from reportlab.lib.pagesizes import A5
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
@@ -86,7 +88,7 @@ fake_data = {
 
 
 # ----------------- 3. HÀM VẼ PHIẾU THUỐC -----------------
-def draw_drug_form(c, data, thong_tin_qrcode):
+def draw_drug_form(c, data, thong_tin_qrcode, is_draw = True):
     width, height = A5
     margin_left = 30
     w_content = width - (margin_left * 2)
@@ -101,10 +103,11 @@ def draw_drug_form(c, data, thong_tin_qrcode):
     c.setFont(VIET_FONT, 9)
     c.drawString(margin_left, y_start - 20, data.get('PhongKham', ''))
 
-    try:
-        c.drawImage(thong_tin_qrcode, width - margin_left * 2, y_start - 12, 40, 40)
-    except:
-        pass
+    if is_draw:
+        try:
+            c.drawImage(thong_tin_qrcode, width - margin_left * 2, y_start - 12, 40, 40)
+        except:
+            pass
 
     c.setFont(VIET_FONT_BOLD, 10)
     c.drawRightString(width - margin_left, y_start - 20, data.get('MaYTe', ''))
@@ -273,7 +276,8 @@ def draw_drug_form(c, data, thong_tin_qrcode):
 # --- INIT ---
 def create_file_name(data):
     bhyt = data.get('BHYT', 'NoID')
-    ngay_kham = data.get('NgayKham', '00') + '__' + data.get('ThangKham', '00') + '__' + data.get('NamKham', '00')
+    ngay_tao = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    ngay_kham = ngay_tao.replace('/', '_').replace(':', '_').replace(' ', '__')
 
     return f"DonThuoc_{bhyt}_{ngay_kham}.pdf"
 
@@ -298,7 +302,7 @@ def create_and_open_pdf_for_printing(data):
         )
 
         c = canvas.Canvas(pdf_path, pagesize=A5)
-        draw_drug_form(c, data, thong_tin_qrcode)
+        draw_drug_form(c, data, thong_tin_qrcode, True)
         c.showPage()
         c.save()
 

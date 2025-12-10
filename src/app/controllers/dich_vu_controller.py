@@ -34,6 +34,8 @@ from app.utils.utils import (
     unformat_currency_to_float,
     populate_list_to_combobox,
 )
+from app.utils.write_json_line import write_json_lines, MODE_JSON
+
 
 def create_checkbox_widget(is_checked: bool, func=None):
     widget = QWidget()
@@ -190,6 +192,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         if doi_tuong_id:
             self.dich_vu_handler.set_ma_doi_tuong(str(doi_tuong_id))
 
+        self.delete_all_rows()
         self.load_loai_gia()
         self.load_nhom_dich_vu()
         self.update_cay_dich_vu()
@@ -975,7 +978,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             QMessageBox.warning(self, "Thiếu dữ liệu", "Chưa chọn dịch vụ chỉ định!")
             return
 
-        # print(json.dumps(data, indent=4, ensure_ascii=False))
+        data_json = json.dumps(data, indent=4, ensure_ascii=False)
+        write_json_lines(data_json, MODE_JSON.PHIEU_CHI_DINH_MODE)
 
         create_and_open_pdf_for_printing(data)
 
