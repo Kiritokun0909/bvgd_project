@@ -5,7 +5,7 @@ from app.services.schema import Schema
 TBL_LOAI_GIA = Schema.LoaiGia
 TBL_DOI_TUONG_LOAI_GIA = Schema.DoiTuongLoaiGia
 
-def get_list_loai_gia() -> list[tuple] | None:
+def get_list_loai_gia() -> list:
     data = fetch_all_rows(
         query=f'SELECT LoaiGia_Id, MaLoaiGia, TenLoaiGia '
               f'FROM {TBL_LOAI_GIA.TABLE_NAME} ',
@@ -14,7 +14,7 @@ def get_list_loai_gia() -> list[tuple] | None:
 
     return data
 
-def get_list_loai_gia_by_doi_tuong_id(doi_tuong_id: str) -> list[tuple] | None:
+def get_list_loai_gia_by_doi_tuong_id(doi_tuong_id: str) -> list:
     data = fetch_all_rows(
         query=f"""  
             SELECT
@@ -30,7 +30,7 @@ def get_list_loai_gia_by_doi_tuong_id(doi_tuong_id: str) -> list[tuple] | None:
 
     return data
 
-def get_list_loai_gia_by_dich_vu_id(doi_tuong_id: str, dich_vu_id: str) -> list[tuple] | None:
+def get_list_loai_gia_by_dich_vu_id(doi_tuong_id: str, dich_vu_id: str) -> list:
     data = fetch_all_rows(
         query=f"""  
             SELECT 

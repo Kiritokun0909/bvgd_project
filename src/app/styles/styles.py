@@ -84,6 +84,7 @@ COMPLETER_THUOC_STYLE = """
         /* Tùy chỉnh mỗi mục trong danh sách gợi ý */
         padding: 4px;
         min-height: 25px; 
+        font-size: 14px;
     }
     QListView::item:selected {
         /* Giao diện khi mục được chọn */

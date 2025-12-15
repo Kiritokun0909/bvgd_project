@@ -42,7 +42,7 @@ class Ui_mainWidget(object):
 
     def retranslateUi(self, mainWidget):
         _translate = QtCore.QCoreApplication.translate
-        mainWidget.setWindowTitle(_translate("mainWidget", "PhanMemBenhVien"))
+        mainWidget.setWindowTitle(_translate("mainWidget", "Phần mềm quản lý bệnh viện"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_kham_benh), _translate("mainWidget", "Khám bệnh"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_dkdv), _translate("mainWidget", "Đăng ký dịch vụ"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_tai_vu), _translate("mainWidget", "Tài vụ"))

@@ -110,9 +110,9 @@ def draw_drug_form(c, data, thong_tin_qrcode, is_draw = True):
             pass
 
     c.setFont(VIET_FONT_BOLD, 10)
-    c.drawRightString(width - margin_left, y_start - 20, data.get('MaYTe', ''))
+    c.drawCentredString(width - margin_left - 15, y_start - 20, data.get('MaYTe', ''))
     c.setFont(VIET_FONT, 9)
-    c.drawRightString(width - margin_left, y_start - 30, data.get('DoiTuong', ''))
+    c.drawCentredString(width - margin_left - 15, y_start - 30, data.get('DoiTuong', ''))
 
     c.setFont(VIET_FONT_BOLD, 12)
     c.drawCentredString(width / 2, y_start - 50, PHIEU_TOA_THUOC_HEADER)
@@ -250,8 +250,10 @@ def draw_drug_form(c, data, thong_tin_qrcode, is_draw = True):
     # c.setFont(VIET_FONT_BOLD, 9)
     # c.drawString(margin_left, y_footer, "Lời dặn:")
     note_content = data.get('DrNote', '')
-    tong_tien_thuoc = f'Tổng tiền thuốc: {data.get('TongTienThuoc','0,000')} VNĐ'
-    tong_benh_nhan_tra = f'Bệnh nhân thanh toán: {data.get('TongBenhNhanTra','0,000')} VNĐ'
+    tien_thuoc = data.get('TongTienThuoc','0,000')
+    tien_benh_nhan = data.get('TongBenhNhanTra','0,000')
+    tong_tien_thuoc = f'Tổng tiền thuốc: {tien_thuoc} VNĐ'
+    tong_benh_nhan_tra = f'Bệnh nhân thanh toán: {tien_benh_nhan} VNĐ'
     y_note_end = draw_multi_column_table(c, margin_left, y_footer,
                                          [
                                              ['Lời dặn:', tong_tien_thuoc],
@@ -286,7 +288,15 @@ def create_and_open_pdf_for_printing(data):
     try:
         os.makedirs(TARGET_DIR, exist_ok=True)
         pdf_path = os.path.join(TARGET_DIR, create_file_name(data))
-        print(pdf_path)
+
+        # --- 1. CHUẨN BỊ DATA CHO QR CODE ---
+        # Trích xuất danh sách thuốc rút gọn: [{'id': 'Mã', 'q': 'SL'}]
+        qr_items = []
+        for drug in data.get('ToaThuoc', []):
+            qr_items.append({
+                'id': drug.get('DuocId', ''),  # Lấy mã thuốc đã thêm ở Controller
+                'q': drug.get('SoLuong', '0')
+            })
 
         # Mock QR/Barcode calls if needed
         thong_tin_qrcode = generate_medical_qr_code(
@@ -299,6 +309,9 @@ def create_and_open_pdf_for_printing(data):
             dia_chi=data.get('DiaChi', ''),
             so_dien_thoai=data.get('SDT', ''),
             so_tien=data.get('TongBenhNhanTra', '0,000') + ' VND',
+
+            bill_type="THUOC",  # Đánh dấu đây là đơn thuốc
+            items=qr_items
         )
 
         c = canvas.Canvas(pdf_path, pagesize=A5)

@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL = Schema.BenhNhan
 
-def get_benh_nhan_by_id(ma_y_te: str) -> tuple | None:
+def get_benh_nhan_by_id(ma_y_te: str) -> tuple:
     data = fetch_one_row(
         query=f'SELECT SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi'
               f' FROM BenhNhan WHERE SoVaoVien = ?',

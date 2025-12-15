@@ -326,6 +326,23 @@ def create_and_open_pdf_for_printing(data):
         os.makedirs(TARGET_DIR, exist_ok=True)
 
         barcode_ma_y_te_path = generate_ma_y_te_barcode(data.get('MaYTe', ''))
+
+        # --- 1. CHUẨN BỊ DATA CHO QR CODE ---
+        # Data dịch vụ đang nằm trong các Nhóm (Group), cần làm phẳng (flatten)
+        qr_items = []
+        list_nhom_dv = data.get('DichVu', [])
+
+        for nhom in list_nhom_dv:
+            ds_dv = nhom.get('DSDichVu', [])
+            for dv in ds_dv:
+                qr_items.append({
+                    'id': dv.get('DichVuId', ''),
+                    'lg': dv.get('MaLoaiGia', ''),
+                    'q': dv.get('SoLuong', '1'),
+                    'kht': dv.get('KhongHoTro', 0),
+                    'ktt': dv.get('KhongThuTien', 0)
+                })
+
         qr_thong_tin = generate_medical_qr_code(
             ma_y_te=data.get('MaYTe', ''),
             so_bhyt=data.get('MaBHYT', ''),
@@ -335,7 +352,10 @@ def create_and_open_pdf_for_printing(data):
             gioi_tinh=data.get('GioiTinh', ''),
             dia_chi=data.get('DiaChi', ''),
             so_dien_thoai=data.get('SDT', ''),
-            so_tien=data.get('TongBenhNhanTra', '0')
+            so_tien=data.get('TongBenhNhanTra', '0'),
+
+            bill_type="DICH_VU",  # Đánh dấu đây là phiếu dịch vụ
+            items=qr_items
         )
 
         for i in range(len(data.get('DichVu', []))):

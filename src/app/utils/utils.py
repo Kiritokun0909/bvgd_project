@@ -57,7 +57,7 @@ def filter_data_by_foreign_key(data_frame: pd.DataFrame,
     return filtered_df
 
 
-def get_first_row_data(data_frame: pd.DataFrame) -> dict | None:
+def get_first_row_data(data_frame: pd.DataFrame) -> dict:
     """
     Trả về dữ liệu của dòng đầu tiên trong DataFrame dưới dạng dictionary.
     Trả về None nếu DataFrame rỗng.
@@ -122,7 +122,7 @@ def populate_df_to_combobox(combobox: QComboBox, df: DataFrame, display_col: str
             print("Lỗi: Tên cột hiển thị (display_col) hoặc cột khóa (key_col) không chính xác.")
             return
 
-def populate_list_to_combobox(combobox: QComboBox, data: list[tuple],
+def populate_list_to_combobox(combobox: QComboBox, data: list,
                               display_col: int, key_col: int):
     combobox.clear()
     length = len(data)

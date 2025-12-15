@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL = Schema.DoiTuong
 
-def get_list_doi_tuong() -> list[tuple] | None:
+def get_list_doi_tuong() -> list:
     data = fetch_all_rows(
         query=f'SELECT DoiTuong_Id, MaDoiTuong, TenDoiTuong '
               f'FROM {TBL.TABLE_NAME} ',
@@ -12,7 +12,7 @@ def get_list_doi_tuong() -> list[tuple] | None:
 
     return data
 
-def get_doi_tuong_by_id(doi_tuong_id: str) -> tuple | None:
+def get_doi_tuong_by_id(doi_tuong_id: str) -> tuple:
     data = fetch_one_row(
         query=f"""  
             SELECT 
@@ -27,7 +27,7 @@ def get_doi_tuong_by_id(doi_tuong_id: str) -> tuple | None:
 
     return data
 
-def get_doi_tuong_by_keyword(keyword: str) -> list[tuple] | None:
+def get_doi_tuong_by_keyword(keyword: str) -> list:
     data = fetch_all_rows(
         query=f"""  
                 SELECT 

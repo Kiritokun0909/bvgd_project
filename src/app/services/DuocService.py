@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL = Schema.DM_Duoc
 
-def get_list_duoc(keyword: str = '') -> list[tuple] | None:
+def get_list_duoc(keyword: str = '') -> list:
     data = fetch_all_rows(
         query=f"""  SELECT 
                         Duoc_Id
@@ -23,7 +23,7 @@ def get_list_duoc(keyword: str = '') -> list[tuple] | None:
 
     return data
 
-def get_duoc_by_id(ma_duoc: str) -> tuple | None:
+def get_duoc_by_id(ma_duoc: str) -> tuple:
     data = fetch_one_row(
         query=f"""   SELECT 
                         Duoc_Id
@@ -39,6 +39,26 @@ def get_duoc_by_id(ma_duoc: str) -> tuple | None:
                         AND MaDuoc = ? ;
         """,
         params=(ma_duoc, )
+    )
+
+    return data
+
+def get_duoc_by_duoc_id(duoc_id: str) -> tuple:
+    data = fetch_one_row(
+        query=f"""   SELECT 
+                        Duoc_Id
+                        , MaDuoc
+                        , TenDuocDayDu
+                        , DonGia
+                        , TenDonViTinh
+                        , Dictionary_Name AS CachDung
+                    FROM 
+                        {TBL.TABLE_NAME}
+                    WHERE 
+                        Dictionary_Name IS NOT NULL --- Nếu null là vat tu y te
+                        AND Duoc_Id = ? ;
+        """,
+        params=(duoc_id, )
     )
 
     return data
