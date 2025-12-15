@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL = Schema.PhongBan
 
-def get_list_phong_ban() -> list[tuple] | None:
+def get_list_phong_ban() -> list:
     data = fetch_all_rows(
         query=f'SELECT PhongBan_Id, MaPhongBan, TenPhongBan '
               f'FROM {TBL.TABLE_NAME} ',

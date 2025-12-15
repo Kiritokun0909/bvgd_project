@@ -78,6 +78,9 @@
      </item>
      <item row="1" column="13">
       <widget class="QComboBox" name="cb_doi_tuong">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>100</horstretch>
@@ -277,13 +280,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="14">
-      <widget class="QPushButton" name="btn_reset_all">
-       <property name="text">
-        <string>Reset</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
@@ -295,7 +291,7 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1,0,0,1,2">
+         <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0,0,0,0">
           <item row="0" column="0">
            <widget class="QLabel" name="lb_noi_yeu_cau">
             <property name="text">
@@ -331,10 +327,10 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lb_ma_code_xn">
+          <item row="1" column="3">
+           <widget class="QLabel" name="lb_ngay_gio_yeu_cau">
             <property name="text">
-             <string>Mã Code XN</string>
+             <string>Ngày giờ yêu cầu</string>
             </property>
            </widget>
           </item>
@@ -342,13 +338,6 @@
            <widget class="QLabel" name="lb_ghi_chu">
             <property name="text">
              <string>Ghi chú</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QLabel" name="lb_ngay_gio_yeu_cau">
-            <property name="text">
-             <string>Ngày giờ yêu cầu</string>
             </property>
            </widget>
           </item>
@@ -366,16 +355,18 @@
            </spacer>
           </item>
           <item row="0" column="4">
-           <widget class="QLineEdit" name="bac_si_chi_dinh"/>
-          </item>
-          <item row="2" column="1" colspan="2">
-           <widget class="QLineEdit" name="ghi_chu"/>
+           <widget class="QLineEdit" name="bac_si_chi_dinh">
+            <property name="placeholderText">
+             <string>Nhập bác sĩ chỉ định...</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="chan_doan"/>
-          </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLineEdit" name="ma_code_xn"/>
+           <widget class="QLineEdit" name="chan_doan">
+            <property name="placeholderText">
+             <string>Nhập chẩn đoán...</string>
+            </property>
+           </widget>
           </item>
           <item row="1" column="4">
            <widget class="QDateTimeEdit" name="dateTimeEdit">
@@ -383,7 +374,14 @@
              <bool>true</bool>
             </property>
             <property name="displayFormat">
-             <string>dd/MM/yyyy h:mm:ss AP</string>
+             <string>dd/MM/yyyy HH:mm:ss</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="4">
+           <widget class="QLineEdit" name="ghi_chu">
+            <property name="placeholderText">
+             <string>Nhập ghi chú...</string>
             </property>
            </widget>
           </item>
@@ -397,7 +395,7 @@
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="1" column="0">
-      <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,3">
+      <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,4">
        <item row="0" column="1">
         <widget class="QTableWidget" name="table_dich_vu">
          <column>
@@ -482,14 +480,7 @@
          </column>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="btn_in_phieu">
-         <property name="text">
-          <string>Lưu và In phiếu</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" rowspan="2">
+       <item row="0" column="0" rowspan="3">
         <widget class="QTableWidget" name="list_dich_vu">
          <property name="minimumSize">
           <size>
@@ -508,6 +499,51 @@
           </property>
          </column>
         </widget>
+       </item>
+       <item row="1" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="btn_export">
+           <property name="text">
+            <string>Xuất excel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_xoa_dich_vu">
+           <property name="text">
+            <string>Xoá hết dịch vụ</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_reset_all">
+           <property name="text">
+            <string>Reset màn hình</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_in_phieu">
+           <property name="text">
+            <string>Lưu và In phiếu (Ctrl+P)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
@@ -667,7 +703,11 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLineEdit" name="ten_dich_vu"/>
+        <widget class="QLineEdit" name="ten_dich_vu">
+         <property name="placeholderText">
+          <string>Nhập tên dịch vụ tìm kiếm...</string>
+         </property>
+        </widget>
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="ma_dich_vu">
@@ -693,7 +733,6 @@
   <tabstop>chan_doan</tabstop>
   <tabstop>dateTimeEdit</tabstop>
   <tabstop>ghi_chu</tabstop>
-  <tabstop>ma_code_xn</tabstop>
   <tabstop>cb_nhom_dich_vu</tabstop>
   <tabstop>ten_dich_vu</tabstop>
   <tabstop>ma_dich_vu</tabstop>

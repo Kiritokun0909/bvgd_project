@@ -1,5 +1,6 @@
 import abc
 from PyQt6 import QtCore, QtWidgets
+from PyQt6.QtCore import QEvent
 
 from app.configs.table_thuoc_configs import COL_MA_THUOC
 from app.services.DichVuService import get_list_dich_vu_by_keyword
@@ -45,11 +46,22 @@ class BaseCompleterHandler(QtCore.QObject):
         line_edit.setCompleter(self.completer)
         line_edit.textEdited.connect(self.start_search)
 
+        if self.min_search_length == 0:
+            line_edit.installEventFilter(self)
+
         try:
             self.completer.activated.disconnect()
         except TypeError:
             pass
         self.completer.activated.connect(self._on_item_activated)
+
+    def eventFilter(self, source, event):
+        """Bắt sự kiện Focus để tự động tìm kiếm nếu min_search_length = 0"""
+        if source is self._line_edit and event.type() == QEvent.Type.FocusIn:
+            if self.min_search_length == 0:
+                # Kích hoạt tìm kiếm ngay lập tức với text hiện tại (kể cả rỗng)
+                self.start_search(self._line_edit.text())
+        return super().eventFilter(source, event)
 
     def start_search(self, text: str):
         self._current_text = text.strip()
@@ -64,7 +76,7 @@ class BaseCompleterHandler(QtCore.QObject):
         self.timer.start(200)
 
     @abc.abstractmethod
-    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
+    def _fetch_and_format_data(self, keyword: str) -> list:
         raise NotImplementedError
 
     def _perform_search(self):
@@ -101,7 +113,7 @@ class DoiTuongCompleterHandler(BaseCompleterHandler):
     def __init__(self, parent=None, **kwargs):
         super().__init__(parent=parent, **kwargs)
 
-    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
+    def _fetch_and_format_data(self, keyword: str) -> list:
         raw_data_list = get_doi_tuong_by_keyword(keyword=keyword)
         results = []
         for raw_item in raw_data_list:
@@ -117,7 +129,7 @@ class IcdCompleterHandler(BaseCompleterHandler):
     def __init__(self, parent=None, **kwargs):
         super().__init__(parent=parent, **kwargs)
 
-    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
+    def _fetch_and_format_data(self, keyword: str) -> list:
         raw_data_list = get_list_icd(keyword=keyword)
         results = []
         for raw_item in raw_data_list:
@@ -147,8 +159,8 @@ class DuocCompleterHandler(BaseCompleterHandler):
         return added_ids
 
     # 3. Cập nhật _fetch_and_format_data để lọc
-    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
-        if not keyword:
+    def _fetch_and_format_data(self, keyword: str) -> list:
+        if not keyword and self.min_search_length > 0:
             return []
 
         # Lấy danh sách ID đã thêm vào bảng
@@ -182,8 +194,8 @@ class DichVuCompleterHandler(BaseCompleterHandler):
     def set_ma_doi_tuong(self, ma_doi_tuong: str):
         self.doi_tuong_id = ma_doi_tuong
 
-    def _fetch_and_format_data(self, keyword: str) -> list[tuple[str, object]]:
-        if not keyword or not self.doi_tuong_id:
+    def _fetch_and_format_data(self, keyword: str) -> list:
+        if (not keyword and self.min_search_length > 0) or not self.doi_tuong_id:
             return []
 
         raw_data_list = get_list_dich_vu_by_keyword(self.doi_tuong_id, keyword)

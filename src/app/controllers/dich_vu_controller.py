@@ -27,6 +27,7 @@ from app.services.PhongBanService import get_list_phong_ban
 from app.styles.styles import ADD_BTN_STYLE, DELETE_BTN_STYLE, COMPLETER_THUOC_STYLE
 from app.ui.TabDichVu import Ui_formDichVu
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
+from app.utils.export_excel import export_excel
 
 from app.utils.ui_helpers import DichVuCompleterHandler
 from app.utils.utils import (
@@ -78,7 +79,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         # <editor-fold desc="Init model search completer">
         self.dich_vu_handler = DichVuCompleterHandler(
             parent=self,
-            min_search_length=2,
+            min_search_length=0,
             popup_min_width=1000
         )
         # </editor-fold>
@@ -147,6 +148,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         self.ui_dich_vu.btn_huy.setStyleSheet(DELETE_BTN_STYLE)
         self.ui_dich_vu.btn_in_phieu.setStyleSheet(ADD_BTN_STYLE)
         self.ui_dich_vu.btn_reset_all.setStyleSheet(ADD_BTN_STYLE)
+        self.ui_dich_vu.btn_xoa_dich_vu.setStyleSheet(DELETE_BTN_STYLE)
+        self.ui_dich_vu.btn_export.setStyleSheet(ADD_BTN_STYLE)
 
         self.ui_dich_vu.cb_nhom_dich_vu.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_dich_vu.cb_doi_tuong.setStyleSheet(COMPLETER_THUOC_STYLE)
@@ -184,6 +187,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         ui.btn_huy.clicked.connect(self._clear_input_fields)
         ui.btn_in_phieu.clicked.connect(self.btn_in_phieu_handle)
         ui.btn_reset_all.clicked.connect(self.reset_all)
+        ui.btn_xoa_dich_vu.clicked.connect(self.delete_all_rows)
+        ui.btn_export.clicked.connect(export_excel)
 
     # </editor-fold>
 
@@ -287,6 +292,9 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         self.ui_dich_vu.table_dich_vu.setColumnCount(DICH_VU_COL_COUNT)
         self.ui_dich_vu.table_dich_vu.setHorizontalHeaderLabels(HEADER_DICH_VU)
         self.ui_dich_vu.table_dich_vu.setColumnHidden(COL_MA_NHOM_DV, True)
+        self.ui_dich_vu.table_dich_vu.setColumnHidden(COL_MA_DV, True)
+        self.ui_dich_vu.table_dich_vu.setColumnHidden(COL_MA_LOAI_GIA, True)
+        self.ui_dich_vu.table_dich_vu.setColumnHidden(COL_DICH_VU_ID, True)
         for i in range(len(HEADER_DICH_VU)):
             table.setColumnWidth(i, MIN_COLUMN_WIDTH)
 
@@ -532,6 +540,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             return None
 
         # (DICH_VU_ID, INPUT_CODE, TEN_DICH_VU, NHOM_DICH_VU_ID)
+        dich_vu_id = dich_vu_data[0]
         ma_dv = dich_vu_data[1]
         ten_dv = dich_vu_data[2]
         nhom_dich_vu_id = str(dich_vu_data[3])
@@ -541,6 +550,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         benh_nhan_thanh_toan = str(float(thanh_tien.replace(',', '')) - float(bao_hiem_thanh_toan))
 
         data = {
+            COL_DICH_VU_ID: dich_vu_id,
             COL_MA_DV: ma_dv,
             COL_MA_NHOM_DV: nhom_dich_vu_id,
             COL_TEN_DV: ten_dv,
@@ -548,6 +558,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             COL_SO_LUONG: ui.so_luong.text().strip(),
             COL_THANH_TIEN_DOANH_THU: format_currency_vn(ui.thanh_tien.text().strip()),
             COL_TY_LE_TT: ui.cb_ty_le.currentText(),
+            COL_MA_LOAI_GIA: ui.cb_loai_gia.currentData(),
             COL_LOAI_GIA: ui.cb_loai_gia.currentText(),
             COL_NOI_THUC_HIEN: ui.cb_noi_thuc_hien.currentText(),
             COL_BH_TT: format_currency_vn(bao_hiem_thanh_toan),
@@ -579,6 +590,10 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         for col, value in new_row_data.items():
             if col not in [COL_KHONG_THU_TIEN, COL_KHONG_HO_TRO, COL_CHON_IN, COL_HUY]:
                 item = QTableWidgetItem(str(value))
+
+                if col == COL_LOAI_GIA:
+                    item.setData(QtCore.Qt.ItemDataRole.UserRole, new_row_data.get(LOAI_GIA.COL_MA_LOAI_GIA_HEADER))
+
                 if col not in [COL_SO_PHIEU, COL_LY_DO_KHONG_THU]:
                     item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 table.setItem(current_row_count, col, item)
@@ -839,7 +854,6 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         ui.bac_si_chi_dinh.clear()
         ui.chan_doan.clear()
         ui.ghi_chu.clear()
-        ui.ma_code_xn.clear()
         self.delete_all_rows()
 
     # <editor-fold desc="Handle nut in phieu">
@@ -864,7 +878,6 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'bac_si': ui.bac_si_chi_dinh.text().strip(),
             'chan_doan': ui.chan_doan.text().strip(),
             'ghi_chu': ui.ghi_chu.text().strip(),
-            'code_xn': ui.ma_code_xn.text().strip(),
             'so_tien': '',
         }
         dich_vu_dang_ky = []
@@ -890,6 +903,13 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
                     is_checked = get_checkbox_state(table, row, col)
                     dich_vu_row_data[field_name] = 1 if is_checked else 0
                     continue
+
+                if col == COL_MA_LOAI_GIA:
+                    item = table.item(row, col)
+                    # Get the hidden ID we stored earlier
+                    loai_gia_id = item.data(QtCore.Qt.ItemDataRole.UserRole)
+                    dich_vu_row_data['MaLoaiGia'] = str(loai_gia_id) if loai_gia_id is not None else ''
+
                 item = table.item(row, col)
                 dich_vu_row_data[field_name] = item.text().strip() if item else ''
 
@@ -933,10 +953,14 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
 
             grouped_services[ma_nhom]['DSDichVu'].append({
                 "STT": str(len(grouped_services[ma_nhom]['DSDichVu']) + 1),
+                'DichVuId': service.get('DichVuId'),
                 "MaDichVu": service.get("MaDichVu", ""),
+                "MaLoaiGia": service.get("MaLoaiGia", ""),
                 "TenDichVu": service.get("TenDichVu", ""),
                 "SoLuong": service.get("SoLuong", "1"),
-                "NoiThucHien": service.get("NoiThucHien", "")
+                "NoiThucHien": service.get("NoiThucHien", ""),
+                "KhongHoTro": service.get("KhongHoTro", 0),
+                "KhongThuTien": service.get("KhongThuTien", 0)
             })
 
         dich_vu_output = list(grouped_services.values())
@@ -978,8 +1002,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             QMessageBox.warning(self, "Thiếu dữ liệu", "Chưa chọn dịch vụ chỉ định!")
             return
 
-        data_json = json.dumps(data, indent=4, ensure_ascii=False)
-        write_json_lines(data_json, MODE_JSON.PHIEU_CHI_DINH_MODE)
+        # data_json = json.dumps(data, indent=4, ensure_ascii=False)
+        write_json_lines(data, MODE_JSON.PHIEU_CHI_DINH_MODE)
 
         create_and_open_pdf_for_printing(data)
 

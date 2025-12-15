@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL_NHOM_DICH_VU = Schema.NhomDichVu
 
-def get_all_nhom_dich_vu() -> list[tuple] | None:
+def get_all_nhom_dich_vu() -> list:
     data = fetch_all_rows(
         query=f'SELECT NhomDichVu_Id, TenNhomDichVu FROM NhomDichVu ',
         params= None
@@ -12,7 +12,7 @@ def get_all_nhom_dich_vu() -> list[tuple] | None:
     return data
 
 
-def get_nhom_dich_vu_by_ma_doi_tuong(ma_doi_tuong: str) -> list[tuple] | None:
+def get_nhom_dich_vu_by_ma_doi_tuong(ma_doi_tuong: str) -> list:
     data = fetch_all_rows(
         query=f"""  
             SELECT DISTINCT

@@ -19,7 +19,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>PhanMemBenhVien</string>
+   <string>Phần mềm quản lý bệnh viện</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

@@ -3,7 +3,7 @@ from app.services.schema import Schema
 
 TBL = Schema.ICD
 
-def get_list_icd(keyword: str = '') -> list[tuple] | None:
+def get_list_icd(keyword: str = '') -> list:
     data = fetch_all_rows(
         query=f"""  SELECT 
                         MaICD
@@ -17,7 +17,7 @@ def get_list_icd(keyword: str = '') -> list[tuple] | None:
 
     return data
 
-def get_icd_name(ma_icd: str) -> tuple | None:
+def get_icd_name(ma_icd: str) -> tuple:
     data = fetch_one_row(
         query=f'SELECT MaICD, TenICD FROM {TBL.TABLE_NAME} WHERE MaICD = ?',
         params=(ma_icd, )

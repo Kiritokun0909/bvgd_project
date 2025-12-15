@@ -17,7 +17,7 @@ from app.utils.constants import DB_FILE_PATH
 # user_data = get_one_row(query_with_params, params=params_tuple)
 # user_data sẽ là: ('John Doe', 'john@example.com')
 
-def fetch_all_rows(query: str, params: tuple | None = None) -> list | None:
+def fetch_all_rows(query: str, params: tuple = None) -> list:
     conn = None
     data = None
 
@@ -45,7 +45,7 @@ def fetch_all_rows(query: str, params: tuple | None = None) -> list | None:
 
     return data
 
-def fetch_one_row(query: str, params: tuple | None = None) -> tuple | None:
+def fetch_one_row(query: str, params: tuple = None) -> tuple:
     conn = None
     data = None
     try:

@@ -5,7 +5,7 @@ TBL_NHOM_DICH_VU = Schema.NhomDichVu
 TBL_DICH_VU = Schema.DMDichVu
 TBL_DOI_TUONG_LOAI_GIA = Schema.DoiTuongLoaiGia
 
-def get_list_dich_vu_by_ma_nhom_dich_vu(ma_doi_tuong: str, ma_nhom_dich_vu: str) -> list[tuple] | None:
+def get_list_dich_vu_by_ma_nhom_dich_vu(ma_doi_tuong: str, ma_nhom_dich_vu: str) -> list:
     data = fetch_all_rows(
         query=f"""  
             SELECT DISTINCT
@@ -32,7 +32,7 @@ def get_list_dich_vu_by_ma_nhom_dich_vu(ma_doi_tuong: str, ma_nhom_dich_vu: str)
 
     return data
 
-def get_list_dich_vu_by_keyword(doi_tuong_id: str, keyword: str) -> list[tuple] | None:
+def get_list_dich_vu_by_keyword(doi_tuong_id: str, keyword: str) -> list:
     keyword = keyword.lower()
 
     data = fetch_all_rows(
@@ -63,7 +63,7 @@ def get_list_dich_vu_by_keyword(doi_tuong_id: str, keyword: str) -> list[tuple] 
 
     return data
 
-def get_dich_vu_by_input_code(doi_tuong_id: str, input_code: str) -> tuple | None:
+def get_dich_vu_by_input_code(doi_tuong_id: str, input_code: str) -> tuple:
     data = fetch_one_row(
         query=f"""  
             SELECT DISTINCT
@@ -90,7 +90,7 @@ def get_dich_vu_by_input_code(doi_tuong_id: str, input_code: str) -> tuple | Non
 
     return data
 
-def get_dich_vu_by_dich_vu_id(doi_tuong_id: str, dich_vu_id: str) -> tuple | None:
+def get_dich_vu_by_dich_vu_id(doi_tuong_id: str, dich_vu_id: str) -> tuple:
     data = fetch_one_row(
         query=f"""  
             SELECT DISTINCT
@@ -133,7 +133,7 @@ def get_gia_dich_vu(dich_vu_id: str, loai_gia_id: str) -> tuple:
 
     return data
 
-def get_noi_thuc_hien_dich_vu(dich_vu_id: str) -> list[tuple]:
+def get_noi_thuc_hien_dich_vu(dich_vu_id: str) -> list:
     data = fetch_all_rows(
         query=f"""  
             SELECT 

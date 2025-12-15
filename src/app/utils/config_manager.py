@@ -31,7 +31,7 @@ class ConfigManager:
         # Ép buộc ghi dữ liệu ra đĩa ngay lập tức
         self.settings.sync()
 
-    def load_last_selection(self) -> tuple[str, str]:
+    def load_last_selection(self) -> tuple:
         """Tải mã phòng khám và tên bác sĩ đã lưu."""
 
         # Tải giá trị. Tham số thứ hai là giá trị mặc định nếu không tìm thấy.
@@ -46,7 +46,7 @@ class ConfigManager:
         self.settings.setValue(KEY_TAI_VU_NGUOI_THU, ten_nguoi_thu)
         self.settings.sync()
 
-    def load_last_tai_vu_selection(self) -> tuple[str, str]:
+    def load_last_tai_vu_selection(self) -> tuple:
         """Tải tên người tạo và tên người thu đã lưu."""
         nguoi_tao = self.settings.value(KEY_TAI_VU_NGUOI_TAO, "")
         nguoi_thu = self.settings.value(KEY_TAI_VU_NGUOI_THU, "")

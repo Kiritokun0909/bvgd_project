@@ -12,8 +12,8 @@ SERVICE_TEN_KHONG_DAU_COLUMN = 'TenKhongDau'
 
 # --- CẤU HÌNH BẢNG DỊCH VỤ ---
 HEADER_DICH_VU = [
-    'Mã dịch vụ', 'Mã nhóm dịch vụ', 'Tên dịch vụ', 'Số lượng','Đơn giá doanh thu',
-    'Tỷ lệ TT', 'Thành tiền doanh thu', 'Loại giá', 'Bảo hiểm thanh toán',
+    'DichVuId', 'Mã dịch vụ', 'Mã nhóm dịch vụ', 'Tên dịch vụ', 'Số lượng','Đơn giá doanh thu',
+    'Tỷ lệ TT', 'Thành tiền doanh thu', 'Mã loại giá', 'Loại giá', 'Bảo hiểm thanh toán',
     'Bệnh nhân thanh toán', 'Không thu tiền', 'Không hỗ trợ', 'Chọn in',
     'Nơi thực hiện', 'Số phiếu', 'Lý do không thu', 'Huỷ']
 
@@ -25,6 +25,7 @@ COLUMN_REQUIRE_ONLY_NUMBER = [
 
 # Các cột được tự động điền hoặc tính toán, không cho phép chỉnh sửa thủ công
 COLUMN_REQUIRE_READ_ONLY = [
+    'DichVuId',
     'Mã dịch vụ',
     'Mã nhóm dịch vụ',
     'Đơn giá doanh thu',
@@ -33,25 +34,8 @@ COLUMN_REQUIRE_READ_ONLY = [
     'Bệnh nhân thanh toán',
 ]
 
-# Mapping tên cột tiếng Việt sang tiếng Anh cho việc in/lưu trữ
-FIELD_MAPPING = {
-    'Mã dịch vụ': 'MaDichVu',
-    'Tên dịch vụ': 'TenDichVu',
-    'Đơn giá doanh thu': 'DonGiaDoanhThu',
-    'Tỷ lệ TT': 'TyLeTT',
-    'Thành tiền doanh thu': 'ThanhTienDoanhThu',
-    'Loại giá': 'LoaiGia',
-    'Bảo hiểm thanh toán': 'BHThanhToan',
-    'Bệnh nhân thanh toán': 'BNThanhToan',
-    'Không thu tiền': 'KhongThuTien',
-    'Không hỗ trợ': 'KhongHoTro',
-    'Chọn in': 'ChonIn',
-    'Nơi thực hiện': 'NoiThucHien',
-    'Số phiếu': 'SoPhieu',
-    'Lý do không thu': 'LyDoKhongThu',
-}
-
 # Cập nhật Chỉ mục cột
+COL_DICH_VU_ID = HEADER_DICH_VU.index('DichVuId')
 COL_MA_DV = HEADER_DICH_VU.index('Mã dịch vụ')
 COL_MA_NHOM_DV = HEADER_DICH_VU.index('Mã nhóm dịch vụ')
 COL_TEN_DV = HEADER_DICH_VU.index('Tên dịch vụ')
@@ -59,6 +43,7 @@ COL_SO_LUONG = HEADER_DICH_VU.index('Số lượng')
 COL_DON_GIA_DOANH_THU = HEADER_DICH_VU.index('Đơn giá doanh thu')
 COL_TY_LE_TT = HEADER_DICH_VU.index('Tỷ lệ TT')
 COL_THANH_TIEN_DOANH_THU = HEADER_DICH_VU.index('Thành tiền doanh thu')
+COL_MA_LOAI_GIA = HEADER_DICH_VU.index('Mã loại giá')
 COL_LOAI_GIA = HEADER_DICH_VU.index('Loại giá')
 COL_BH_TT = HEADER_DICH_VU.index('Bảo hiểm thanh toán')
 COL_BN_TT = HEADER_DICH_VU.index('Bệnh nhân thanh toán')
@@ -107,6 +92,7 @@ class DON_GIA:
     COL_DON_GIA_HEADER = 'DonGia'
 
 FIELD_MAPPING = {
+    'DichVuId': 'DichVuId',
     'Mã dịch vụ': 'MaDichVu',
     'Mã nhóm dịch vụ': 'MaNhomDichVu',
     'Tên dịch vụ': 'TenDichVu',
@@ -114,6 +100,7 @@ FIELD_MAPPING = {
     'Đơn giá doanh thu': 'DonGiaDoanhThu',
     'Tỷ lệ TT': 'TyLeTT',
     'Thành tiền doanh thu': 'TTDoanhThu',
+    'Mã loại giá': 'MaLoaiGia',
     'Loại giá': 'LoaiGia',
     'Bảo hiểm thanh toán': 'BaoHiemTT',
     'Bệnh nhân thanh toán': 'BenhNhanTT',

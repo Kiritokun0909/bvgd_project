@@ -1,8 +1,8 @@
 from PyQt6 import QtWidgets, QtCore, QtGui
-from PyQt6.QtCore import QRegularExpression, QDate
+from PyQt6.QtCore import QRegularExpression, QDate, pyqtSignal, QEvent, QTimer
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QMessageBox, QLineEdit
-import json
+from datetime import datetime
 
 from app.core.in_phieu_toa_thuoc import create_and_open_pdf_for_printing
 
@@ -16,10 +16,11 @@ from app.ui.TabKhamBenh import Ui_formKhamBenh
 
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
-from app.utils.constants import MA_Y_TE_LENGTH
+from app.utils.constants import MA_Y_TE_LENGTH, CLS_CODE
 from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
+from app.utils.export_excel import export_excel
 
 from app.configs.table_thuoc_configs import *
 from app.utils.constants import GIAI_QUYET_FILE_PATH
@@ -36,13 +37,24 @@ def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
             pass
     return 0
 
+class ComboBoxFilter(QtCore.QObject):
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.Type.FocusIn:
+            if isinstance(source, QtWidgets.QLineEdit):
+                combo = source.parent()
+                if isinstance(combo, QtWidgets.QComboBox) and combo.isEnabled():
+                    combo.showPopup()
+                    QTimer.singleShot(0, source.selectAll)
+
+        return super().eventFilter(source, event)
 
 class KhamBenhTabController(QtWidgets.QWidget):
+
+    req_dang_ky_cls = pyqtSignal()
 
     # <editor-fold desc="Khoi tao man hinh kham benh">
     def __init__(self, tab_widget_container, parent=None):
         super().__init__(parent)
-
         self.ma_y_te = None
         self.dia_chi = None
 
@@ -50,18 +62,20 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.input_drug_so_luong = None
 
         self.duoc_handler = None
-        self.icd_handler = IcdCompleterHandler(self, min_search_length=1)
+        self.icd_handler = IcdCompleterHandler(self, min_search_length=0)
+
+        self.cb_event_filter = ComboBoxFilter(self)
 
         # <editor-fold desc="Init UI">
         self.ui_kham = Ui_formKhamBenh()
         self.ui_kham.setupUi(tab_widget_container)
-        self.ui_kham.ds_benh_nhan_cho.clear()
+        self.ui_kham.ds_da_kham.clear()
         # </editor-fold>
 
         self.duoc_handler = DuocCompleterHandler(
             table_widget=self.ui_kham.ds_thuoc,
             parent=self,
-            min_search_length=1,
+            min_search_length=0,
             popup_min_width=1000)
 
         # <editor-fold desc="Load data, connect signals,...">
@@ -73,6 +87,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self._load_saved_settings()
         self._connect_signals()
         self.apply_stylesheet()
+        self.check_enable_btn_dang_ky()
         # </editor-fold>
 
     # </editor-fold>
@@ -111,11 +126,14 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.is_hen_kham.setChecked(False)
         self.ui_kham.so_ngay_hen.clear()
         self.ui_kham.ngay_hen_kham.setDate(QtCore.QDate.currentDate())
+
+        self.update_tuoi()
+        self.ui_kham.ma_y_te.setFocus()
     # </editor-fold>
 
     # <editor-fold desc="Load thong tin lan dau khoi tao man hinh">
     def init(self):
-        """Đổ dữ liệu ban đầu vào các combo_box."""
+        # <editor-fold desc=Đổ dữ liệu vào các combo_box">
         populate_combobox(self.ui_kham.cb_cach_giai_quyet, 'TenGiaiQuyet', 'MaGiaiQuyet', GIAI_QUYET_FILE_PATH)
 
         doi_tuong_data = get_list_doi_tuong()
@@ -126,6 +144,28 @@ class KhamBenhTabController(QtWidgets.QWidget):
         populate_list_to_combobox(self.ui_kham.cb_phong_kham,
                                   data=phong_ban_data,
                                   display_col=2, key_col=0)
+        # </editor-fold>
+
+        # <editor-fold desc="Cấu hình combo_box">
+        target_combos = [
+            self.ui_kham.cb_phong_kham,
+            self.ui_kham.cb_doi_tuong,
+            self.ui_kham.cb_cach_giai_quyet,
+            self.ui_kham.cb_gioi_tinh
+        ]
+
+        for cb in target_combos:
+            cb.setEditable(True)  # Bắt buộc Editable để có LineEdit và SelectAll
+
+            # Tự động chọn dòng đầu tiên nếu dữ liệu rỗng
+            if cb.count() > 0 and cb.currentIndex() < 0:
+                cb.setCurrentIndex(0)
+
+            # Quan trọng: Cài đặt filter cho LineEdit bên trong ComboBox
+            # Vì khi gõ hoặc click, ta tương tác với LineEdit này
+            if cb.lineEdit():
+                cb.lineEdit().installEventFilter(self.cb_event_filter)
+        # </editor-fold>
 
         # <editor-fold desc="set validator">
         int_validator = QIntValidator(0, 9999)
@@ -141,11 +181,21 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.spo2.setValidator(int_validator)
         self.ui_kham.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{10}$')))
 
+        self.ui_kham.ma_y_te.setMaxLength(8)
+        self.ui_kham.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
+
+        # 2. Số CCCD: Tối đa 12 ký tự, CHỈ cho phép nhập SỐ
+        self.ui_kham.cccd.setMaxLength(12)
+        self.ui_kham.cccd.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d*$')))
+
+        # 3. Số BHYT: Tối đa 15 ký tự, chỉ cho phép Chữ và Số
+        self.ui_kham.so_bhyt.setMaxLength(15)
+        self.ui_kham.so_bhyt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
+
         self.ui_kham.so_ngay_hen.setReadOnly(True)
         # </editor-fold>
 
         self.reset_data()
-
     # </editor-fold>
 
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
@@ -156,13 +206,29 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ten_bac_si.textEdited.connect(self._save_settings)
         self.ui_kham.is_hen_kham.clicked.connect(self.update_ngay_hen)
         self.ui_kham.so_ngay_hen.textEdited.connect(self.update_ngay_hen_kham_date)
+
         self.ui_kham.btn_in_phieu.clicked.connect(self.print_drug_bill)
         self.ui_kham.btn_reset_all.clicked.connect(self.reset_all)
+        self.ui_kham.btn_xoa_toa_thuoc.clicked.connect(self.reset_prescription_table)
+        self.ui_kham.btn_export.clicked.connect(export_excel)
+
+        self.ui_kham.cb_cach_giai_quyet.currentIndexChanged.connect(self.check_enable_btn_dang_ky)
+        self.ui_kham.btn_dang_ky.clicked.connect(self.req_dang_ky_cls.emit)
 
         self.ui_kham.ngay_sinh.dateChanged.connect(self.update_tuoi)
 
         self.icd_handler.connect_to(self.ui_kham.ma_icd)
         self.icd_handler.activated_with_data.connect(self._on_icd_selected)
+
+    def check_enable_btn_dang_ky(self):
+        """Chỉ bật nút Đăng ký khi cách giải quyết là Cận Lâm Sàng"""
+        ma_giai_quyet = self.ui_kham.cb_cach_giai_quyet.currentData()
+
+        if ma_giai_quyet == CLS_CODE:
+            self.ui_kham.btn_dang_ky.setEnabled(True)
+            # Optional: Đổi style để làm nổi bật nút nếu cần
+        else:
+            self.ui_kham.btn_dang_ky.setEnabled(False)
     # </editor-fold>
 
     # <editor-fold desc="Load & Save setting phòng khám">
@@ -189,6 +255,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
     def apply_stylesheet(self):
         self.ui_kham.btn_in_phieu.setStyleSheet(ADD_BTN_STYLE)
         self.ui_kham.btn_reset_all.setStyleSheet(ADD_BTN_STYLE)
+
+        self.ui_kham.btn_xoa_toa_thuoc.setStyleSheet(DELETE_BTN_STYLE)
+        self.ui_kham.btn_dang_ky.setStyleSheet(ADD_BTN_STYLE)
+        self.ui_kham.btn_export.setStyleSheet(ADD_BTN_STYLE)
+
         self.ui_kham.cb_phong_kham.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_doi_tuong.setStyleSheet(COMPLETER_THUOC_STYLE)
 
@@ -289,6 +360,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         # ẨN CỘT MÃ THUỐC (Chỉ dùng cho dữ liệu, không hiển thị cho người dùng)
         self.ui_kham.ds_thuoc.setColumnHidden(COL_MA_THUOC, True)
+        self.ui_kham.ds_thuoc.setColumnHidden(COL_DUOC_ID, True)
 
         # Thiết lập chiều rộng
         self.ui_kham.ds_thuoc.setColumnWidth(COL_TEN_THUOC, COL_TEN_THUOC_WIDTH)
@@ -311,6 +383,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         # Data từ DuocService:
         # (Duoc_Id, MaDuoc, TenDuocDayDu, DonGia, TenDonViTinh, CachDung)
         try:
+            duoc_id = str(raw_data[0])
             ma_duoc = str(raw_data[1])
             ten_duoc = str(raw_data[2])
             don_gia = float(raw_data[3])
@@ -319,6 +392,10 @@ class KhamBenhTabController(QtWidgets.QWidget):
         except (IndexError, TypeError, ValueError) as e:
             print(f"Lỗi xử lý dữ liệu dược: {e}, data: {raw_data}")
             return
+
+        duoc_id_widget = table.cellWidget(row_index, COL_DUOC_ID)
+        if duoc_id_widget and isinstance(duoc_id_widget, QLineEdit):
+            duoc_id_widget.setText(duoc_id)
 
         # 1. Cột MÃ THUỐC (COL_MA_THUOC) - ẨN
         ma_thuoc_widget = table.cellWidget(row_index, COL_MA_THUOC)
@@ -383,8 +460,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
         table.setVerticalHeaderItem(0, item)
 
         # 1a. TẠO CỘT MÃ THUỐC (ReadOnly, rỗng)
+        duoc_id = QLineEdit()
         ma_thuoc = QLineEdit()
+        duoc_id.setReadOnly(True)
         ma_thuoc.setReadOnly(True)
+        table.setCellWidget(0, COL_DUOC_ID, duoc_id)
         table.setCellWidget(0, COL_MA_THUOC, ma_thuoc)
 
         # 1b. Tạo QLineEdit TÊN THUỐC và gán QCompleter
@@ -511,7 +591,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             table.setItem(data_row_index, col, item)
 
         # Thêm nút Hủy
-        delete_btn = QPushButton("Hủy")
+        delete_btn = QPushButton(HEADER_THUOC[COL_HUY])
         delete_btn.setStyleSheet(DELETE_BTN_STYLE)
         delete_btn.clicked.connect(self.handle_delete_row)
 
@@ -618,10 +698,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
             self.add_input_row()
 
         self.update_row_numbers()
+        self.input_drug_name.setFocus()
 
     def reset_all(self):
-        self.reset_data()
         self.reset_prescription_table()
+        self.reset_data()
 
     # <editor-fold desc="Xử lý nút in toa thuốc">
     def get_thong_tin_kham(self):
@@ -650,7 +731,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             # Thu thập các cột dữ liệu khác từ bảng
             for col_index, header in enumerate(HEADER_THUOC):
                 # Bỏ qua cột Hủy
-                if header == 'Huỷ':
+                if header == COL_HUY_HEADER:
                     continue
 
                 # Sử dụng FIELD_MAPPING để đặt tên field tiếng Anh
@@ -665,6 +746,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
         for idx, drug in enumerate(drug_list):
             mapped_drugs.append({
                 'STT': str(idx + 1),
+                'DuocId': drug.get('DuocId', ''),
+                'MaThuoc': drug.get('MaThuoc', ''),
                 'TenThuoc': drug.get('TenThuoc', ''),
                 'TenThuocPhu': drug.get('DuongDung', ''),
                 'DonViTinh': drug.get('DonViTinh', ''),
@@ -703,7 +786,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'MaDoiTuong': ui.cb_doi_tuong.currentData(),
             'DoiTuong': ui.cb_doi_tuong.currentText(),
 
-            'ChanDoan': ui.chan_doan.text().strip(),
+            'ChanDoan': ui.chan_doan.text().strip() +'; '+ ui.ma_icd.text().strip(),
             'Mach': ui.mach.text().strip(),
             'HA': huyet_ap,
             'NhietDo': ui.nhiet_do.text().strip(),
@@ -733,7 +816,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
             (ui.dia_chi, "Địa chỉ"),
             (ui.sdt, "Số điện thoại"),
             (ui.chan_doan, "Chẩn đoán")
-            # (ui.so_bhyt, "Số BHYT"),
         ]
 
         if not ui.ngay_sinh.date().isValid():
@@ -766,13 +848,15 @@ class KhamBenhTabController(QtWidgets.QWidget):
                                 f"Chưa có thuốc nào trong toa thuốc.")
             return
 
-        json_data = json.dumps(data, indent=4, ensure_ascii=False)
-        write_json_lines(json_data, MODE_JSON.PHIEU_TOA_THUOC_MODE)
+        # json_data = json.dumps(data, indent=4, ensure_ascii=False)
+        write_json_lines(data, MODE_JSON.PHIEU_TOA_THUOC_MODE)
 
         # Bổ sung logic in hoặc lưu trữ ở đây
         # QMessageBox.information(self, "Thông báo", "Đã thu thập dữ liệu form thành công. Sẵn sàng cho việc in/lưu.")
 
         create_and_open_pdf_for_printing(data)
+
+        self.ui_kham.ma_y_te.setFocus()
 
         # --- THÔNG BÁO HỎI RESET MÀN HÌNH ---
         # reply = QMessageBox.question(self, "Xác nhận",
