@@ -27,7 +27,7 @@ from app.services.PhongBanService import get_list_phong_ban
 from app.styles.styles import ADD_BTN_STYLE, DELETE_BTN_STYLE, COMPLETER_THUOC_STYLE
 from app.ui.TabDichVu import Ui_formDichVu
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
-from app.utils.export_excel import export_excel
+from app.utils.export_excel import export_and_show_dialog
 
 from app.utils.ui_helpers import DichVuCompleterHandler
 from app.utils.utils import (
@@ -188,7 +188,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         ui.btn_in_phieu.clicked.connect(self.btn_in_phieu_handle)
         ui.btn_reset_all.clicked.connect(self.reset_all)
         ui.btn_xoa_dich_vu.clicked.connect(self.delete_all_rows)
-        ui.btn_export.clicked.connect(export_excel)
+        ui.btn_export.clicked.connect(lambda: export_and_show_dialog(self))
 
     # </editor-fold>
 
@@ -925,7 +925,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'MaDoiTuong': f"{data_raw['ThongTinBenhNhan'].get('ma_doi_tuong', 'Không rõ')}",
             'DoiTuong': f"{data_raw['ThongTinBenhNhan'].get('doi_tuong', 'Không rõ')}",
             'NgayTao': datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
-            'BacSi': data_raw['ThongTinPhongKham'].get('bac_si', 'N/A'),
+            'TenBacSi': data_raw['ThongTinPhongKham'].get('bac_si', 'N/A'),
         }
 
         # Lấy thông tin tra cứu tên nhóm DV
@@ -956,6 +956,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
                 'DichVuId': service.get('DichVuId'),
                 "MaDichVu": service.get("MaDichVu", ""),
                 "MaLoaiGia": service.get("MaLoaiGia", ""),
+                "TenLoaiGia": service.get("LoaiGia", ""),
                 "TenDichVu": service.get("TenDichVu", ""),
                 "SoLuong": service.get("SoLuong", "1"),
                 "NoiThucHien": service.get("NoiThucHien", ""),
@@ -971,7 +972,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'CSKH': default_info['CSKH'],
 
             'MaYTe': data_raw['ThongTinBenhNhan'].get('ma_y_te', ''),
-            'MaBHYT': data_raw['ThongTinBenhNhan'].get('so_bhyt', ''),
+            'BHYT': data_raw['ThongTinBenhNhan'].get('so_bhyt', ''),
             'MaDoiTuong': default_info['MaDoiTuong'],
             'DoiTuong': default_info['DoiTuong'],
             'HoTen': data_raw['ThongTinBenhNhan'].get('ho_ten', ''),
@@ -986,7 +987,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'TongBenhNhanTra': tt_thanhtoan.get('TongBenhNhanTT', '0'),
 
             'NgayTao': default_info['NgayTao'],
-            'BacSi': default_info['BacSi'],
+            'TenBacSi': default_info['TenBacSi'],
 
             'DichVu': dich_vu_output
         }
@@ -1014,4 +1015,95 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
         # if reply == QMessageBox.StandardButton.Yes:
         #     self.reset_all()
         #     self.dich_vu_completed.emit()
+    # </editor-fold>
+
+    # <editor-fold desc="Load dữ liệu từ Service Bill (JSON)">
+    def load_data_from_service_bill(self, data: dict):
+        """
+        Nhận dữ liệu service_bill (JSON) và đổ dữ liệu vào màn hình Đăng ký dịch vụ.
+        Sử dụng lại logic load_thong_tin_benh_nhan và add_service_row để đảm bảo tính nhất quán.
+        """
+        if not data:
+            return
+
+        ui = self.ui_dich_vu
+
+        # 1. Map dữ liệu JSON sang cấu trúc chuẩn mà load_thong_tin_benh_nhan mong đợi
+        # JSON keys (bên trái) có thể khác với keys màn hình dịch vụ cần (bên phải)
+        mapped_data = {
+            'HoTenBN': data.get('HoTen', ''),
+            'MaYTe': data.get('MaYTe', ''),
+            'NgaySinh': data.get('NgaySinh', ''),
+            'Tuoi': data.get('Tuoi', ''),
+            'GioiTinh': data.get('GioiTinh', ''),
+            'DiaChi': data.get('DiaChi', ''),
+            'SoBHYT': data.get('BHYT', ''),  # Map từ BHYT -> SoBHYT
+            'MaDoiTuong': data.get('MaDoiTuong', ''),
+            'TenDoiTuong': data.get('DoiTuong', ''),
+            'SDT': data.get('SDT', ''),
+
+            # Thông tin chỉ định
+            'TenBacSi': data.get('TenBacSi', ''),
+            'PhongKham': data.get('PhongKham', ''),
+            'ChanDoan': data.get('ChanDoan', ''),
+            'GhiChu': data.get('GhiChu', ''),
+            'NgayGioKham': datetime.now().strftime("%d/%m/%Y %H:%M:%S")  # Lấy giờ hiện tại hoặc từ data nếu có
+        }
+
+        # 2. Gọi hàm load thông tin chung (như AppController làm)
+        # Hàm này sẽ set text các ô hành chính, set combobox đối tượng, phòng khám...
+        self.load_thong_tin_benh_nhan(mapped_data)
+
+        # 3. Load danh sách dịch vụ
+        self.delete_all_rows()  # Xóa bảng cũ
+
+        service_groups = data.get('DichVu', [])
+
+        # Duyệt qua từng nhóm dịch vụ
+        for group in service_groups:
+            services = group.get('DSDichVu', [])
+
+            # Duyệt qua từng dịch vụ trong nhóm
+            for svc in services:
+                # Lấy dữ liệu từ JSON
+                ma_dv = str(svc.get('MaDichVu', ''))
+                ma_loai_gia = str(svc.get('MaLoaiGia', ''))
+                so_luong = str(svc.get('SoLuong', '1'))
+
+                # Checkbox states (JSON lưu 0/1 hoặc true/false -> convert sang bool)
+                is_khong_thu = True if str(svc.get('KhongThuTien', '0')) == '1' else False
+                is_khong_ho_tro = True if str(svc.get('KhongHoTro', '0')) == '1' else False
+
+                # --- GIẢ LẬP QUY TRÌNH NHẬP LIỆU CỦA NGƯỜI DÙNG ---
+
+                # B1: Điền mã dịch vụ vào ô input
+                ui.ma_dich_vu.setText(ma_dv)
+
+                # B2: Gọi hàm search để load thông tin dịch vụ (Tên, DS Loại giá tương ứng)
+                # Việc này quan trọng để Combobox Loại giá có dữ liệu đúng cho dịch vụ này
+                self.search_dich_vu_by_id(mode=SEARCH_BY_INPUT_CODE)
+
+                # B3: Chọn lại Loại giá theo đúng dữ liệu trong JSON
+                # (Vì hàm search ở trên mặc định chọn loại giá đầu tiên)
+                index_lg = ui.cb_loai_gia.findData(ma_loai_gia)
+                if index_lg != -1:
+                    ui.cb_loai_gia.setCurrentIndex(index_lg)
+                    # Cập nhật lại đơn giá trên UI theo loại giá vừa chọn
+                    self.update_don_gia_dich_vu()
+
+                    # B4: Điền số lượng
+                ui.so_luong.setText(so_luong)
+
+                # B5: Set trạng thái các checkbox trên UI
+                ui.is_khong_thu_tien.setChecked(is_khong_thu)
+                ui.is_khong_ho_tro.setChecked(is_khong_ho_tro)
+
+                # B6: Tính toán lại thành tiền trên UI (để add_service_row lấy đúng giá trị)
+                self.calculate_thanh_tien()
+
+                # B7: Gọi hàm thêm dòng (sẽ tự động validate, tính toán BHYT, format tiền tệ và reset input)
+                # Sử dụng mode ADD_FROM_SEARCHBOX hoặc ADD_FROM_TREE_ITEM đều được,
+                # ở đây dùng SEARCHBOX để tận dụng logic validate đầy đủ.
+                self.add_service_row(mode=ADD_FROM_SEARCHBOX)
+
     # </editor-fold>

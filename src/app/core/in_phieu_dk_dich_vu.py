@@ -78,7 +78,7 @@ fake_data = {
     'PhongKham': 'Nội tim mạch (P112)',
     'CSKH': '0123',
     'MaYTe': '701310.09081020',
-    'MaBHYT': 'CT2797931871655',
+    'BHYT': 'CT2797931871655',
     'DoiTuong': '37 BHYT 80%',
     'HoTen': 'TẠ THỊ HẢI',
     'Tuoi': '87',
@@ -93,7 +93,7 @@ fake_data = {
     'SoTien': '70.600',
     'TongBenhNhanTra': '800.153',
     'NgayTao': '30/10/2025 07:01:49',
-    'BacSi': 'Bs. Nguyễn Thị C',
+    'TenBacSi': 'Bs. Nguyễn Thị C',
     'DichVu': [
         {
             'MaNhomDichVu': 'DM001',
@@ -136,7 +136,7 @@ def draw_header_info(c, data, barcode_ma_y_te_path, qr_thong_tin):
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawRightString(PAGE_WIDTH - MARGIN_LEFT - 50, y_start + 10, f'Mã y tế: {data.get("MaYTe", "")}')
     c.setFont(VIET_FONT, 9)
-    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT - 50, y_start , f'Số BHYT: {data.get("MaBHYT", "")}')
+    c.drawRightString(PAGE_WIDTH - MARGIN_LEFT - 50, y_start , f'Số BHYT: {data.get("BHYT", "")}')
     c.setFont(VIET_FONT_BOLD, 9)
     c.drawRightString(PAGE_WIDTH - MARGIN_LEFT - 50, y_start -10, f'Đối tượng: {data.get("DoiTuong", "")}')
 
@@ -228,7 +228,7 @@ def draw_footer_info(c, data, y_current):
 
     y_footer -= 45  # Khoảng ký
     c.setFont(VIET_FONT_BOLD, 9)
-    c.drawCentredString(center_right_x, y_footer, data.get('BacSi', ''))
+    c.drawCentredString(center_right_x, y_footer, data.get('TenBacSi', ''))
 
     return y_footer
 
@@ -314,7 +314,7 @@ def draw_phieu_chi_dinh_paged(c, data, thu_tu, barcode_ma_y_te_path, qr_thong_ti
 # ==============================================================================
 
 def create_file_name(data, thu_tu: int):
-    ma_bhyt = data.get('MaBHYT', 'NO_BHYT')
+    ma_bhyt = data.get('BHYT', 'NO_BHYT')
     ngay_tao = data.get('NgayTao', 'NO_DATE')
     ma_nhom_dv = data['DichVu'][thu_tu]['MaNhomDichVu']
     safe_date_string = ngay_tao.replace('/', '_').replace(':', '_').replace(' ', '__')
@@ -345,7 +345,7 @@ def create_and_open_pdf_for_printing(data):
 
         qr_thong_tin = generate_medical_qr_code(
             ma_y_te=data.get('MaYTe', ''),
-            so_bhyt=data.get('MaBHYT', ''),
+            so_bhyt=data.get('BHYT', ''),
             doi_tuong=data.get('DoiTuong', ''),
             ho_ten=data.get('HoTen', ''),
             tuoi=data.get('Tuoi', ''),

@@ -627,7 +627,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0,0">
               <item>
-               <widget class="QLineEdit" name="ma_y_te_2">
+               <widget class="QLineEdit" name="ma_y_te_da_kham">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -646,7 +646,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="ho_ten">
+               <widget class="QLineEdit" name="ho_ten_da_kham">
                 <property name="placeholderText">
                  <string>Tên bệnh nhân...</string>
                 </property>
@@ -700,7 +700,7 @@
                <number>0</number>
               </property>
               <property name="columnCount">
-               <number>6</number>
+               <number>5</number>
               </property>
               <row>
                <property name="text">
@@ -724,12 +724,7 @@
               </column>
               <column>
                <property name="text">
-                <string>Họ</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Tên</string>
+                <string>Họ tên</string>
                </property>
               </column>
               <column>
@@ -759,20 +754,15 @@
               </item>
               <item row="0" column="2">
                <property name="text">
-                <string>O</string>
+                <string>123</string>
                </property>
               </item>
               <item row="0" column="3">
                <property name="text">
-                <string>123</string>
-               </property>
-              </item>
-              <item row="0" column="4">
-               <property name="text">
                 <string>Nam</string>
                </property>
               </item>
-              <item row="0" column="5">
+              <item row="0" column="4">
                <property name="text">
                 <string>12314141</string>
                </property>
@@ -789,20 +779,15 @@
               </item>
               <item row="1" column="2">
                <property name="text">
-                <string>A</string>
+                <string>12</string>
                </property>
               </item>
               <item row="1" column="3">
                <property name="text">
-                <string>12</string>
-               </property>
-              </item>
-              <item row="1" column="4">
-               <property name="text">
                 <string>Nữ</string>
                </property>
               </item>
-              <item row="1" column="5">
+              <item row="1" column="4">
                <property name="text">
                 <string>12941231</string>
                </property>
@@ -819,20 +804,15 @@
               </item>
               <item row="2" column="2">
                <property name="text">
-                <string>B</string>
+                <string>24</string>
                </property>
               </item>
               <item row="2" column="3">
                <property name="text">
-                <string>24</string>
-               </property>
-              </item>
-              <item row="2" column="4">
-               <property name="text">
                 <string>Nam</string>
                </property>
               </item>
-              <item row="2" column="5">
+              <item row="2" column="4">
                <property name="text">
                 <string>12345624</string>
                </property>
@@ -869,6 +849,9 @@
               </item>
               <item>
                <widget class="QLineEdit" name="current_page">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1622,8 +1605,8 @@
   <tabstop>btn_in_phieu</tabstop>
   <tabstop>btn_reset_all</tabstop>
   <tabstop>btn_xoa_toa_thuoc</tabstop>
-  <tabstop>ma_y_te_2</tabstop>
-  <tabstop>ho_ten</tabstop>
+  <tabstop>ma_y_te_da_kham</tabstop>
+  <tabstop>ho_ten_da_kham</tabstop>
   <tabstop>btn_refresh</tabstop>
   <tabstop>ds_da_kham</tabstop>
   <tabstop>cb_phong_kham</tabstop>

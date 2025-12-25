@@ -1,3 +1,7 @@
+import os
+import json
+import math
+
 from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import QRegularExpression, QDate, pyqtSignal, QEvent, QTimer
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
@@ -20,11 +24,11 @@ from app.utils.constants import MA_Y_TE_LENGTH, CLS_CODE
 from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
-from app.utils.export_excel import export_excel
+from app.utils.export_excel import export_and_show_dialog
 
 from app.configs.table_thuoc_configs import *
 from app.utils.constants import GIAI_QUYET_FILE_PATH
-from app.utils.write_json_line import write_json_lines, MODE_JSON
+from app.utils.write_json_line import write_json_lines, MODE_JSON, TARGET_DIR, get_todays_csv_rows
 
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
@@ -52,6 +56,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
     req_dang_ky_cls = pyqtSignal()
 
+    req_load_service_bill = pyqtSignal(dict)
+    req_reset_dich_vu = pyqtSignal()
+
     # <editor-fold desc="Khoi tao man hinh kham benh">
     def __init__(self, tab_widget_container, parent=None):
         super().__init__(parent)
@@ -69,7 +76,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         # <editor-fold desc="Init UI">
         self.ui_kham = Ui_formKhamBenh()
         self.ui_kham.setupUi(tab_widget_container)
-        self.ui_kham.ds_da_kham.clear()
+        self.ui_kham.ds_da_kham.setRowCount(0)
         # </editor-fold>
 
         self.duoc_handler = DuocCompleterHandler(
@@ -77,6 +84,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
             parent=self,
             min_search_length=0,
             popup_min_width=1000)
+
+        # --- CẤU HÌNH PHÂN TRANG ---
+        self.current_page_index = 1  # Trang hiện tại
+        self.items_per_page = 10  # Số dòng mỗi trang
+        self.total_pages = 1  # Tổng số trang
 
         # <editor-fold desc="Load data, connect signals,...">
         self.init()
@@ -88,6 +100,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self._connect_signals()
         self.apply_stylesheet()
         self.check_enable_btn_dang_ky()
+        self.update_table_display()
         # </editor-fold>
 
     # </editor-fold>
@@ -210,7 +223,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_in_phieu.clicked.connect(self.print_drug_bill)
         self.ui_kham.btn_reset_all.clicked.connect(self.reset_all)
         self.ui_kham.btn_xoa_toa_thuoc.clicked.connect(self.reset_prescription_table)
-        self.ui_kham.btn_export.clicked.connect(export_excel)
+        self.ui_kham.btn_export.clicked.connect(lambda: export_and_show_dialog(self))
 
         self.ui_kham.cb_cach_giai_quyet.currentIndexChanged.connect(self.check_enable_btn_dang_ky)
         self.ui_kham.btn_dang_ky.clicked.connect(self.req_dang_ky_cls.emit)
@@ -219,6 +232,14 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         self.icd_handler.connect_to(self.ui_kham.ma_icd)
         self.icd_handler.activated_with_data.connect(self._on_icd_selected)
+
+        self.ui_kham.ma_y_te_da_kham.textChanged.connect(self.reset_paging_and_load)
+        self.ui_kham.ho_ten_da_kham.textChanged.connect(self.reset_paging_and_load)
+
+        self.ui_kham.btn_refresh.clicked.connect(self.reset_paging_and_load)
+        self.ui_kham.btn_prev_page.clicked.connect(self.on_prev_page)
+        self.ui_kham.btn_next_page.clicked.connect(self.on_next_page)
+        self.ui_kham.ds_da_kham.cellDoubleClicked.connect(self.on_patient_double_click)
 
     def check_enable_btn_dang_ky(self):
         """Chỉ bật nút Đăng ký khi cách giải quyết là Cận Lâm Sàng"""
@@ -229,6 +250,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
             # Optional: Đổi style để làm nổi bật nút nếu cần
         else:
             self.ui_kham.btn_dang_ky.setEnabled(False)
+
+    def reset_paging_and_load(self):
+        """Khi tìm kiếm, luôn quay về trang 1"""
+        self.current_page_index = 1
+        self.update_table_display()
     # </editor-fold>
 
     # <editor-fold desc="Load & Save setting phòng khám">
@@ -285,6 +311,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         nam_sinh = benh_nhan_data[3]
         sdt = benh_nhan_data[4]
         dia_chi = benh_nhan_data[5]
+        bhyt = benh_nhan_data[6]
 
         ngay_sinh = QDate(int(nam_sinh), 1, 1) if nam_sinh is not None else QDate.currentDate()
 
@@ -294,6 +321,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.ngay_sinh.setDate(ngay_sinh)
         ui.sdt.setText(str(sdt) if sdt is not None else '')
         ui.dia_chi.setText(str(dia_chi) if dia_chi is not None else '')
+        ui.so_bhyt.setText(str(bhyt) if bhyt is not None else '')
         self.update_tuoi()
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):
@@ -857,6 +885,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         create_and_open_pdf_for_printing(data)
 
         self.ui_kham.ma_y_te.setFocus()
+        self.update_table_display()
 
         # --- THÔNG BÁO HỎI RESET MÀN HÌNH ---
         # reply = QMessageBox.question(self, "Xác nhận",
@@ -869,6 +898,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
     # </editor-fold>
 
     # <editor-fold desc="Lấy thông tin bệnh nhân và phòng khám chuyển sang màn hình đăng ký dịch vụ">
+
     def get_hanh_chinh_data(self) -> dict:
         """
         Thu thập các thông tin hành chính cơ bản của bệnh nhân
@@ -898,8 +928,272 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'NgayGioKham': ui.ngay_gio_kham.dateTime().toString("dd/MM/yyyy HH:mm:ss"),
 
             'MaGiaiQuyet': ui.cb_cach_giai_quyet.currentData(),
-            'ChanDoan': ui.chan_doan.text(),
+            'ChanDoan': ui.chan_doan.text().strip() +'; '+ ui.ma_icd.text().strip(),
         }
 
         return data
+
+    # </editor-fold>
+
+    # <editor-fold desc="Lazy Load & Pagination danh sách đã khám trong ngày">
+
+    def update_table_display(self):
+        table = self.ui_kham.ds_da_kham
+        table.setRowCount(0)
+
+        # 1. Lấy dữ liệu thô từ CSV
+        raw_rows = get_todays_csv_rows()
+
+        # 2. Lọc dữ liệu (Search) - [CẬP NHẬT TÊN WIDGET ĐÚNG]
+        keyword_id = self.ui_kham.ma_y_te_da_kham.text().strip().lower()
+        keyword_name = self.ui_kham.ho_ten_da_kham.text().strip().lower()
+
+        filtered_rows = []
+        if not keyword_id and not keyword_name:
+            filtered_rows = raw_rows
+        else:
+            for row in raw_rows:
+                # Dữ liệu trong CSV: user_id, user_name
+                u_id = row.get('user_id', '').lower()
+                u_name = row.get('user_name', '').lower()
+
+                # Logic tìm kiếm gần đúng (chứa từ khóa)
+                match_id = keyword_id in u_id if keyword_id else True
+                match_name = keyword_name in u_name if keyword_name else True
+
+                if match_id and match_name:
+                    filtered_rows.append(row)
+
+        # 3. Tính toán phân trang
+        total_items = len(filtered_rows)
+        # Nếu items_per_page chưa set, mặc định là 10 (tránh lỗi chia cho 0 hoặc 1 như trong file gốc của bạn đang set là 1)
+        if self.items_per_page < 1: self.items_per_page = 10
+
+        self.total_pages = math.ceil(total_items / self.items_per_page)
+        if self.total_pages < 1: self.total_pages = 1
+
+        # Validate trang hiện tại
+        if self.current_page_index > self.total_pages: self.current_page_index = self.total_pages
+        if self.current_page_index < 1: self.current_page_index = 1
+
+        # Hiển thị số trang lên UI
+        self.ui_kham.current_page.setText(str(self.current_page_index))
+        self.ui_kham.num_page.setText(str(self.total_pages))
+
+        # Cập nhật trạng thái nút
+        self.ui_kham.btn_prev_page.setEnabled(self.current_page_index > 1)
+        self.ui_kham.btn_next_page.setEnabled(self.current_page_index < self.total_pages)
+
+        if total_items == 0:
+            return
+
+        # 4. Cắt dữ liệu (Slicing) cho trang hiện tại
+        start_idx = (self.current_page_index - 1) * self.items_per_page
+        end_idx = start_idx + self.items_per_page
+        page_items = filtered_rows[start_idx:end_idx]
+
+        # 5. Đọc JSON chi tiết và Hiển thị
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        day_dir = os.path.join(TARGET_DIR, date_str)
+
+        for row_data in page_items:
+            # Lấy thông tin cơ bản từ CSV
+            ma_y_te = row_data.get('user_id', '')
+            full_name = row_data.get('user_name', '')
+            file_name = row_data.get('file_name', '')
+            age = ""
+            gender = ""
+            bhyt = ""
+
+            # --- LAZY LOAD JSON ---
+            json_path = os.path.join(day_dir, file_name)
+            if os.path.exists(json_path):
+                try:
+                    with open(json_path, 'r', encoding='utf-8') as jf:
+                        data = json.load(jf)
+                        bills = data.get('bills', {})
+                        bill = bills.get('drug_bill') or bills.get('service_bill') or bills.get('invoice')
+                        if bill:
+                            age = bill.get('Tuoi', '')
+                            gender = bill.get('GioiTinh', '')
+                            bhyt = bill.get('BHYT', '')
+                            # Nếu trong bill có tên đầy đủ hơn thì lấy
+                            if bill.get('HoTen'):
+                                full_name = bill.get('HoTen')
+                except:
+                    pass
+
+            row_idx = table.rowCount()
+            table.insertRow(row_idx)
+
+            vals = [ma_y_te, full_name, age, gender, bhyt]
+            for col, val in enumerate(vals):
+                item = QTableWidgetItem(str(val))
+                item.setFlags(item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)  # Readonly
+                table.setItem(row_idx, col, item)
+
+    def on_prev_page(self):
+        if self.current_page_index > 1:
+            self.current_page_index -= 1
+            self.update_table_display()
+
+    def on_next_page(self):
+        if self.current_page_index < self.total_pages:
+            self.current_page_index += 1
+            self.update_table_display()
+
+    # </editor-fold>
+
+    # <editor-fold desc="Load lại dữ liệu từ JSON khi Double Click">
+
+    def on_patient_double_click(self, row, col):
+        """Sự kiện chính: Xác định bệnh nhân và load dữ liệu."""
+        # 1. Lấy Mã Y Tế từ cột 0 của dòng được click
+        item_id = self.ui_kham.ds_da_kham.item(row, 0)
+        if not item_id:
+            return
+
+        self.reset_all()
+        self.req_reset_dich_vu.emit()
+
+        user_id = item_id.text().strip()
+
+        # 2. Xác định đường dẫn file JSON
+        # Lưu ý: Logic này giả định load dữ liệu của ngày hiện tại (theo cấu trúc folder của bạn)
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        safe_id = "".join(c for c in user_id if c.isalnum() or c in ('-', '_'))
+        json_filename = f"{safe_id}.json"
+        json_path = os.path.join(TARGET_DIR, date_str, json_filename)
+
+        if not os.path.exists(json_path):
+            QMessageBox.warning(self, "Lỗi", f"Không tìm thấy file dữ liệu: {json_filename}")
+            return
+
+        # 3. Đọc và đổ dữ liệu
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                full_data = json.load(f)
+
+            # Lấy phần phiếu khám (drug_bill)
+            bills = full_data.get('bills', {})
+            drug_bill = bills.get('drug_bill')
+            service_bill = bills.get('service_bill')
+
+            if drug_bill:
+                self.fill_form_data(drug_bill, load_prescription=True)
+
+            if service_bill:
+                self.fill_form_data(service_bill, load_prescription=False)
+                self.req_load_service_bill.emit(service_bill)
+
+        except Exception as e:
+            print(f"Lỗi load lại json: {e}")
+            QMessageBox.critical(self, "Lỗi", f"Không thể đọc file dữ liệu: {e}")
+
+    def fill_form_data(self, data: dict, load_prescription: bool = True):
+        """Map dữ liệu từ Dictionary vào UI."""
+        ui = self.ui_kham
+
+        # --- 1. Thông tin Hành Chính ---
+        self.ma_y_te = data.get('MaYTe', '')
+        ui.ma_y_te.setText(data.get('MaYTe', ''))
+        ui.ho_ten_bn.setText(data.get('HoTen', ''))
+        ui.dia_chi.setText(data.get('DiaChi', ''))
+        ui.sdt.setText(data.get('SDT', ''))
+        ui.so_bhyt.setText(data.get('BHYT', ''))
+        ui.tuoi.setText(data.get('Tuoi', ''))
+        ui.cb_gioi_tinh.setCurrentText(data.get('GioiTinh', ''))
+
+        # Xử lý ComboBox Đối tượng, Phòng khám (Dùng findText để set chuẩn)
+        idx_doi_tuong = ui.cb_doi_tuong.findText(data.get('DoiTuong', ''))
+        if idx_doi_tuong >= 0: ui.cb_doi_tuong.setCurrentIndex(idx_doi_tuong)
+
+        idx_pk = ui.cb_phong_kham.findText(data.get('PhongKham', ''))
+        if idx_pk >= 0: ui.cb_phong_kham.setCurrentIndex(idx_pk)
+
+        ui.ten_bac_si.setText(data.get('TenBacSi', ''))
+
+        # --- 2. Chỉ số sinh tồn ---
+        ui.mach.setText(data.get('Mach', ''))
+        ui.nhiet_do.setText(data.get('NhietDo', ''))
+        ui.can_nang.setText(data.get('CanNang', ''))
+
+        # Tách huyết áp (Ví dụ: 120/80)
+        ha = data.get('HA', '')
+        if '/' in ha:
+            parts = ha.split('/')
+            ui.huyet_ap_1.setText(parts[0])
+            ui.huyet_ap_2.setText(parts[1])
+        else:
+            ui.huyet_ap_1.setText(ha)
+            ui.huyet_ap_2.setText('')
+
+        # --- 3. Chẩn đoán & Hẹn khám ---
+        # Tách Mã ICD và Chẩn đoán (Do lúc lưu ta ghép: "Tên bệnh; A01")
+        full_chan_doan = data.get('ChanDoan', '')
+        parts_cd = full_chan_doan.split(';')
+        if len(parts_cd) > 1:
+            ui.chan_doan.setText(parts_cd[0].strip())
+            # Giả định phần sau cùng là mã ICD nếu có
+            ui.ma_icd.setText(parts_cd[-1].strip())
+        else:
+            ui.chan_doan.setText(full_chan_doan)
+
+        # Hẹn khám
+        so_ngay_hen = data.get('SoNgayHenTaiKham', '0')
+        if so_ngay_hen and str(so_ngay_hen) != '0':
+            ui.is_hen_kham.setChecked(True)
+            ui.so_ngay_hen.setText(str(so_ngay_hen))
+            self.update_ngay_hen()  # Gọi hàm update để tính ngày cụ thể
+        else:
+            ui.is_hen_kham.setChecked(False)
+            ui.so_ngay_hen.clear()
+            self.update_ngay_hen()
+
+        # --- 4. Load Toa Thuốc (Quan trọng) ---
+        if load_prescription:
+            self.reset_prescription_table()  # Xóa trắng bảng thuốc
+            toa_thuoc = data.get('ToaThuoc', [])
+
+            # Đảo ngược danh sách để insert đúng thứ tự (vì hàm insert luôn chèn row 0 nhưng data lại append xuống dưới)
+            # Tuy nhiên hàm _insert_static_drug_row của bạn chèn vào index chỉ định,
+            # nên ta cần loop xuôi và chèn vào cuối (trước dòng trống input).
+
+            # Cách an toàn nhất với cấu trúc hiện tại:
+            # Table của bạn: Row 0 là Input. Row 1 -> N là dữ liệu.
+            # Ta sẽ chèn lần lượt vào sau dòng 0.
+
+            row_idx = 1
+            for drug in toa_thuoc:
+                # Map lại dữ liệu từ JSON key sang list value theo đúng thứ tự cột
+                # Cấu trúc list mong đợi: [DuocId, MaThuoc, TenThuoc, DonVi, Sang, Trua, Chieu, Toi, SoNgay, SoLuong, DonGia, Note, DuongDung]
+                # Lưu ý: Cần đối chiếu chính xác với HEADER_THUOC trong table_thuoc_configs
+
+                # Tạo list rỗng với kích thước chuẩn
+                drug_values = [""] * (DRUG_COL_COUNT - 1)  # -1 vì không có cột Hủy trong data trích xuất
+
+                # Fill dữ liệu vào list (Hardcode mapping dựa trên logic save)
+                drug_values[COL_DUOC_ID] = drug.get('DuocId', '')
+                drug_values[COL_MA_THUOC] = drug.get('MaThuoc', '')
+                drug_values[COL_TEN_THUOC] = drug.get('TenThuoc', '')
+                drug_values[COL_DON_VI_TINH] = drug.get('DonViTinh', '')
+                drug_values[COL_SANG] = drug.get('Sang', '0')
+                drug_values[COL_TRUA] = drug.get('Trua', '0')
+                drug_values[COL_CHIEU] = drug.get('Chieu', '0')
+                drug_values[COL_TOI] = drug.get('Toi', '0')
+                drug_values[COL_SO_NGAY] = drug.get('SoNgay', '0')
+                drug_values[COL_SO_LUONG] = drug.get('SoLuong', '0')
+                drug_values[COL_DON_GIA] = drug.get('DonGia', '0')
+                drug_values[COL_DUONG_DUNG] = drug.get('TenThuocPhu',
+                                                       '')  # Lúc lưu bạn map DuongDung vào TenThuocPhu
+
+                # Gọi hàm có sẵn để chèn
+                self._insert_static_drug_row(ui.ds_thuoc, row_idx, drug_values)
+                row_idx += 1
+
+            self.update_row_numbers()
+            self.ui_kham.ma_y_te.setFocus()
+
+        # </editor-fold>
+
     # </editor-fold>

@@ -17,6 +17,7 @@ class BenhNhan:
     NAM_SINH = 'NamSinh'
     SO_DIEN_THOAI = 'SoDienThoai'
     DIA_CHI = 'DiaChi'
+    BHYT = 'BHYT'
 
     # Định nghĩa cấu trúc (Tên cột, Kiểu dữ liệu SQLite)
     STRUCTURE = [
@@ -26,7 +27,8 @@ class BenhNhan:
         (GIOI_TINH, "TEXT"),
         (NAM_SINH, "INTEGER"),
         (SO_DIEN_THOAI, "TEXT"),
-        (DIA_CHI, "TEXT")
+        (DIA_CHI, "TEXT"),
+        (BHYT, "TEXT"),
     ]
     CONSTRAINTS = []
 
@@ -34,9 +36,15 @@ class BenhNhan:
 
     # Query lấy dữ liệu từ SQL Server (Số lượng cột và thứ tự phải khớp với STRUCTURE)
     SOURCE_QUERY = f"""
-        SELECT 
-            BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi 
-        FROM DM_BenhNhan
+--         SELECT 
+--             BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi 
+--         FROM DM_BenhNhan
+        
+        SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe
+        FROM DM_BenhNhan bn
+        OUTER apply (
+            SELECT top 1 * FROM DM_BenhNhan_BHYT a WHERE a.benhnhan_id=bn.BenhNhan_Id 
+            ORDER BY benhnhan_bhyt_id DESC) the
     """
 
 

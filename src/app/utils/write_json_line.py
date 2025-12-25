@@ -176,7 +176,29 @@ def write_json_lines(new_data, mode):
     # 8. Cập nhật file CSV Index
     update_index_csv(csv_path, current_data['meta_data'], json_filename, status_flags)
 
-    print(f"[DATA SAVED] {json_filename} | Mode: {mode} | ID: {user_id}")
+    # print(f"[DATA SAVED] {json_filename} | Mode: {mode} | ID: {user_id}")
+
+def get_todays_csv_rows():
+    """
+    Hàm chỉ đọc file index.csv và trả về danh sách các dòng (dict).
+    Không đọc JSON chi tiết ở đây để đảm bảo tốc độ nhanh.
+    """
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    csv_path = os.path.join(TARGET_DIR, date_str, "index.csv")
+
+    if not os.path.exists(csv_path):
+        return []
+
+    try:
+        with open(csv_path, mode='r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+            # Đảo ngược để người mới khám lên đầu
+            rows.reverse()
+            return rows
+    except Exception as e:
+        print(f"Lỗi đọc CSV: {e}")
+        return []
 
 
 if __name__ == '__main__':
