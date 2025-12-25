@@ -4,6 +4,8 @@ import pandas as pd
 from datetime import datetime
 from app.utils.get_file_path import get_file_path
 
+from PyQt6.QtWidgets import QMessageBox
+
 # Đường dẫn gốc chứa data json
 DATA_DIR = get_file_path('data/collect')
 EXPORT_DIR = get_file_path('data/exports')
@@ -96,27 +98,28 @@ def export_daily_report_to_excel(date_str):
 
         # --- SHEET 2: DỊCH VỤ (SERVICE BILLS) ---
         service_bill = bills.get('service_bill')
-        if service_bill and 'DichVu' in service_bill:
-            # Lấy thông tin bệnh nhân từ phần dịch vụ (đề phòng trường hợp thuốc chưa có)
-            bn_info_svc = service_bill.get('ThongTinBenhNhan', {})
+        if service_bill:
+            for group_service in service_bill['DichVu']:
+                for service in group_service['DSDichVu']:
+                    row = {
+                        'Mã y tế': service_bill.get('MaYTe', ''),
+                        'Tên Bệnh Nhân': service_bill.get('HoTen', ''),
+                        'Tuổi': service_bill.get('Tuoi', ''),
+                        'Giới Tính': service_bill.get('GioiTinh', ''),
 
-            for service in service_bill['DichVu']:
-                row = {
-                    'Mã BN': user_id,
-                    'Tên Bệnh Nhân': user_name,
-                    'Tuổi': bn_info_svc.get('tuoi', ''),
-                    'Giới Tính': bn_info_svc.get('gioi_tinh', ''),
+                        'Bác Sĩ CĐ': service_bill.get('BacSi', ''),
+                        'Chẩn Đoán': service_bill.get('ChanDoan', ''),
 
-                    'Bác Sĩ CĐ': service_bill.get('BacSi', ''),
-                    'Chẩn Đoán': service_bill.get('ChanDoan', ''),
-
-                    'Mã Dịch Vụ': service.get('MaDichVu', ''),
-                    'Tên Dịch Vụ': service.get('TenDichVu', ''),
-                    'Nơi Thực Hiện': service.get('NoiThucHien', ''),
-                    'Số Lượng': service.get('SoLuong', 1),
-                    'Đơn Giá': service.get('DonGia', 0),  # Nếu có lưu
-                }
-                list_services.append(row)
+                        'Tên nhóm dịch vụ': group_service.get('TenNhomDichVu', ''),
+                        'Mã Dịch Vụ': service.get('MaDichVu', ''),
+                        'Tên Dịch Vụ': service.get('TenDichVu', ''),
+                        'Tên Loại giá': service.get('TenLoaiGia', ''),
+                        'Nơi Thực Hiện': service.get('NoiThucHien', ''),
+                        'Số Lượng': service.get('SoLuong', 1),
+                        'Không hỗ trợ': service.get('KhongHoTro', 0),
+                        'Không thu tiền': service.get('KhongThuTien', 0),
+                    }
+                    list_services.append(row)
 
         # --- SHEET 3: HÓA ĐƠN (INVOICES) ---
         invoice = bills.get('invoice')
@@ -203,6 +206,42 @@ def _auto_adjust_column_width(writer, df, sheet_name):
 def export_excel():
     today = datetime.now().strftime("%Y-%m-%d")
     export_daily_report_to_excel(today)
+
+def export_and_show_dialog(parent_widget, date_str=None):
+    """
+    Hàm wrapper: Vừa xuất Excel, vừa hiển thị thông báo, vừa mở file.
+    Giúp code trong Controller ngắn gọn hơn.
+
+    :param parent_widget: Là 'self' (Controller) truyền vào để hiển thị popup
+    :param date_str: Ngày cần xuất (mặc định là hôm nay)
+    """
+    if date_str is None:
+        date_str = datetime.now().strftime("%Y-%m-%d")
+
+    # 1. Gọi hàm logic xuất file (Hàm cũ)
+    file_path = export_daily_report_to_excel(date_str)
+
+    # 2. Xử lý hiển thị thông báo (UI)
+    if file_path and os.path.exists(file_path):
+        msg = QMessageBox(parent_widget)
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setWindowTitle("Xuất dữ liệu thành công")
+        msg.setText(f"File Excel đã được lưu tại:\n{file_path}")
+
+        # Thêm nút mở nhanh
+        btn_open = msg.addButton("Mở File Ngay", QMessageBox.ButtonRole.ActionRole)
+        msg.addButton("Đóng", QMessageBox.ButtonRole.RejectRole)
+
+        msg.exec()
+
+        # Mở file nếu người dùng chọn
+        if msg.clickedButton() == btn_open:
+            try:
+                os.startfile(file_path)  # Chỉ chạy trên Windows
+            except Exception as e:
+                QMessageBox.warning(parent_widget, "Lỗi", f"Không thể mở file: {e}")
+    else:
+        QMessageBox.warning(parent_widget, "Thông báo", "Không có dữ liệu để xuất hoặc xảy ra lỗi ghi file.")
 
 if __name__ == '__main__':
     export_excel()

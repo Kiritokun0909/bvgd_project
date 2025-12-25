@@ -18,7 +18,7 @@ from app.ui.TabTaiVu import Ui_formTaiVu
 from app.utils.chuyen_tien_thanh_chu import chuyen_tien_thanh_chu
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
-from app.utils.export_excel import export_excel
+from app.utils.export_excel import export_and_show_dialog
 from app.utils.utils import format_currency_vn, unformat_currency_to_float, calculate_age, populate_list_to_combobox
 from app.utils.write_json_line import write_json_lines, MODE_JSON
 from app.configs.table_dich_vu_configs import *
@@ -265,7 +265,7 @@ class TaiVuTabController(QtWidgets.QWidget):
         ui.btn_in_hoa_don.clicked.connect(self.handle_in_hoa_don)
         ui.btn_reset_all.clicked.connect(self.reset_all)
         ui.btn_dang_ky.clicked.connect(self.req_dang_ky_cls.emit)
-        ui.btn_export.clicked.connect(export_excel)
+        ui.btn_export.clicked.connect(lambda: export_and_show_dialog(self))
 
         # --- THAY ĐỔI QUAN TRỌNG CHO MÁY QUÉT ---
         # Không dùng textEdited cho ma_y_te nữa vì máy quét gõ rất nhanh sẽ gây lag

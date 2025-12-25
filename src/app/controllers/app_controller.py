@@ -40,6 +40,8 @@ class AppController(QtWidgets.QWidget):
         self.dich_vu_controller.dich_vu_completed.connect(self.handle_dich_vu_completed)
         self.kham_benh_controller.req_dang_ky_cls.connect(self.handle_f5_shortcut)
         self.tai_vu_controller.req_dang_ky_cls.connect(lambda : self.handle_f5_shortcut(mode='tai_vu'))
+        self.kham_benh_controller.req_load_service_bill.connect(self.dich_vu_controller.load_data_from_service_bill)
+        self.kham_benh_controller.req_reset_dich_vu.connect(self.dich_vu_controller.reset_all)
 
         self.ui_main.tabWidget.setCurrentIndex(0)
         self.showMaximized()
