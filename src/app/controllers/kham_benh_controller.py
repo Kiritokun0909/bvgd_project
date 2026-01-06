@@ -263,15 +263,20 @@ class KhamBenhTabController(QtWidgets.QWidget):
         maThe = self.ui_kham.so_bhyt.text().strip()
         hoTen = self.ui_kham.ho_ten_bn.text().strip()
         namSinh = self.ui_kham.ngay_sinh.date().toString('yyyy')
-        result = thong_tuyen_bhyt(maThe, hoTen, namSinh)
-        print(result)
 
+        if not maThe or not hoTen or not namSinh:
+            QMessageBox.warning(self, 'Lỗi nhập liệu', 'Chưa đủ thông tin thông tuyến BHYT.')
+            return
+
+        result = thong_tuyen_bhyt(maThe, hoTen, namSinh)
+        if type(result) == str:
+            result = json.loads(result)
         maKetQua = result.get('maKetQua', '')
-        if maKetQua == 700:
+        if maKetQua == '700':
             QMessageBox.warning(self, "Lỗi kết nối", "Không có kết nối internet, vui lòng thử lại.")
             return
 
-        if maKetQua == 401:
+        if maKetQua == '401':
             QMessageBox.warning(self, "Lỗi phân quyền", f'{result.get('ghiChu', '')}')
             return
 
