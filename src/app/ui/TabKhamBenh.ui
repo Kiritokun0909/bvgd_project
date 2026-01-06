@@ -188,7 +188,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="lb_phong_kha">
+        <widget class="QLabel" name="lb_phong_kham">
          <property name="text">
           <string>Phòng khám</string>
          </property>
@@ -595,6 +595,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="0" column="13">
+        <widget class="QPushButton" name="btn_check_bhyt">
+         <property name="text">
+          <string>Kiểm tra BHYT (F9)</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

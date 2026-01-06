@@ -30,6 +30,8 @@ from app.configs.table_thuoc_configs import *
 from app.utils.constants import GIAI_QUYET_FILE_PATH
 from app.utils.write_json_line import write_json_lines, MODE_JSON, TARGET_DIR, get_todays_csv_rows
 
+from app.utils.thong_tuyen_bhyt import thong_tuyen_bhyt
+
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
     """Hàm tiện ích để lấy giá trị số từ QLineEdit, trả về 0 nếu rỗng/lỗi."""
@@ -240,6 +242,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_prev_page.clicked.connect(self.on_prev_page)
         self.ui_kham.btn_next_page.clicked.connect(self.on_next_page)
         self.ui_kham.ds_da_kham.cellDoubleClicked.connect(self.on_patient_double_click)
+        self.ui_kham.btn_check_bhyt.clicked.connect(self.handle_btn_check_bhyt)
 
     def check_enable_btn_dang_ky(self):
         """Chỉ bật nút Đăng ký khi cách giải quyết là Cận Lâm Sàng"""
@@ -255,6 +258,25 @@ class KhamBenhTabController(QtWidgets.QWidget):
         """Khi tìm kiếm, luôn quay về trang 1"""
         self.current_page_index = 1
         self.update_table_display()
+
+    def handle_btn_check_bhyt(self):
+        maThe = self.ui_kham.so_bhyt.text().strip()
+        hoTen = self.ui_kham.ho_ten_bn.text().strip()
+        namSinh = self.ui_kham.ngay_sinh.date().toString('yyyy')
+        result = thong_tuyen_bhyt(maThe, hoTen, namSinh)
+        print(result)
+
+        maKetQua = result.get('maKetQua', '')
+        if maKetQua == 700:
+            QMessageBox.warning(self, "Lỗi kết nối", "Không có kết nối internet, vui lòng thử lại.")
+            return
+
+        if maKetQua == 401:
+            QMessageBox.warning(self, "Lỗi phân quyền", f'{result.get('ghiChu', '')}')
+            return
+
+        QMessageBox.warning(self, "Kết quả thông tuyến", f'{result.get('ghiChu', '')}')
+        return
     # </editor-fold>
 
     # <editor-fold desc="Load & Save setting phòng khám">
@@ -285,6 +307,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_xoa_toa_thuoc.setStyleSheet(DELETE_BTN_STYLE)
         self.ui_kham.btn_dang_ky.setStyleSheet(ADD_BTN_STYLE)
         self.ui_kham.btn_export.setStyleSheet(ADD_BTN_STYLE)
+        self.ui_kham.btn_check_bhyt.setStyleSheet(ADD_BTN_STYLE)
 
         self.ui_kham.cb_phong_kham.setStyleSheet(COMPLETER_THUOC_STYLE)
         self.ui_kham.cb_doi_tuong.setStyleSheet(COMPLETER_THUOC_STYLE)
