@@ -32,6 +32,10 @@ class AppConfig:
     LOGO_FILE_NAME = 'logo.png'
     DB_FILE_NAME = 'hospital.db'
     CLS_CODE = 'GQ06'
+    USERNAME_THONG_TUYEN_BHYT = '79030_BV'
+    PASSWORD_THONG_TUYEN_BHYT = 'b1271a18ad724ce7414ca6fba5fec377'  # Pass đã được mã hoá MD5
+    HO_TEN_CAN_BO = 'Nguyen Van A'
+    CCCD_CAN_BO = '012345678936'
 
 
 def load_config():
@@ -56,6 +60,12 @@ def load_config():
     AppConfig.LOGO_FILE_NAME = parser.get('THONG_TIN_CHUNG', 'LOGO_FILE_NAME', fallback=AppConfig.LOGO_FILE_NAME)
     AppConfig.DB_FILE_NAME = parser.get('THONG_TIN_CHUNG', 'DB_FILE_NAME', fallback=AppConfig.DB_FILE_NAME)
     AppConfig.CLS_CODE = parser.get('THONG_TIN_CHUNG', 'CLS_CODE', fallback=AppConfig.CLS_CODE)
+    AppConfig.USERNAME_THONG_TUYEN_BHYT = parser.get('THONG_TIN_CHUNG', 'USERNAME_THONG_TUYEN_BHYT',
+                                                     fallback=AppConfig.USERNAME_THONG_TUYEN_BHYT)
+    AppConfig.PASSWORD_THONG_TUYEN_BHYT = parser.get('THONG_TIN_CHUNG', 'PASSWORD_THONG_TUYEN_BHYT',
+                                                     fallback=AppConfig.PASSWORD_THONG_TUYEN_BHYT)
+    AppConfig.HO_TEN_CAN_BO = parser.get('THONG_TIN_CHUNG', 'HO_TEN_CAN_BO', fallback=AppConfig.HO_TEN_CAN_BO)
+    AppConfig.CCCD_CAN_BO = parser.get('THONG_TIN_CHUNG', 'CCCD_CAN_BO', fallback=AppConfig.CCCD_CAN_BO)
 
 
 # Thực hiện tải cấu hình ngay khi module này được import
