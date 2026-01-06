@@ -120,7 +120,7 @@ class AppController(QtWidgets.QWidget):
         # Chỉ xử lý nếu đang ở Tab Khám Bệnh
         if current_index == kham_benh_tab_index:
 
-            # --- F5: Chuyển sang Dịch vụ (Code cũ của bạn) ---
+            # --- F5: Chuyển sang Dịch vụ ---
             if event.key() == QtCore.Qt.Key.Key_F5:
                 self.handle_f5_shortcut()
                 event.accept()
@@ -130,6 +130,12 @@ class AppController(QtWidgets.QWidget):
             if (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier) and \
                     (event.key() == QtCore.Qt.Key.Key_P):
                 self.kham_benh_controller.print_drug_bill()
+                event.accept()
+                return
+
+            # --- F9: Kiểm tra thông tuyến BHYT ---
+            if event.key() == QtCore.Qt.Key.Key_F9:
+                self.kham_benh_controller.handle_btn_check_bhyt()
                 event.accept()
                 return
 
