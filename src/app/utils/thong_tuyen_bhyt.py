@@ -2,6 +2,7 @@ import urllib.request
 from urllib.error import HTTPError, URLError
 import json
 import hashlib
+import ast
 
 from app.utils.setting_loader import AppConfig
 from app.utils.utils import convert_to_unsigned_preserve_case
@@ -51,35 +52,34 @@ def check_bhyt(
         hoTenCb='',
         cccdCb='',
 ):
-    credential = login(username, password)
-    url = (f"{CHECK_BHYT_URL}?username={credential['username']}"
-           f"&password={credential['password']}"
-           f"&token={credential['access_token']}"
-           f"&id_token={credential['id_token']}")
-    print(url)
-
-    payload = {
-        "maThe": maThe, # Mã bhxh hoặc mã thẻ BHYT
-        "hoTen": hoTen, # Họ tên có thể là k dấu
-        "ngaySinh": ngaySinh,   # ngày tháng năm sinh hoặc năm sinh, eg: 01012026 hoac 2026
-        "hoTenCb": hoTenCb, # họ tên cán bộ tra cứu(có thể k đấu)
-        "cccdCb": cccdCb,   # số cccd cán bộ tra cứu đã được cấp quyền
-    }
-
-    # Convert dictionary to a JSON string and then to bytes
-    json_data = json.dumps(payload).encode('utf-8')
-    # print(json_data)
-
-    # Build the request object
-    req = urllib.request.Request(url, data=json_data, method='POST')
-    req.add_header('Content-Type', 'application/json; charset=utf-8')
-
     try:
+        credential = login(username, password)
+        url = (f"{CHECK_BHYT_URL}?username={credential['username']}"
+               f"&password={credential['password']}"
+               f"&token={credential['access_token']}"
+               f"&id_token={credential['id_token']}")
+        print(url)
+
+        payload = {
+            "maThe": maThe,  # Mã bhxh hoặc mã thẻ BHYT
+            "hoTen": hoTen,  # Họ tên có thể là k dấu
+            "ngaySinh": ngaySinh,  # ngày tháng năm sinh hoặc năm sinh, eg: 01012026 hoac 2026
+            "hoTenCb": hoTenCb,  # họ tên cán bộ tra cứu(có thể k đấu)
+            "cccdCb": cccdCb,  # số cccd cán bộ tra cứu đã được cấp quyền
+        }
+
+        # Convert dictionary to a JSON string and then to bytes
+        json_data = json.dumps(payload).encode('utf-8')
+        # print(json_data)
+
+        # Build the request object
+        req = urllib.request.Request(url, data=json_data, method='POST')
+        req.add_header('Content-Type', 'application/json; charset=utf-8')
+
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode('utf-8'))
-            # print(f"Status: {response.status}")
+            print(f"Status: {response.status}")
             return result
-
     except HTTPError as e:
         # Lỗi 401, 404, 500... sẽ rơi vào đây
         # print(f"Lỗi HTTP: {e.code}")  # Sẽ in ra 401
@@ -91,21 +91,17 @@ def check_bhyt(
         # if e.code == 401:
             # print("Xác thực thất bại: Kiểm tra lại username/password hoặc Token.")
         return error_body
-
     except URLError as e:
         # Lỗi kết nối (sai URL, không có internet, server sập)
         # print(f"Lỗi kết nối: {e.reason}")
         response = {"maKetQua":"700"}
         return response
 
-def thong_tuyen_bhyt(maThe, _hoTen, namSinh):
-    hoTen = convert_to_unsigned_preserve_case(_hoTen)
+def thong_tuyen_bhyt(maThe, hoTen, namSinh):
+    _hoTen = convert_to_unsigned_preserve_case(hoTen)
     response = check_bhyt(AppConfig.USERNAME_THONG_TUYEN_BHYT,
                           AppConfig.PASSWORD_THONG_TUYEN_BHYT,
-                          maThe, hoTen, namSinh,
+                          maThe, _hoTen, namSinh,
                           AppConfig.HO_TEN_CAN_BO,
                           AppConfig.CCCD_CAN_BO)
     return response
-
-if __name__ == '__main__':
-    pass

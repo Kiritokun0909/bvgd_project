@@ -32,8 +32,8 @@ class AppConfig:
     LOGO_FILE_NAME = 'logo.png'
     DB_FILE_NAME = 'hospital.db'
     CLS_CODE = 'GQ06'
-    USERNAME_THONG_TUYEN_BHYT = '79030_BV'
-    PASSWORD_THONG_TUYEN_BHYT = 'b1271a18ad724ce7414ca6fba5fec377'  # Pass đã được mã hoá MD5
+    USERNAME_THONG_TUYEN_BHYT = 'Username'
+    PASSWORD_THONG_TUYEN_BHYT = 'Password'
     HO_TEN_CAN_BO = 'Nguyen Van A'
     CCCD_CAN_BO = '012345678936'
 
