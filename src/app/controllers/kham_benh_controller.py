@@ -17,6 +17,7 @@ from app.services.PhongBanService import get_list_phong_ban
 from app.styles.styles import DELETE_BTN_STYLE, ADD_BTN_STYLE, TUOI_STYLE, COMPLETER_THUOC_STYLE
 
 from app.ui.TabKhamBenh import Ui_formKhamBenh
+from app.ui.ThongBaoThongTuyenBHYT import Ui_Dialog as Ui_ThongBaoThongTuyenBHYT
 
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
@@ -260,27 +261,52 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.update_table_display()
 
     def handle_btn_check_bhyt(self):
-        maThe = self.ui_kham.so_bhyt.text().strip()
-        hoTen = self.ui_kham.ho_ten_bn.text().strip()
-        namSinh = self.ui_kham.ngay_sinh.date().toString('yyyy')
+        ma_the_bhyt = self.ui_kham.so_bhyt.text().strip()
+        ho_ten = self.ui_kham.ho_ten_bn.text().strip()
+        nam_sinh = self.ui_kham.ngay_sinh.date().toString('yyyy')
 
-        if not maThe or not hoTen or not namSinh:
-            QMessageBox.warning(self, 'Lỗi nhập liệu', 'Chưa đủ thông tin thông tuyến BHYT.')
-            return
+        fields_to_check = [
+            (self.ui_kham.so_bhyt, "Số BHYT"),
+            (self.ui_kham.ho_ten_bn, "Họ tên bệnh nhân"),
+        ]
 
-        result = thong_tuyen_bhyt(maThe, hoTen, namSinh)
+        if not self.ui_kham.ngay_sinh.date().isValid():
+            QMessageBox.warning(self, "Thiếu dữ liệu", "Vui lòng nhập Năm sinh hợp lệ để thông tuyến BHYT.")
+            self.ui_kham.ngay_sinh.setFocus()
+            return False
+
+        for field, name in fields_to_check:
+            if not field.text().strip():
+                QMessageBox.warning(self, "Thiếu dữ liệu", f"Vui lòng nhập {name} để thông tuyến BHYT.")
+                field.setFocus()
+                return False
+
+        result = thong_tuyen_bhyt(ma_the_bhyt, ho_ten, nam_sinh)
         if type(result) == str:
             result = json.loads(result)
+        
         maKetQua = result.get('maKetQua', '')
+        ghiChu = result.get('ghiChu', '')
+
         if maKetQua == '700':
-            QMessageBox.warning(self, "Lỗi kết nối", "Không có kết nối internet, vui lòng thử lại.")
-            return
+            ghiChu = "Không có kết nối internet, vui lòng kiểm tra kết nối mạng."
 
-        if maKetQua == '401':
-            QMessageBox.warning(self, "Lỗi phân quyền", f'{result.get('ghiChu', '')}')
-            return
+        # Show Dialog
+        dialog = QtWidgets.QDialog(self)
+        ui = Ui_ThongBaoThongTuyenBHYT()
+        ui.setupUi(dialog)
 
-        QMessageBox.warning(self, "Kết quả thông tuyến", f'{result.get('ghiChu', '')}')
+        ui.maKetQua.setText(f"Mã kết quả: {maKetQua}")
+        ui.ghiChu.setText(ghiChu)
+
+        if maKetQua != '000':
+            dialog.setStyleSheet("QLabel {\n"
+                                 "color: red;\n"
+                                 "font-size: 12pt;\n"
+                                 "font-weight: bold;\n"
+                                 "}")
+
+        dialog.exec()
         return
     # </editor-fold>
 
@@ -871,7 +897,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
             (ui.ho_ten_bn, "Họ tên bệnh nhân"),
             (ui.dia_chi, "Địa chỉ"),
             (ui.sdt, "Số điện thoại"),
-            (ui.chan_doan, "Chẩn đoán")
+            (ui.chan_doan, "Chẩn đoán"),
+            (ui.cccd, "Căn cước công dân"),
         ]
 
         if not ui.ngay_sinh.date().isValid():
@@ -900,8 +927,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         if len(data.get('ToaThuoc')) < 1:
             QMessageBox.warning(self,
-                                "Thông báo",
-                                f"Chưa có thuốc nào trong toa thuốc.")
+                                "Thiếu dữ liệu",
+                                f"Chưa chọn thuốc nào trong toa thuốc.")
             return
 
         # json_data = json.dumps(data, indent=4, ensure_ascii=False)

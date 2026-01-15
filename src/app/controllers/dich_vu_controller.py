@@ -1000,7 +1000,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             return
         data = self.get_thong_tin_dang_ky()
         if len(data.get('DichVu', [])) < 1:
-            QMessageBox.warning(self, "Thiếu dữ liệu", "Chưa chọn dịch vụ chỉ định!")
+            QMessageBox.warning(self, "Thiếu dữ liệu", "Chưa chọn dịch vụ chỉ định cho bệnh nhân!")
             return
 
         # data_json = json.dumps(data, indent=4, ensure_ascii=False)

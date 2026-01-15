@@ -12,7 +12,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_formKhamBenh(object):
     def setupUi(self, formKhamBenh):
         formKhamBenh.setObjectName("formKhamBenh")
-        formKhamBenh.resize(1567, 768)
+        formKhamBenh.resize(1610, 768)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(10)
@@ -793,7 +793,7 @@ class Ui_formKhamBenh(object):
         self.cccd.setPlaceholderText(_translate("formKhamBenh", "Nhập số CCCD..."))
         self.lb_cccd.setText(_translate("formKhamBenh", "Số CCCD"))
         self.so_bhyt.setPlaceholderText(_translate("formKhamBenh", "Nhập số BHYT..."))
-        self.btn_check_bhyt.setText(_translate("formKhamBenh", "Kiểm tra BHYT (F9)"))
+        self.btn_check_bhyt.setText(_translate("formKhamBenh", "Kiểm tra BHYT (F3)"))
         self.groupBox.setTitle(_translate("formKhamBenh", "DANH SÁCH ĐÃ KHÁM BỆNH TRONG NGÀY"))
         self.ma_y_te_da_kham.setPlaceholderText(_translate("formKhamBenh", "Mã y tế..."))
         self.ho_ten_da_kham.setPlaceholderText(_translate("formKhamBenh", "Tên bệnh nhân..."))

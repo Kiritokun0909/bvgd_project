@@ -49,7 +49,7 @@ try:
     pdfmetrics.registerFont(TTFont(VIET_FONT_BOLD, 'C:/Windows/Fonts/timesbd.ttf'))
     pdfmetrics.registerFont(TTFont(VIET_FONT_ITALIC, 'C:/Windows/Fonts/timesi.ttf'))
 except Exception as e:
-    print(f"!!! CẢNH BÁO Font: {e}")
+    # print(f"!!! CẢNH BÁO Font: {e}")
     VIET_FONT = 'Helvetica'
     VIET_FONT_BOLD = 'Helvetica-Bold'
     VIET_FONT_ITALIC = 'Helvetica-Oblique'
