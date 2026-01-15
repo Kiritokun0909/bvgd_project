@@ -74,7 +74,11 @@ DIA_CHI = 123 Đường ABC, Phường XYZ
 SDT = 024.1234.5678
 LOGO_FILE_NAME = logo.png
 DB_FILE_NAME = hospital.db
-CLS_CODE = GQ06
+CLS_CODE = GQ06 # Notice this code must be the same with CLS in cach_giai_quyet.csv
+USERNAME_THONG_TUYEN_BHYT = username # username for login BHXH VN
+PASSWORD_THONG_TUYEN_BHYT = password # password
+HO_TEN_CAN_BO = Nguyen Van A # Tên cán bộ được cấp quyền tìm kiếm
+CCCD_CAN_BO = 012345678936  # Số CCCD của cán bộ được cấp quyền trên cổng PIS
 ```
 
 ## How to Run

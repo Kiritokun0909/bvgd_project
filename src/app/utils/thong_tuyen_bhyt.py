@@ -58,7 +58,7 @@ def check_bhyt(
                f"&password={credential['password']}"
                f"&token={credential['access_token']}"
                f"&id_token={credential['id_token']}")
-        print(url)
+        # print(url)
 
         payload = {
             "maThe": maThe,  # Mã bhxh hoặc mã thẻ BHYT
@@ -78,7 +78,8 @@ def check_bhyt(
 
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode('utf-8'))
-            print(f"Status: {response.status}")
+            # print(f"Status: {response.status}")
+            # print(result)
             return result
     except HTTPError as e:
         # Lỗi 401, 404, 500... sẽ rơi vào đây

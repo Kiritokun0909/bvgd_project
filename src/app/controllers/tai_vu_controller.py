@@ -545,8 +545,6 @@ class TaiVuTabController(QtWidgets.QWidget):
     def handle_in_hoa_don(self):
         data = self.get_thong_tin()
         if not self.check_required_data(data):
-            # QMessageBox.warning(self, 'Cảnh báo', 'Chưa có đủ thông tin in phiếu hoá đơn!')
-            # self.ui_tai_vu.ma_y_te.setFocus()
             return
 
         write_json_lines(data, MODE_JSON.HOA_DON_MODE)

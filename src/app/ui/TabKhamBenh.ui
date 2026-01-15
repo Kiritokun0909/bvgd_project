@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1567</width>
+    <width>1610</width>
     <height>768</height>
    </rect>
   </property>
@@ -599,7 +599,7 @@
        <item row="0" column="13">
         <widget class="QPushButton" name="btn_check_bhyt">
          <property name="text">
-          <string>Kiểm tra BHYT (F9)</string>
+          <string>Kiểm tra BHYT (F3)</string>
          </property>
         </widget>
        </item>

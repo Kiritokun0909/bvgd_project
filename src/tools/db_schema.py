@@ -163,7 +163,7 @@ class DMDichVu:
         (DICH_VU_ID, "INTEGER PRIMARY KEY"),
         (INPUT_CODE, "TEXT"),
         (TEN_DICH_VU, "TEXT"),
-        (TEN_KHONG_DAU, "TEXT")
+        (TEN_KHONG_DAU, "TEXT"),
         (NHOM_DICH_VU_ID, "INTEGER"),
     ]
     # Ràng buộc khoá ngoại

@@ -134,7 +134,7 @@ class AppController(QtWidgets.QWidget):
                 return
 
             # --- F9: Kiểm tra thông tuyến BHYT ---
-            if event.key() == QtCore.Qt.Key.Key_F9:
+            if event.key() == QtCore.Qt.Key.Key_F3:
                 self.kham_benh_controller.handle_btn_check_bhyt()
                 event.accept()
                 return

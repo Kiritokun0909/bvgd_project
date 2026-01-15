@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>443</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Thông báo kết quả thông tuyến</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QLabel {
+color: rgb(0, 181, 133) ;
+font-size: 12pt;
+font-weight: bold;
+}</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="1,2,0">
+   <item>
+    <widget class="QLabel" name="maKetQua">
+     <property name="text">
+      <string>Mã kết quả [000]: Thẻ còn giá trị sử dụng</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="ghiChu">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>'Thẻ còn giá trị sử dụng! Họ tên : Nguyễn Văn A, Ngày sinh: 01/01/1999, Giới tính : Nam! (ĐC: 123 Đường Nơ Trang Long, Phường Gia Định, Quận Bình Thạnh, Thành phố Hồ Chí Minh; Nơi KCBBĐ: 79030; Hạn thẻ: 01/01/2026 - 31/12/2026; Thời điểm đủ 5 năm liên tục: 01/01/2015).'</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Dialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Dialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
