@@ -1,4 +1,4 @@
-SQLITE_DB_PATH = 'data/du_lieu_local.db'
+SQLITE_DB_PATH = 'data/hospital.db'
 
 """
     Nơi định nghĩa cấu trúc Database.
@@ -36,10 +36,6 @@ class BenhNhan:
 
     # Query lấy dữ liệu từ SQL Server (Số lượng cột và thứ tự phải khớp với STRUCTURE)
     SOURCE_QUERY = f"""
---         SELECT 
---             BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi 
---         FROM DM_BenhNhan
-        
         SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe
         FROM DM_BenhNhan bn
         OUTER apply (
@@ -98,6 +94,7 @@ class DM_Duoc:
     DON_GIA = 'DonGia'
     TEN_DON_VI_TINH = 'TenDonViTinh'
     DICTIONARY_NAME = 'Dictionary_Name'
+    PHAM_VI = 'PhamVi'
 
     STRUCTURE = [
         (DUOC_ID, "INTEGER PRIMARY KEY"),
@@ -105,12 +102,13 @@ class DM_Duoc:
         (TEN_DUOC_DAY_DU, "TEXT"),
         (DON_GIA, "REAL"),
         (TEN_DON_VI_TINH, "TEXT"),
-        (DICTIONARY_NAME, "TEXT")
+        (DICTIONARY_NAME, "TEXT"),
+        (PHAM_VI, "TEXT"),
     ]
     CONSTRAINTS = []
 
     SOURCE_QUERY = f"""
-        SELECT Duoc_Id, MaDuoc, TenDuocDayDu, DonGia, TenDonViTinh, Dictionary_Name
+        SELECT Duoc_Id, MaDuoc, TenDuocDayDu, DonGia, TenDonViTinh, Dictionary_Name, PhamVi
         FROM DM_Duoc
     """
 

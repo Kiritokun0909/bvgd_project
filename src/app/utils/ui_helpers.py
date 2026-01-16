@@ -147,6 +147,10 @@ class DuocCompleterHandler(BaseCompleterHandler):
     def __init__(self, table_widget: QtWidgets.QTableWidget, parent=None, **kwargs):
         super().__init__(parent=parent, **kwargs)
         self.table_widget = table_widget
+        self.doi_tuong_id = None
+
+    def set_ma_doi_tuong(self, ma_doi_tuong: str):
+        self.doi_tuong_id = ma_doi_tuong
 
     # 2. Thêm hàm helper để đọc bảng
     def _get_added_drug_ids(self) -> set:
@@ -167,7 +171,7 @@ class DuocCompleterHandler(BaseCompleterHandler):
         added_ids = self._get_added_drug_ids()
 
         # Gọi service
-        raw_data_list = get_list_duoc(keyword=keyword)
+        raw_data_list = get_list_duoc(keyword, self.doi_tuong_id)
 
         results = []
         for raw_item in raw_data_list:

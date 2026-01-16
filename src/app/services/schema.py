@@ -12,6 +12,7 @@ class Schema:
         NAM_SINH = 'NamSinh'
         SO_DIEN_THOAI = 'SoDienThoai'
         DIA_CHI = 'DiaChi'
+        BHYT = 'BHYT'
 
     class DoiTuong:
         TABLE_NAME = 'DoiTuong'
@@ -35,6 +36,7 @@ class Schema:
         DON_GIA = 'DonGia'
         TEN_DON_VI_TINH = 'TenDonViTinh'
         DICTIONARY_NAME = 'Dictionary_Name'
+        PHAM_VI = 'PhamVi'
 
     class PhongBan:
         TABLE_NAME = 'PhongBan'

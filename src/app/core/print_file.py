@@ -1,23 +1,35 @@
-import subprocess
-import sys
+import win32api
+import win32print
+import os
 
-from app.utils.get_file_path import get_file_path
-sumatra_path = r'C:\Users\hoduc\PycharmProjects\BVGD_Project\dist\SumatraPDF\SumatraPDF.exe'
-
-if getattr(sys, 'frozen', False):
-    sumatra_path = get_file_path("SumatraPDF/SumatraPDF.exe")
 
 def print_file_win32(file_path):
-    args = [
-        sumatra_path,
-        "-print-to-default",
-        "-silent",
-        "-exit-on-print",
-        file_path
-    ]
+    if not os.path.exists(file_path):
+        print(f"Lỗi: Không tìm thấy tệp tại đường dẫn: {file_path}")
+        return
+
     try:
-        # Gọi subprocess
-        subprocess.run(args, check=True)
-        # print("Đã gửi lệnh in đến máy in mặc định thành công.")
-    except subprocess.CalledProcessError as e:
-        print(f"Có lỗi xảy ra khi gọi SumatraPDF: {e}")
+        default_printer = win32print.GetDefaultPrinter()
+        abs_path = os.path.abspath(file_path)
+
+        win32api.ShellExecute(
+            0,
+            "printto",  # 'printto' sẽ gửi tệp trực tiếp đến máy in
+            abs_path,
+            f'"{default_printer}"',
+            ".",
+            0  # 0: SW_HIDE - Cố gắng ẩn cửa sổ ứng dụng in
+        )
+
+        # print(f"Đã gửi lệnh in thành công:")
+        # print(f" - Tệp: {os.path.basename(abs_path)}")
+        # print(f" - Máy in: {default_printer}")
+
+    except Exception as e:
+        print(f"Lỗi khi in bằng win32api: {e}")
+
+
+if __name__ == "__main__":
+    # Đường dẫn tệp của bạn
+    path = r'C:\Users\hoduc\PycharmProjects\BVGD_Project\src\data\in_phieu_toa_thuoc\DonThuoc_123_15_12_2025__13_58_18.pdf'
+    print_file_win32(path)

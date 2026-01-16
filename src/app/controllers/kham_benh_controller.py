@@ -212,6 +212,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         # </editor-fold>
 
         self.reset_data()
+        self.handle_update_doi_tuong()
     # </editor-fold>
 
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
@@ -222,6 +223,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ten_bac_si.textEdited.connect(self._save_settings)
         self.ui_kham.is_hen_kham.clicked.connect(self.update_ngay_hen)
         self.ui_kham.so_ngay_hen.textEdited.connect(self.update_ngay_hen_kham_date)
+        self.ui_kham.cb_doi_tuong.currentIndexChanged.connect(self.handle_update_doi_tuong)
 
         self.ui_kham.btn_in_phieu.clicked.connect(self.print_drug_bill)
         self.ui_kham.btn_reset_all.clicked.connect(self.reset_all)
@@ -244,6 +246,11 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_next_page.clicked.connect(self.on_next_page)
         self.ui_kham.ds_da_kham.cellDoubleClicked.connect(self.on_patient_double_click)
         self.ui_kham.btn_check_bhyt.clicked.connect(self.handle_btn_check_bhyt)
+
+    def handle_update_doi_tuong(self):
+        doi_tuong_id = self.ui_kham.cb_doi_tuong.currentData()
+        if doi_tuong_id:
+            self.duoc_handler.set_ma_doi_tuong(str(doi_tuong_id))
 
     def check_enable_btn_dang_ky(self):
         """Chỉ bật nút Đăng ký khi cách giải quyết là Cận Lâm Sàng"""
@@ -300,6 +307,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.ghiChu.setText(ghiChu)
 
         if maKetQua != '000':
+            idx_doi_tuong = self.ui_kham.cb_doi_tuong.findData(20)
+            if idx_doi_tuong >= 0: self.ui_kham.cb_doi_tuong.setCurrentIndex(idx_doi_tuong)
+
             dialog.setStyleSheet("QLabel {\n"
                                  "color: red;\n"
                                  "font-size: 12pt;\n"
@@ -385,7 +395,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         benh_nhan_data = get_benh_nhan_by_id(ma_y_te)
         if benh_nhan_data is None:
-            print(f'Không tìm thấy bệnh nhân với mã {ma_y_te}')
+            QMessageBox.warning(self, 'Thông báo', f'Không tìm thấy bệnh nhân với mã y tế {ma_y_te}')
             return
 
         self.set_thong_tin_benh_nhan(benh_nhan_data)
