@@ -76,6 +76,7 @@ def export_daily_report_to_excel(date_str):
                     'Giới Tính': drug_bill.get('GioiTinh', ''),
                     'Địa Chỉ': drug_bill.get('DiaChi', ''),
                     'BHYT': drug_bill.get('BHYT', ''),
+                    'CCCD': drug_bill.get('CCCD', ''),
 
                     # 2. Sinh hiệu & Lâm sàng (Thêm mới)
                     **vital_signs,  # Bung toàn bộ dict sinh hiệu vào đây

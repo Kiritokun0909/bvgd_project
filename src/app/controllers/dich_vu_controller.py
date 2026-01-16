@@ -872,6 +872,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'gioi_tinh': ui.gioi_tinh.text().strip(),
             'dia_chi': ui.dia_chi.text().strip(),
             'sdt': self.thong_tin_benh_nhan.get('SDT', ''),
+            'cccd': self.thong_tin_benh_nhan.get('CCCD', ''),
         }
         data_raw['ThongTinPhongKham'] = {
             'noi_yeu_cau': ui.cb_noi_yeu_cau.currentText(),
@@ -980,6 +981,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'GioiTinh': data_raw['ThongTinBenhNhan'].get('gioi_tinh', ''),
             'DiaChi': data_raw['ThongTinBenhNhan'].get('dia_chi', ''),
             'SDT': data_raw['ThongTinBenhNhan'].get('sdt', ''),
+            'CCCD': data_raw['ThongTinBenhNhan'].get('cccd', ''),
 
             'ChanDoan': data_raw['ThongTinPhongKham'].get('chan_doan', ''),
             'GhiChu': data_raw['ThongTinPhongKham'].get('ghi_chu', ''),
@@ -1041,6 +1043,7 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
             'MaDoiTuong': data.get('MaDoiTuong', ''),
             'TenDoiTuong': data.get('DoiTuong', ''),
             'SDT': data.get('SDT', ''),
+            'CCCD': data.get('CCCD', ''),
 
             # Thông tin chỉ định
             'TenBacSi': data.get('TenBacSi', ''),
