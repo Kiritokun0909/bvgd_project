@@ -123,6 +123,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.bhyt_from.setDate(current_date)
         self.ui_kham.bhyt_to.setDate(current_date)
         self.ui_kham.ngay_sinh.setDate(current_date)
+        self.ui_kham.cccd.clear()
 
         self.ui_kham.mach.clear()
         self.ui_kham.nhiet_do.clear()
@@ -875,10 +876,13 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'DiaChi': ui.dia_chi.text().strip(),
             'SDT': ui.sdt.text().strip(),
             'BHYT': ui.so_bhyt.text().strip().upper(),
+            'CCCD': ui.cccd.text().strip(),
             'MaDoiTuong': ui.cb_doi_tuong.currentData(),
             'DoiTuong': ui.cb_doi_tuong.currentText(),
 
-            'ChanDoan': ui.chan_doan.text().strip() +'; '+ ui.ma_icd.text().strip(),
+            'ChanDoan': ui.chan_doan.text().strip()
+                + ('; ' + ui.ma_icd.text().strip() if ui.ma_icd.text().strip() != '' else '')
+                + ('; ' + ui.ma_icd_phu.text().strip() if ui.ma_icd_phu.text().strip() != '' else ''),
             'Mach': ui.mach.text().strip(),
             'HA': huyet_ap,
             'NhietDo': ui.nhiet_do.text().strip(),
@@ -982,6 +986,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'BHYT_Den': ui.bhyt_to.date().toString("dd/MM/yyyy"),
             'DiaChi': ui.dia_chi.text().strip(),
             'SDT': ui.sdt.text().strip(),
+            'CCCD': ui.cccd.text().strip(),
 
             'Tuoi': ui.tuoi.text().strip(),
             'MaDoiTuong': ui.cb_doi_tuong.currentData(),
@@ -993,7 +998,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
             'NgayGioKham': ui.ngay_gio_kham.dateTime().toString("dd/MM/yyyy HH:mm:ss"),
 
             'MaGiaiQuyet': ui.cb_cach_giai_quyet.currentData(),
-            'ChanDoan': ui.chan_doan.text().strip() +'; '+ ui.ma_icd.text().strip(),
+            'ChanDoan': ui.chan_doan.text().strip()
+                        + ('; ' + ui.ma_icd.text().strip() if ui.ma_icd.text().strip() != '' else '')
+                        + ('; ' + ui.ma_icd_phu.text().strip() if ui.ma_icd_phu.text().strip() != '' else ''),
         }
 
         return data
@@ -1144,12 +1151,12 @@ class KhamBenhTabController(QtWidgets.QWidget):
             drug_bill = bills.get('drug_bill')
             service_bill = bills.get('service_bill')
 
-            if drug_bill:
-                self.fill_form_data(drug_bill, load_prescription=True)
-
             if service_bill:
                 self.fill_form_data(service_bill, load_prescription=False)
                 self.req_load_service_bill.emit(service_bill)
+
+            if drug_bill:
+                self.fill_form_data(drug_bill, load_prescription=True)
 
         except Exception as e:
             print(f"Lỗi load lại json: {e}")
@@ -1166,6 +1173,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.dia_chi.setText(data.get('DiaChi', ''))
         ui.sdt.setText(data.get('SDT', ''))
         ui.so_bhyt.setText(data.get('BHYT', ''))
+        ui.cccd.setText(data.get('CCCD', ''))
         ui.tuoi.setText(data.get('Tuoi', ''))
         ui.cb_gioi_tinh.setCurrentText(data.get('GioiTinh', ''))
 
