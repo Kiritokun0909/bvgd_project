@@ -5,8 +5,8 @@ from PyQt6.QtWidgets import QMessageBox, QTableWidgetItem, QWidget, QHBoxLayout,
 import sys
 
 # --- IMPORT SERVICES ---
-from app.services.DuocService import get_duoc_by_id, get_duoc_by_duoc_id
-from app.services.DichVuService import get_dich_vu_by_input_code, get_gia_dich_vu, get_dich_vu_by_dich_vu_id
+from app.services.DuocService import get_duoc_by_duoc_id
+from app.services.DichVuService import get_gia_dich_vu, get_dich_vu_by_dich_vu_id
 from app.services.LoaiGiaService import get_list_loai_gia
 
 from app.controllers.dich_vu_controller import get_checkbox_state

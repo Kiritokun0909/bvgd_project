@@ -48,5 +48,5 @@ if __name__ == '__main__':
     for i in range(len(data)):
         print(f'[{i}]:', data[i])
 
-    data = get_doi_tuong_by_id(2)
+    data = get_doi_tuong_by_id('20')
     print(data)
