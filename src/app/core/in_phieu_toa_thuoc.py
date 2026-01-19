@@ -194,7 +194,8 @@ def draw_drug_form(c, data, thong_tin_qrcode, is_draw = True):
 
         # 2. Chuẩn bị dữ liệu dòng Tên thuốc
         # Kết hợp Tên chính (Đậm) và Tên phụ (Nghiêng) vào 1 ô Paragraph
-        ten_thuoc_full = f"<b>{drug.get('TenThuoc', '')}</b> <font name='{VIET_FONT_ITALIC}'>{drug.get('TenThuocPhu', '')}</font>"
+        ten_thuoc_full = (f"<font name='{VIET_FONT_BOLD}'>{drug.get('TenThuoc', '')}</font> "
+                          f"<font name='{VIET_FONT_ITALIC}'>{drug.get('TenThuocPhu', '')}</font>")
 
         row_data = [
             drug.get('STT', ''),
