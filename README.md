@@ -31,6 +31,7 @@ The application operates with a local SQLite database for offline capability/spe
 ### 1. Prerequisites
 - Python 3.8 or higher.
 - ODBC Driver 17 for SQL Server.
+- Recommend using **Pycharm, QtDesigner** to maintain this project.
 
 ### 2. Install Dependencies
 It is recommended to use a virtual environment.
@@ -90,22 +91,30 @@ Before running the application, you need to prepare the local database.
 python src/tools/main_etl.py
 ```
 This script will:
-1.  Create the SQLite database structure (`data/du_lieu_local.db`).
+1.  Create the SQLite database structure (`data/hospital.db`).
 2.  Fetch data from the configured SQL Server.
 3.  Populate the local SQLite database.
 
 ### 2. Run the Application
 Start the main desktop interface:
 
-```bash
+```
 python src/main.py
 ```
 
 ## Building Executable
 To build a standalone executable using the provided spec file:
-
-```bash
+```
 pyinstaller --windowed .\src\main.py
 ```
 The output file will be located in the `dist/` directory.
+
+
+# Other Tools
+ * To extract correctly data from your own database to **hospital.db**, you need
+to open **src/tools/README.md** and follow instruction.
+
+ * To copy and sync program to multiple machines in local network and schedule
+to run it weekly, please read **src/tools/sync_app/README.md** and follow
+instruction.
    
