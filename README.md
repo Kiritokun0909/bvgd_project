@@ -87,7 +87,7 @@ CCCD_CAN_BO = 012345678936  # Số CCCD của cán bộ được cấp quyền t
 ### 1. Initialize & Sync Data (ETL)
 Before running the application, you need to prepare the local database.
 
-```bash
+```
 python src/tools/main_etl.py
 ```
 This script will:
@@ -105,14 +105,14 @@ python src/main.py
 ## Building Executable
 To build a standalone executable using the provided spec file:
 ```
-pyinstaller --windowed --noconfirm .\src\main.py
+pyinstaller --windowed --noconfirm .\src\main.py  
 ```
 The output file will be located in the `dist/` directory.
 
 
 # Other Tools
- * To extract correctly data from your own database to **hospital.db**, you need
-to open **src/tools/README.md** and follow instruction.
+ * To extract correctly data from your own database to **hospital.db**, please read 
+**src/tools/README.md** and follow instruction.
 
  * To copy and sync program to multiple machines in local network and schedule
 to run it weekly, please read **src/tools/sync_app/README.md** and follow
