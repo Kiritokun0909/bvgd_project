@@ -32,7 +32,7 @@ If the destination shares are password-protected, you need to enable the authent
 
 1.  **Define Credentials:**
     Add your credentials at the top of the Configuration section:
-    ```powershell
+    ```
     $User = "AdminUser"
     $Password = "YourStrongPassword"
     ```
