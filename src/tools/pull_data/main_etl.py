@@ -38,10 +38,6 @@ def get_sql_server_connection():
 
 
 def generate_insert_sql(table_cls):
-    """
-    Tạo câu lệnh INSERT động:
-    INSERT INTO TableName (Col1, Col2) VALUES (?, ?)
-    """
     col_names = [col[0] for col in table_cls.STRUCTURE]
     placeholders = ["?"] * len(col_names)
 
