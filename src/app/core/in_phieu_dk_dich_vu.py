@@ -127,8 +127,8 @@ def draw_header_info(c, data, barcode_ma_y_te_path, qr_thong_tin):
 
     # QR code thông tin
     try:
-        x_qr = PAGE_WIDTH - MARGIN_LEFT - 45
-        c.drawImage(qr_thong_tin, x_qr, y_start - 20, 45, 45)
+        x_qr = PAGE_WIDTH - MARGIN_LEFT - 50
+        c.drawImage(qr_thong_tin, x_qr, y_start - 35, 60, 60)
     except:
         pass
 
