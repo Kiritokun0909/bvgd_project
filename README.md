@@ -105,7 +105,7 @@ python src/main.py
 ## Building Executable
 To build a standalone executable using the provided spec file:
 ```
-pyinstaller --windowed .\src\main.py
+pyinstaller --windowed --noconfirm .\src\main.py
 ```
 The output file will be located in the `dist/` directory.
 
