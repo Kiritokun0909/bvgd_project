@@ -21,3 +21,6 @@ src/data/
 
 src/logo.png
 src/settings.ini
+src/tools/sync_app/logs
+src/tools/sync_app/sync.py
+src/tools/pull_data/main_etl.py

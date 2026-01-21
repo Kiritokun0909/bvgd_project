@@ -1,4 +1,4 @@
-SQLITE_DB_PATH = '../../data/hospital.db'
+SQLITE_DB_PATH = 'data/hospital.db'
 
 """
     Nơi định nghĩa cấu trúc Database.
@@ -7,6 +7,7 @@ SQLITE_DB_PATH = '../../data/hospital.db'
     - CONSTRAINTS: List các ràng buộc bảng (Primary key phức hợp, Foreign key...)
     - SOURCE_QUERY: Query lấy data từ db gốc
 """
+
 
 class BenhNhan:
     TABLE_NAME = 'BenhNhan'
@@ -28,7 +29,7 @@ class BenhNhan:
         (NAM_SINH, "INTEGER"),
         (SO_DIEN_THOAI, "TEXT"),
         (DIA_CHI, "TEXT"),
-        (BHYT, "TEXT"),
+        (BHYT, "TEXT")
     ]
     CONSTRAINTS = []
 
@@ -36,7 +37,7 @@ class BenhNhan:
 
     # Query lấy dữ liệu từ SQL Server (Số lượng cột và thứ tự phải khớp với STRUCTURE)
     SOURCE_QUERY = f"""
-        SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe
+        SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe as BHYT
         FROM DM_BenhNhan bn
         OUTER apply (
             SELECT top 1 * FROM DM_BenhNhan_BHYT a WHERE a.benhnhan_id=bn.BenhNhan_Id 
@@ -65,7 +66,8 @@ class DoiTuong:
 
     SOURCE_QUERY = f"""
         SELECT DoiTuong_Id, MaDoiTuong, TenDoiTuong, GioiHan_1, TyLe_1, TyLe_2 
-        FROM DoiTuong
+        FROM DM_DoiTuong 
+        where tamngung=0
     """
 
 
@@ -81,8 +83,8 @@ class ICD:
     CONSTRAINTS = []
 
     SOURCE_QUERY = f"""
-        SELECT MaICD, TenICD 
-        FROM ICD
+        SELECT distinct MaICD, TenICD 
+        FROM DM_ICD where tamngung=0
     """
 
 
@@ -94,22 +96,42 @@ class DM_Duoc:
     DON_GIA = 'DonGia'
     TEN_DON_VI_TINH = 'TenDonViTinh'
     DICTIONARY_NAME = 'Dictionary_Name'
-    PHAM_VI = 'PhamVi'
+    PHAMVI = 'PhamVi'
 
     STRUCTURE = [
         (DUOC_ID, "INTEGER PRIMARY KEY"),
         (MA_DUOC, "TEXT"),
         (TEN_DUOC_DAY_DU, "TEXT"),
-        (DON_GIA, "REAL"),
         (TEN_DON_VI_TINH, "TEXT"),
         (DICTIONARY_NAME, "TEXT"),
-        (PHAM_VI, "TEXT"),
+        (DON_GIA, "REAL"),
+        (PHAMVI, "TEXT"),
     ]
     CONSTRAINTS = []
 
     SOURCE_QUERY = f"""
-        SELECT Duoc_Id, MaDuoc, TenDuocDayDu, DonGia, TenDonViTinh, Dictionary_Name, PhamVi
-        FROM DM_Duoc
+    SELECT * 
+    FROM (    
+        SELECT 
+            duoc.Duoc_Id, MaDuoc, TenDuocDayDu, DonViTinh, Dictionary_Name, chungtu.DonGiaVon as DonGia, duoc.PhamVi
+        FROM 
+            DM_Duoc duoc
+            outer apply(select top 1 * from ChungTuSoLoNhap ct where ct.Duoc_Id=duoc.Duoc_Id order by NgayNhap desc) chungtu
+            join Lst_Dictionary dic on dic.Dictionary_Id=duoc.DuongDung_Id
+        WHERE
+            duoc.TamNgung=0 AND duoc.PhamVi='BV'
+
+        UNION ALL
+
+        SELECT duoc.Duoc_Id, MaDuoc, TenDuocDayDu, DonViTinh,Dictionary_Name,gia.DonGiaBan as DonGia,duoc.PhamVi
+        FROM 
+            DM_Duoc duoc
+            outer apply(select top 1 * from Duoc_SoLoNhap_GiaBan giaban where giaban.duoc_id=duoc.Duoc_Id) gia
+            join Lst_Dictionary dic on dic.Dictionary_Id=duoc.DuongDung_Id
+        WHERE 
+            duoc.TamNgung=0 AND duoc.PhamVi='NT'
+    ) tmp
+    WHERE tmp.DonGia is not null;
     """
 
 
@@ -128,7 +150,7 @@ class PhongBan:
 
     SOURCE_QUERY = f"""
         SELECT PhongBan_Id, MaPhongBan, TenPhongBan
-        FROM PhongBan
+        FROM DM_PhongBan where TamNgung=0
     """
 
 
@@ -145,7 +167,7 @@ class NhomDichVu:
 
     SOURCE_QUERY = f"""
         SELECT NhomDichVu_Id, TenNhomDichVu 
-        FROM NhomDichVu
+        FROM DM_NhomDichVu where TamNgung=0
     """
 
 
@@ -171,7 +193,7 @@ class DMDichVu:
 
     SOURCE_QUERY = f"""
         SELECT DichVu_Id, InputCode, TenDichVu, TenKhongDau,  NhomDichVu_Id
-        FROM DichVu
+        FROM DM_DichVu where TamNgung=0
     """
 
 
@@ -190,7 +212,7 @@ class LoaiGia:
 
     SOURCE_QUERY = f"""
         SELECT LoaiGia_Id, MaLoaiGia, TenLoaiGia
-        FROM LoaiGia
+        FROM DM_LoaiGia where TamNgung=0
     """
 
 
@@ -214,7 +236,7 @@ class GiaDichVu:
 
     SOURCE_QUERY = f"""
         SELECT DichVu_Id, LoaiGia_Id, DonGia
-        FROM GiaDichVu
+        FROM DM_DichVu_DonGia where TamNgung=0
     """
 
 
@@ -237,7 +259,7 @@ class PhongBanDichVu:
 
     SOURCE_QUERY = f"""
         SELECT DichVu_Id, PhongBan_Id, PhongBan_DichVu_Id
-        FROM PhongBanDichVu
+        FROM DM_PhongBan_DichVu
     """
 
 
@@ -262,5 +284,5 @@ class DoiTuongLoaiGia:
 
     SOURCE_QUERY = f"""
         SELECT DoiTuong_Id, LoaiGia_Id,  DoiTuong_LoaiGia_Id, DoUuTien
-        FROM DoiTuongLoaiGia
+        FROM DM_DoiTuong_LoaiGia
     """
