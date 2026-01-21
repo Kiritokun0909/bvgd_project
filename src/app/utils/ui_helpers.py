@@ -167,11 +167,11 @@ class DuocCompleterHandler(BaseCompleterHandler):
         if not keyword and self.min_search_length > 0:
             return []
 
-        # Lấy danh sách ID đã thêm vào bảng
         added_ids = self._get_added_drug_ids()
 
-        # Gọi service
-        raw_data_list = get_list_duoc(keyword, self.doi_tuong_id)
+        raw_data_list = []
+        if self.doi_tuong_id:
+            raw_data_list = get_list_duoc(keyword, self.doi_tuong_id)
 
         results = []
         for raw_item in raw_data_list:

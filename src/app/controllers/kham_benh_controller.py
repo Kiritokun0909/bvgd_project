@@ -32,6 +32,7 @@ from app.utils.constants import GIAI_QUYET_FILE_PATH
 from app.utils.write_json_line import write_json_lines, MODE_JSON, TARGET_DIR, get_todays_csv_rows
 
 from app.utils.thong_tuyen_bhyt import thong_tuyen_bhyt
+from app.services.DoiTuongService import get_doi_tuong_by_id
 
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
@@ -67,6 +68,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         super().__init__(parent)
         self.ma_y_te = None
         self.dia_chi = None
+        self.doi_tuong_id = None
 
         self.input_drug_name = None
         self.input_drug_so_luong = None
@@ -117,7 +119,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.tuoi.clear()
         self.ui_kham.so_bhyt.clear()
         self.ui_kham.sdt.clear()
-        self.ui_kham.cb_doi_tuong.setCurrentIndex(0)
+        # self.ui_kham.cb_doi_tuong.setCurrentIndex(0)
+        self.ui_kham.cb_doi_tuong.setCurrentText('')
+        self.doi_tuong_id = None
 
         current_date = QDate.currentDate()
         self.ui_kham.bhyt_from.setDate(current_date)
@@ -146,6 +150,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         self.update_tuoi()
         self.ui_kham.ma_y_te.setFocus()
+        self.handle_update_doi_tuong()
     # </editor-fold>
 
     # <editor-fold desc="Load thong tin lan dau khoi tao man hinh">
@@ -213,7 +218,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
         # </editor-fold>
 
         self.reset_data()
-        self.handle_update_doi_tuong()
     # </editor-fold>
 
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
@@ -249,9 +253,53 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.btn_check_bhyt.clicked.connect(self.handle_btn_check_bhyt)
 
     def handle_update_doi_tuong(self):
-        doi_tuong_id = self.ui_kham.cb_doi_tuong.currentData()
-        if doi_tuong_id:
-            self.duoc_handler.set_ma_doi_tuong(str(doi_tuong_id))
+        curr_ten_doi_tuong = self.ui_kham.cb_doi_tuong.currentText().strip()
+        prev_doi_tuong_id = self.doi_tuong_id
+        curr_doi_tuong_id = self.ui_kham.cb_doi_tuong.currentData()
+
+        if curr_ten_doi_tuong == '':
+            self.duoc_handler.set_ma_doi_tuong('')
+            self.doi_tuong_id = None
+            return
+
+        if not curr_doi_tuong_id: return
+
+        if not prev_doi_tuong_id:
+            self.duoc_handler.set_ma_doi_tuong(str(curr_doi_tuong_id))
+            self.doi_tuong_id = str(curr_doi_tuong_id)
+            return
+
+        prev_doi_tuong_data = get_doi_tuong_by_id(prev_doi_tuong_id)
+        curr_doi_tuong_data = get_doi_tuong_by_id(curr_doi_tuong_id)
+
+        def check_is_bao_hiem(data):
+            if data and len(data) > 3:
+                gioi_han = data[3]
+                return gioi_han is not None and gioi_han != 0
+            return False
+
+        is_prev_bh = check_is_bao_hiem(prev_doi_tuong_data)
+        is_curr_bh = check_is_bao_hiem(curr_doi_tuong_data)
+
+        if prev_doi_tuong_id and is_prev_bh != is_curr_bh:
+            msg = QMessageBox.question(
+                self,
+                "Xác nhận thay đổi",
+                "Loại đối tượng đã thay đổi (Bảo hiểm <-> Không bảo hiểm).\n"
+                "Bạn có muốn xoá danh sách thuốc hiện tại để tính toán lại không?"
+            )
+
+            if msg == QMessageBox.StandardButton.Yes:
+                self.reset_prescription_table()
+                self.doi_tuong_id = curr_doi_tuong_id
+                self.duoc_handler.set_ma_doi_tuong(str(curr_doi_tuong_id))
+                print("Đã xoá danh sách thuốc.")
+            else:
+                idx_doi_tuong = self.ui_kham.cb_doi_tuong.findData(prev_doi_tuong_id)
+                if idx_doi_tuong >= 0: self.ui_kham.cb_doi_tuong.setCurrentIndex(idx_doi_tuong)
+                print("Giữ nguyên danh sách thuốc và quay lại đối tượng trước đó.")
+
+        return
 
     def check_enable_btn_dang_ky(self):
         """Chỉ bật nút Đăng ký khi cách giải quyết là Cận Lâm Sàng"""
@@ -900,19 +948,20 @@ class KhamBenhTabController(QtWidgets.QWidget):
         return data
 
     def validate_patient_info(self) -> bool:
-        """
-        Xác thực thông tin hành chính bệnh nhân: Họ tên, Địa chỉ, SĐT, Số BHYT.
-        Trả về True nếu hợp lệ, False nếu thiếu và hiển thị cảnh báo.
-        """
         ui = self.ui_kham
+
+        if not self.doi_tuong_id or not ui.cb_doi_tuong.currentText():
+            QMessageBox.warning(self, "Thiếu dữ liệu", "Vui lòng chọn đối tượng.")
+            ui.cb_doi_tuong.setFocus()
+            return False
 
         # Danh sách các trường cần xác thực: (widget, tên hiển thị)
         fields_to_check = [
             (ui.ho_ten_bn, "Họ tên bệnh nhân"),
             (ui.dia_chi, "Địa chỉ"),
-            (ui.sdt, "Số điện thoại"),
-            (ui.chan_doan, "Chẩn đoán"),
             (ui.cccd, "Căn cước công dân"),
+            # (ui.sdt, "Số điện thoại"),
+            (ui.chan_doan, "Chẩn đoán"),
         ]
 
         if not ui.ngay_sinh.date().isValid():
@@ -1180,6 +1229,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         # Xử lý ComboBox Đối tượng, Phòng khám (Dùng findText để set chuẩn)
         idx_doi_tuong = ui.cb_doi_tuong.findText(data.get('DoiTuong', ''))
         if idx_doi_tuong >= 0: ui.cb_doi_tuong.setCurrentIndex(idx_doi_tuong)
+        self.handle_update_doi_tuong()
 
         idx_pk = ui.cb_phong_kham.findText(data.get('PhongKham', ''))
         if idx_pk >= 0: ui.cb_phong_kham.setCurrentIndex(idx_pk)
@@ -1223,9 +1273,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
             ui.so_ngay_hen.clear()
             self.update_ngay_hen()
 
-        # --- 4. Load Toa Thuốc (Quan trọng) ---
         if load_prescription:
-            self.reset_prescription_table()  # Xóa trắng bảng thuốc
+            self.reset_prescription_table()
             toa_thuoc = data.get('ToaThuoc', [])
 
             # Đảo ngược danh sách để insert đúng thứ tự (vì hàm insert luôn chèn row 0 nhưng data lại append xuống dưới)
