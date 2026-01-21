@@ -1,1063 +1,0 @@
-
--------------------------------------------------------------------------------
-   ROBOCOPY     ::     Robust File Copy for Windows                              
--------------------------------------------------------------------------------
-
-  Started : Tuesday, January 20, 2026 12:18:11 PM
-   Source : C:\Users\pnqt\PycharmProjects\bvgd_project\dist\
-     Dest : \\192.168.116.196\softwares\Backup\
-
-    Files : *.*
-	    
-  Options : *.* /TEE /S /E /DCOPY:DA /COPY:DAT /PURGE /MIR /R:1000000 /W:30 
-
-------------------------------------------------------------------------------
-
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\
-	  New Dir          4	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\
-	    New File  		     221	cach_giai_quyet.csv100%  
-	    New File  		 528.7 m	hospital.db  0.1%  0.3%  0.5%  0.7%  0.9%  1.1%  1.3%  1.5%  1.7%  1.8%  2.0%  2.2%  2.4%  2.6%  2.8%  3.0%  3.2%  3.4%  3.5%  3.7%  3.9%  4.1%  4.3%  4.5%  4.7%  4.9%  5.1%  5.2%  5.4%  5.6%  5.8%  6.0%  6.2%  6.4%  6.6%  6.8%  6.9%  7.1%  7.3%  7.5%  7.7%  7.9%  8.1%  8.3%  8.5%  8.7%  8.8%  9.0%  9.2%  9.4%  9.6%  9.8% 10.0% 10.2% 10.4% 10.5% 10.7% 10.9% 11.1% 11.3% 11.5% 11.7% 11.9% 12.1% 12.2% 12.4% 12.6% 12.8% 13.0% 13.2% 13.4% 13.6% 13.8% 13.9% 14.1% 14.3% 14.5% 14.7% 14.9% 15.1% 15.3% 15.5% 15.6% 15.8% 16.0% 16.2% 16.4% 16.6% 16.8% 17.0% 17.2% 17.4% 17.5% 17.7% 17.9% 18.1% 18.3% 18.5% 18.7% 18.9% 19.1% 19.2% 19.4% 19.6% 19.8% 20.0% 20.2% 20.4% 20.6% 20.8% 20.9% 21.1% 21.3% 21.5% 21.7% 21.9% 22.1% 22.3% 22.5% 22.6% 22.8% 23.0% 23.2% 23.4% 23.6% 23.8% 24.0% 24.2% 24.3% 24.5% 24.7% 24.9% 25.1% 25.3% 25.5% 25.7% 25.9% 26.1% 26.2% 26.4% 26.6% 26.8% 27.0% 27.2% 27.4% 27.6% 27.8% 27.9% 28.1% 28.3% 28.5% 28.7% 28.9% 29.1% 29.3% 29.5% 29.6% 29.8% 30.0% 30.2% 30.4% 30.6% 30.8% 31.0% 31.2% 31.3% 31.5% 31.7% 31.9% 32.1% 32.3% 32.5% 32.7% 32.9% 33.0% 33.2% 33.4% 33.6% 33.8% 34.0% 34.2% 34.4% 34.6% 34.8% 34.9% 35.1% 35.3% 35.5% 35.7% 35.9% 36.1% 36.3% 36.5% 36.6% 36.8% 37.0% 37.2% 37.4% 37.6% 37.8% 38.0% 38.2% 38.3% 38.5% 38.7% 38.9% 39.1% 39.3% 39.5% 39.7% 39.9% 40.0% 40.2% 40.4% 40.6% 40.8% 41.0% 41.2% 41.4% 41.6% 41.8% 41.9% 42.1% 42.3% 42.5% 42.7% 42.9% 43.1% 43.3% 43.5% 43.6% 43.8% 44.0% 44.2% 44.4% 44.6% 44.8% 45.0% 45.2% 45.3% 45.5% 45.7% 45.9% 46.1% 46.3% 46.5% 46.7% 46.9% 47.0% 47.2% 47.4% 47.6% 47.8% 48.0% 48.2% 48.4% 48.6% 48.7% 48.9% 49.1% 49.3% 49.5% 49.7% 49.9% 50.1% 50.3% 50.5% 50.6% 50.8% 51.0% 51.2% 51.4% 51.6% 51.8% 52.0% 52.2% 52.3% 52.5% 52.7% 52.9% 53.1% 53.3% 53.5% 53.7% 53.9% 54.0% 54.2% 54.4% 54.6% 54.8% 55.0% 55.2% 55.4% 55.6% 55.7% 55.9% 56.1% 56.3% 56.5% 56.7% 56.9% 57.1% 57.3% 57.4% 57.6% 57.8% 58.0% 58.2% 58.4% 58.6% 58.8% 59.0% 59.2% 59.3% 59.5% 59.7% 59.9% 60.1% 60.3% 60.5% 60.7% 60.9% 61.0% 61.2% 61.4% 61.6% 61.8% 62.0% 62.2% 62.4% 62.6% 62.7% 62.9% 63.1% 63.3% 63.5% 63.7% 63.9% 64.1% 64.3% 64.4% 64.6% 64.8% 65.0% 65.2% 65.4% 65.6% 65.8% 66.0% 66.1% 66.3% 66.5% 66.7% 66.9% 67.1% 67.3% 67.5% 67.7% 67.9% 68.0% 68.2% 68.4% 68.6% 68.8% 69.0% 69.2% 69.4% 69.6% 69.7% 69.9% 70.1% 70.3% 70.5% 70.7% 70.9% 71.1% 71.3% 71.4% 71.6% 71.8% 72.0% 72.2% 72.4% 72.6% 72.8% 73.0% 73.1% 73.3% 73.5% 73.7% 73.9% 74.1% 74.3% 74.5% 74.7% 74.9% 75.0% 75.2% 75.4% 75.6% 75.8% 76.0% 76.2% 76.4% 76.6% 76.7% 76.9% 77.1% 77.3% 77.5% 77.7% 77.9% 78.1% 78.3% 78.4% 78.6% 78.8% 79.0% 79.2% 79.4% 79.6% 79.8% 80.0% 80.1% 80.3% 80.5% 80.7% 80.9% 81.1% 81.3% 81.5% 81.7% 81.8% 82.0% 82.2% 82.4% 82.6% 82.8% 83.0% 83.2% 83.4% 83.6% 83.7% 83.9% 84.1% 84.3% 84.5% 84.7% 84.9% 85.1% 85.3% 85.4% 85.6% 85.8% 86.0% 86.2% 86.4% 86.6% 86.8% 87.0% 87.1% 87.3% 87.5% 87.7% 87.9% 88.1% 88.3% 88.5% 88.7% 88.8% 89.0% 89.2% 89.4% 89.6% 89.8% 90.0% 90.2% 90.4% 90.5% 90.7% 90.9% 91.1% 91.3% 91.5% 91.7% 91.9% 92.1% 92.3% 92.4% 92.6% 92.8% 93.0% 93.2% 93.4% 93.6% 93.8% 94.0% 94.1% 94.3% 94.5% 94.7% 94.9% 95.1% 95.3% 95.5% 95.7% 95.8% 96.0% 96.2% 96.4% 96.6% 96.8% 97.0% 97.2% 97.4% 97.5% 97.7% 97.9% 98.1% 98.3% 98.5% 98.7% 98.9% 99.1% 99.2% 99.4% 99.6% 99.8%100%  
-	    New File  		    1729	logo.png100%  
-	    New File  		     447	settings.ini100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\collect\
-	  New Dir          4	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\collect\2026-01-20\
-	    New File  		    1995	09081018.json100%  
-	    New File  		     260	index.csv100%  
-	    New File  		    2501	TE102909.json100%  
-	    New File  		    1812	TE110146.json100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\exports\
-	    New File  		    7155	BaoCao_Ngay_2026-01-20_.xlsx100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\hinh_anh\
-	    New File  		    2132	qrcode_123444444444444_nguyen_van_a.png100%  
-	    New File  		    2403	qrcode_HC4790205263520_Phan_Nguyen_Quoc_Tuan.png100%  
-	    New File  		    1629	qrcode__12.png100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\data\in_phieu_toa_thuoc\
-	    New File  		  161811	DonThuoc_123444444444444_20_01_2026__10_29_09.pdf 81%  100%  
-	    New File  		  166912	DonThuoc_HC4790205263520_20_01_2026__10_46_28.pdf 78%  100%  
-	    New File  		  154797	DonThuoc__20_01_2026__11_01_46.pdf 84%  100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\
-	    New File  		  11.3 m	main.exe  8.7% 17.5% 26.3% 35.1% 43.8% 52.6% 61.4% 70.2% 78.9% 87.7% 96.5%100%  
-	  New Dir         27	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\
-	    New File  		   1.3 m	base_library.zip 18%   37%   56%   75%   93%  100%  
-	    New File  		   4.9 m	libcrypto-3.dll 10%   20%   30%   40%   50%   60%   70%   80%   90%  100%  
-	    New File  		   39696	libffi-8.dll100%  
-	    New File  		  792856	libssl-3.dll 33%   66%   99%  100%  
-	    New File  		  201488	pyexpat.pyd 65%  100%  
-	    New File  		   70416	python3.dll100%  
-	    New File  		   5.8 m	python313.dll  8.6% 17.2% 25.8% 34.4% 43.0% 51.7% 60.3% 68.9% 77.5% 86.1% 94.7%100%  
-	    New File  		   30992	select.pyd100%  
-	    New File  		   1.4 m	sqlite3.dll 17%   34%   51%   68%   85%  100%  
-	    New File  		  709904	unicodedata.pyd 36%   73%  100%  
-	    New File  		  120400	VCRUNTIME140.dll100%  
-	    New File  		   49744	VCRUNTIME140_1.dll100%  
-	    New File  		   70928	_asyncio.pyd100%  
-	    New File  		   84240	_bz2.pyd100%  
-	    New File  		  131344	_ctypes.pyd 99%  100%  
-	    New File  		  277776	_decimal.pyd 47%   94%  100%  
-	    New File  		  133904	_elementtree.pyd 97%  100%  
-	    New File  		   64272	_hashlib.pyd100%  
-	    New File  		  157968	_lzma.pyd 82%  100%  
-	    New File  		   35600	_multiprocessing.pyd100%  
-	    New File  		   55568	_overlapped.pyd100%  
-	    New File  		   33552	_queue.pyd100%  
-	    New File  		   83728	_socket.pyd100%  
-	    New File  		  128272	_sqlite3.pyd100%  
-	    New File  		  181520	_ssl.pyd 72%  100%  
-	    New File  		   25872	_uuid.pyd100%  
-	    New File  		   38160	_wmi.pyd100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\charset_normalizer\
-	    New File  		   10752	md.cp313-win_amd64.pyd100%  
-	    New File  		  126976	md__mypyc.cp313-win_amd64.pyd100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\dateutil\
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\dateutil\zoneinfo\
-	    New File  		  156400	dateutil-zoneinfo.tar.gz 83%  100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy\
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy\fft\
-	    New File  		  279040	_pocketfft_umath.cp313-win_amd64.pyd 46%   93%  100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy\linalg\
-	    New File  		  108032	_umath_linalg.cp313-win_amd64.pyd100%  
-	  New Dir          9	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy\random\
-	    New File  		  161792	bit_generator.cp313-win_amd64.pyd 81%  100%  
-	    New File  		  601600	mtrand.cp313-win_amd64.pyd 43%   87%  100%  
-	    New File  		  208384	_bounded_integers.cp313-win_amd64.pyd 62%  100%  
-	    New File  		  152576	_common.cp313-win_amd64.pyd 85%  100%  
-	    New File  		  712704	_generator.cp313-win_amd64.pyd 36%   73%  100%  
-	    New File  		   82944	_mt19937.cp313-win_amd64.pyd100%  
-	    New File  		   91136	_pcg64.cp313-win_amd64.pyd100%  
-	    New File  		   76288	_philox.cp313-win_amd64.pyd100%  
-	    New File  		   57856	_sfc64.cp313-win_amd64.pyd100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy\_core\
-	    New File  		   63488	_multiarray_tests.cp313-win_amd64.pyd100%  
-	    New File  		   3.9 m	_multiarray_umath.cp313-win_amd64.pyd 12%   25%   37%   50%   62%   75%   87%  100%  
-	  New Dir          8	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy-2.2.6.dist-info\
-	    New File  		     446	DELVEWHEEL100%  
-	    New File  		     172	entry_points.txt100%  
-	    New File  		       4	INSTALLER100%  
-	    New File  		   47709	LICENSE.txt100%  
-	    New File  		   60844	METADATA100%  
-	    New File  		  108709	RECORD100%  
-	    New File  		       0	REQUESTED
-	    New File  		      85	WHEEL100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\numpy.libs\
-	    New File  		  19.4 m	libscipy_openblas64_-13e2df515630b4a41f92893938845698.dll  5.1% 10.2% 15.4% 20.5% 25.7% 30.8% 35.9% 41.1% 46.2% 51.4% 56.5% 61.7% 66.8% 71.9% 77.1% 82.2% 87.4% 92.5% 97.7%100%  
-	    New File  		  575056	msvcp140-263139962577ecda4cd9469ca360a746.dll 45%   91%  100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\io\
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\io\formats\
-	  New Dir          7	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\io\formats\templates\
-	    New File  		     412	html.tpl100%  
-	    New File  		     694	html_style.tpl100%  
-	    New File  		    1811	html_table.tpl100%  
-	    New File  		     127	latex.tpl100%  
-	    New File  		    2877	latex_longtable.tpl100%  
-	    New File  		    2221	latex_table.tpl100%  
-	    New File  		     344	string.tpl100%  
-	  New Dir         26	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\_libs\
-	    New File  		   1.6 m	algos.cp313-win_amd64.pyd 15%   30%   46%   61%   77%   92%  100%  
-	    New File  		   92160	arrays.cp313-win_amd64.pyd100%  
-	    New File  		   42496	byteswap.cp313-win_amd64.pyd100%  
-	    New File  		   1.9 m	groupby.cp313-win_amd64.pyd 12%   25%   38%   51%   64%   77%   90%  100%  
-	    New File  		  155648	hashing.cp313-win_amd64.pyd 84%  100%  
-	    New File  		   1.6 m	hashtable.cp313-win_amd64.pyd 14%   29%   44%   59%   74%   89%  100%  
-	    New File  		  677888	index.cp313-win_amd64.pyd 38%   77%  100%  
-	    New File  		   50688	indexing.cp313-win_amd64.pyd100%  
-	    New File  		  301056	internals.cp313-win_amd64.pyd 43%   87%  100%  
-	    New File  		 1028096	interval.cp313-win_amd64.pyd 25%   50%   76%  100%  
-	    New File  		 1026560	join.cp313-win_amd64.pyd 25%   51%   76%  100%  
-	    New File  		   51200	json.cp313-win_amd64.pyd100%  
-	    New File  		  627712	lib.cp313-win_amd64.pyd 41%   83%  100%  
-	    New File  		  156160	missing.cp313-win_amd64.pyd 83%  100%  
-	    New File  		  191488	ops.cp313-win_amd64.pyd 68%  100%  
-	    New File  		   45568	ops_dispatch.cp313-win_amd64.pyd100%  
-	    New File  		   32256	pandas_datetime.cp313-win_amd64.pyd100%  
-	    New File  		   29696	pandas_parser.cp313-win_amd64.pyd100%  
-	    New File  		  358912	parsers.cp313-win_amd64.pyd 36%   73%  100%  
-	    New File  		   63488	properties.cp313-win_amd64.pyd100%  
-	    New File  		  228352	reshape.cp313-win_amd64.pyd 57%  100%  
-	    New File  		  187392	sas.cp313-win_amd64.pyd 69%  100%  
-	    New File  		  751104	sparse.cp313-win_amd64.pyd 34%   69%  100%  
-	    New File  		   80384	testing.cp313-win_amd64.pyd100%  
-	    New File  		  240128	tslib.cp313-win_amd64.pyd 54%  100%  
-	    New File  		  184832	writers.cp313-win_amd64.pyd 70%  100%  
-	  New Dir         16	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\_libs\tslibs\
-	    New File  		   46080	base.cp313-win_amd64.pyd100%  
-	    New File  		   60416	ccalendar.cp313-win_amd64.pyd100%  
-	    New File  		  215040	conversion.cp313-win_amd64.pyd 60%  100%  
-	    New File  		  144896	dtypes.cp313-win_amd64.pyd 90%  100%  
-	    New File  		  257536	fields.cp313-win_amd64.pyd 50%  100%  
-	    New File  		  188416	nattype.cp313-win_amd64.pyd 69%  100%  
-	    New File  		  106496	np_datetime.cp313-win_amd64.pyd100%  
-	    New File  		  779264	offsets.cp313-win_amd64.pyd 33%   67%  100%  
-	    New File  		  297984	parsing.cp313-win_amd64.pyd 43%   87%  100%  
-	    New File  		  378880	period.cp313-win_amd64.pyd 34%   69%  100%  
-	    New File  		  277504	strptime.cp313-win_amd64.pyd 47%   94%  100%  
-	    New File  		  440320	timedeltas.cp313-win_amd64.pyd 29%   59%   89%  100%  
-	    New File  		  481280	timestamps.cp313-win_amd64.pyd 27%   54%   81%  100%  
-	    New File  		  203776	timezones.cp313-win_amd64.pyd 64%  100%  
-	    New File  		  228864	tzconversion.cp313-win_amd64.pyd 57%  100%  
-	    New File  		  180224	vectorized.cp313-win_amd64.pyd 72%  100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas\_libs\window\
-	    New File  		  321536	aggregations.cp313-win_amd64.pyd 40%   81%  100%  
-	    New File  		  154112	indexers.cp313-win_amd64.pyd 85%  100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pandas.libs\
-	    New File  		  575056	msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll 45%   91%  100%  
-	  New Dir          7	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PIL\
-	    New File  		   7.4 m	_avif.cp313-win_amd64.pyd  6.6% 13.3% 20.0% 26.7% 33.4% 40.1% 46.8% 53.5% 60.2% 66.9% 73.6% 80.3% 87.0% 93.6%100%  
-	    New File  		   2.3 m	_imaging.cp313-win_amd64.pyd 21%   42%   63%   84%  100%  
-	    New File  		  269824	_imagingcms.cp313-win_amd64.pyd 48%   97%  100%  
-	    New File  		   1.9 m	_imagingft.cp313-win_amd64.pyd 12%   25%   38%   50%   63%   76%   88%  100%  
-	    New File  		   25088	_imagingmath.cp313-win_amd64.pyd100%  
-	    New File  		   14848	_imagingtk.cp313-win_amd64.pyd100%  
-	    New File  		  410112	_webp.cp313-win_amd64.pyd 31%   63%   95%  100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pyphen\
-	  New Dir         84	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pyphen\dictionaries\
-	    New File  		   62925	hyph_af_ZA.dic100%  
-	    New File  		    1642	hyph_as_IN.dic100%  
-	    New File  		   31963	hyph_be_BY.dic100%  
-	    New File  		   59388	hyph_bg_BG.dic100%  
-	    New File  		   28602	hyph_ca.dic100%  
-	    New File  		   20049	hyph_cs_CZ.dic100%  
-	    New File  		    6049	hyph_da_DK.dic100%  
-	    New File  		   1.0 m	hyph_de_AT.dic 23%   47%   71%   95%  100%  
-	    New File  		   1.0 m	hyph_de_CH.dic 23%   47%   71%   95%  100%  
-	    New File  		   1.0 m	hyph_de_DE.dic 23%   47%   71%   95%  100%  
-	    New File  		    3205	hyph_el_GR.dic100%  
-	    New File  		  107031	hyph_en_GB.dic100%  
-	    New File  		  106414	hyph_en_US.dic100%  
-	    New File  		   29876	hyph_eo.dic100%  
-	    New File  		    5699	hyph_es.dic100%  
-	    New File  		   22637	hyph_et_EE.dic100%  
-	    New File  		    1152	hyph_eu.dic100%  
-	    New File  		   23631	hyph_fr.dic100%  
-	    New File  		    1420	hyph_gl.dic100%  
-	    New File  		    7789	hyph_hr_HR.dic100%  
-	    New File  		  937807	hyph_hu_HU.dic 27%   55%   83%  100%  
-	    New File  		  104072	hyph_id_ID.dic100%  
-	    New File  		   50011	hyph_is.dic100%  
-	    New File  		    2308	hyph_it_IT.dic100%  
-	    New File  		    1592	hyph_kn_IN.dic100%  
-	    New File  		    7817	hyph_lt.dic100%  
-	    New File  		   79409	hyph_lv_LV.dic100%  
-	    New File  		   13486	hyph_mn_MN.dic100%  
-	    New File  		    2482	hyph_mr_IN.dic100%  
-	    New File  		  186678	hyph_nb_NO.dic 70%  100%  
-	    New File  		  116507	hyph_nl_NL.dic100%  
-	    New File  		  186678	hyph_nn_NO.dic 70%  100%  
-	    New File  		    1535	hyph_or_IN.dic100%  
-	    New File  		    1534	hyph_pa_IN.dic100%  
-	    New File  		   37931	hyph_pl_PL.dic100%  
-	    New File  		   11260	hyph_pt_BR.dic100%  
-	    New File  		    1288	hyph_pt_PT.dic100%  
-	    New File  		   34597	hyph_ro_RO.dic100%  
-	    New File  		   35415	hyph_ru_RU.dic100%  
-	    New File  		    1171	hyph_sa_IN.dic100%  
-	    New File  		   18205	hyph_sk_SK.dic100%  
-	    New File  		    8245	hyph_sl_SI.dic100%  
-	    New File  		  127201	hyph_sq_AL.dic100%  
-	    New File  		   27355	hyph_sr.dic100%  
-	    New File  		   28392	hyph_sr_Latn.dic100%  
-	    New File  		  102979	hyph_sv.dic100%  
-	    New File  		    1592	hyph_te_IN.dic100%  
-	    New File  		   66279	hyph_th_TH.dic100%  
-	    New File  		   20222	hyph_uk_UA.dic100%  
-	    New File  		    1956	hyph_zu_ZA.dic100%  
-	    New File  		     300	README_hyph_be_BY.txt100%  
-	    New File  		    3924	README_hyph_bg_BG.txt100%  
-	    New File  		     636	README_hyph_ca.txt100%  
-	    New File  		     631	README_hyph_cs_CZ.txt100%  
-	    New File  		     482	README_hyph_da_DK.txt100%  
-	    New File  		    1738	README_hyph_de.txt100%  
-	    New File  		     525	README_hyph_el_GR.txt100%  
-	    New File  		    4569	README_hyph_en_GB.txt100%  
-	    New File  		    1888	README_hyph_en_US.txt100%  
-	    New File  		    1752	README_hyph_es.txt100%  
-	    New File  		   52957	README_hyph_et_EE.txt100%  
-	    New File  		    3697	README_hyph_eu.txt100%  
-	    New File  		    3738	README_hyph_fr.txt100%  
-	    New File  		     600	README_hyph_gl.txt100%  
-	    New File  		    3598	README_hyph_hr_HR.txt100%  
-	    New File  		     544	README_hyph_hu_HU.txt100%  
-	    New File  		   34266	README_hyph_is.txt100%  
-	    New File  		     949	README_hyph_it_IT.txt100%  
-	    New File  		     780	README_hyph_lt_LT.txt100%  
-	    New File  		    5782	README_hyph_lv_LV.txt100%  
-	    New File  		     341	README_hyph_NO.txt100%  
-	    New File  		    1526	README_hyph_pl_PL.txt100%  
-	    New File  		   19284	README_hyph_pt_BR.txt100%  
-	    New File  		     486	README_hyph_pt_PT.txt100%  
-	    New File  		     488	README_hyph_ro_RO.txt100%  
-	    New File  		     252	README_hyph_sk_SK.txt100%  
-	    New File  		    2765	README_hyph_sl_SI.txt100%  
-	    New File  		     423	README_hyph_sq_AL.txt100%  
-	    New File  		     284	README_hyph_sr.txt100%  
-	    New File  		     650	README_hyph_sv.txt100%  
-	    New File  		     860	README_hyph_te_IN.txt100%  
-	    New File  		     410	README_hyph_th_TH.txt100%  
-	    New File  		     957	README_hyph_uk_UA.txt100%  
-	    New File  		     251	update.sh100%  
-	  New Dir          4	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\
-	    New File  		   2.4 m	QtCore.pyd 20%   40%   61%   81%  100%  
-	    New File  		   2.1 m	QtGui.pyd 22%   45%   68%   91%  100%  
-	    New File  		   4.8 m	QtWidgets.pyd 10%   20%   31%   41%   51%   62%   72%   82%   93%  100%  
-	    New File  		  111104	sip.cp313-win_amd64.pyd100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\
-	  New Dir         12	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\bin\
-	    New File  		  590112	MSVCP140.dll 44%   88%  100%  
-	    New File  		   31728	MSVCP140_1.dll100%  
-	    New File  		  193520	MSVCP140_2.dll 67%  100%  
-	    New File  		  19.6 m	opengl32sw.dll  5.0% 10.1% 15.2% 20.3% 25.4% 30.4% 35.5% 40.6% 45.7% 50.8% 55.8% 60.9% 66.0% 71.1% 76.2% 81.2% 86.3% 91.4% 96.5%100%  
-	    New File  		   9.6 m	Qt6Core.dll 10.3% 20.7% 31.1% 41.4% 51.8% 62.2% 72.6% 82.9% 93.3%100%  
-	    New File  		   9.0 m	Qt6Gui.dll 11.1% 22.2% 33.3% 44.4% 55.5% 66.6% 77.7% 88.8% 99.9%100%  
-	    New File  		   1.6 m	Qt6Network.dll 15%   30%   45%   60%   75%   90%  100%  
-	    New File  		   5.2 m	Qt6Pdf.dll  9%   18%   28%   37%   47%   56%   66%   75%   85%   94%  100%  
-	    New File  		  623328	Qt6Svg.dll 42%   84%  100%  
-	    New File  		   6.2 m	Qt6Widgets.dll  7.9% 15.9% 23.9% 31.9% 39.9% 47.9% 55.9% 63.9% 71.9% 79.9% 87.9% 95.9%100%  
-	    New File  		  101872	VCRUNTIME140.dll100%  
-	    New File  		   44528	VCRUNTIME140_1.dll100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\generic\
-	    New File  		  103136	qtuiotouchplugin.dll100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\iconengines\
-	    New File  		   72416	qsvgicon.dll100%  
-	  New Dir         10	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\imageformats\
-	    New File  		   48352	qgif.dll100%  
-	    New File  		   56544	qicns.dll100%  
-	    New File  		   46816	qico.dll100%  
-	    New File  		  578272	qjpeg.dll 45%   90%  100%  
-	    New File  		   43232	qpdf.dll100%  
-	    New File  		   39648	qsvg.dll100%  
-	    New File  		   39136	qtga.dll100%  
-	    New File  		  442592	qtiff.dll 29%   59%   88%  100%  
-	    New File  		   37600	qwbmp.dll100%  
-	    New File  		  562912	qwebp.dll 46%   93%  100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\platforms\
-	    New File  		   62176	qminimal.dll100%  
-	    New File  		  114400	qoffscreen.dll100%  
-	    New File  		  997088	qwindows.dll 26%   52%   78%  100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\plugins\styles\
-	    New File  		  224992	qmodernwindowsstyle.dll 58%  100%  
-	  New Dir         96	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\Qt6\translations\
-	    New File  		  160017	qtbase_ar.qm 81%  100%  
-	    New File  		  165337	qtbase_bg.qm 79%  100%  
-	    New File  		  209899	qtbase_ca.qm 62%  100%  
-	    New File  		  174701	qtbase_cs.qm 75%  100%  
-	    New File  		  181387	qtbase_da.qm 72%  100%  
-	    New File  		  223404	qtbase_de.qm 58%  100%  
-	    New File  		      33	qtbase_en.qm100%  
-	    New File  		  165170	qtbase_es.qm 79%  100%  
-	    New File  		  148156	qtbase_fa.qm 88%  100%  
-	    New File  		  179941	qtbase_fi.qm 72%  100%  
-	    New File  		  159463	qtbase_fr.qm 82%  100%  
-	    New File  		  189580	qtbase_gd.qm 69%  100%  
-	    New File  		  138690	qtbase_he.qm 94%  100%  
-	    New File  		  149711	qtbase_hr.qm 87%  100%  
-	    New File  		  205885	qtbase_hu.qm 63%  100%  
-	    New File  		  161166	qtbase_it.qm 81%  100%  
-	    New File  		  129913	qtbase_ja.qm100%  
-	    New File  		  201105	qtbase_ka.qm 65%  100%  
-	    New File  		  156799	qtbase_ko.qm 83%  100%  
-	    New File  		  239242	qtbase_lg.qm 54%  100%  
-	    New File  		  153608	qtbase_lv.qm 85%  100%  
-	    New File  		  202861	qtbase_nl.qm 64%  100%  
-	    New File  		  196424	qtbase_nn.qm 66%  100%  
-	    New File  		  162962	qtbase_pl.qm 80%  100%  
-	    New File  		  208516	qtbase_pt_BR.qm 62%  100%  
-	    New File  		  203767	qtbase_ru.qm 64%  100%  
-	    New File  		  125763	qtbase_sk.qm100%  
-	    New File  		  197334	qtbase_sv.qm 66%  100%  
-	    New File  		  248720	qtbase_tr.qm 52%  100%  
-	    New File  		  158274	qtbase_uk.qm 82%  100%  
-	    New File  		  147222	qtbase_zh_CN.qm 89%  100%  
-	    New File  		  126185	qtbase_zh_TW.qm100%  
-	    New File  		     104	qt_ar.qm100%  
-	    New File  		      91	qt_bg.qm100%  
-	    New File  		      91	qt_ca.qm100%  
-	    New File  		      95	qt_cs.qm100%  
-	    New File  		      91	qt_da.qm100%  
-	    New File  		      91	qt_de.qm100%  
-	    New File  		      33	qt_en.qm100%  
-	    New File  		      91	qt_es.qm100%  
-	    New File  		      84	qt_fa.qm100%  
-	    New File  		      91	qt_fi.qm100%  
-	    New File  		      91	qt_fr.qm100%  
-	    New File  		      70	qt_gd.qm100%  
-	    New File  		  323590	qt_gl.qm 40%   81%  100%  
-	    New File  		      57	qt_he.qm100%  
-	    New File  		    8743	qt_help_ar.qm100%  
-	    New File  		   10599	qt_help_bg.qm100%  
-	    New File  		    7426	qt_help_ca.qm100%  
-	    New File  		   15297	qt_help_cs.qm100%  
-	    New File  		    4795	qt_help_da.qm100%  
-	    New File  		    7569	qt_help_de.qm100%  
-	    New File  		      33	qt_help_en.qm100%  
-	    New File  		   10704	qt_help_es.qm100%  
-	    New File  		    3573	qt_help_fr.qm100%  
-	    New File  		   10891	qt_help_gl.qm100%  
-	    New File  		    5170	qt_help_hr.qm100%  
-	    New File  		    7255	qt_help_hu.qm100%  
-	    New File  		   10612	qt_help_it.qm100%  
-	    New File  		    7917	qt_help_ja.qm100%  
-	    New File  		    7091	qt_help_ka.qm100%  
-	    New File  		    5708	qt_help_ko.qm100%  
-	    New File  		    5087	qt_help_nl.qm100%  
-	    New File  		    6934	qt_help_nn.qm100%  
-	    New File  		    9673	qt_help_pl.qm100%  
-	    New File  		   15776	qt_help_pt_BR.qm100%  
-	    New File  		    7288	qt_help_ru.qm100%  
-	    New File  		   10388	qt_help_sk.qm100%  
-	    New File  		   10363	qt_help_sl.qm100%  
-	    New File  		    6941	qt_help_sv.qm100%  
-	    New File  		    6723	qt_help_tr.qm100%  
-	    New File  		    9750	qt_help_uk.qm100%  
-	    New File  		    5115	qt_help_zh_CN.qm100%  
-	    New File  		    5160	qt_help_zh_TW.qm100%  
-	    New File  		     102	qt_hr.qm100%  
-	    New File  		      84	qt_hu.qm100%  
-	    New File  		      91	qt_it.qm100%  
-	    New File  		      84	qt_ja.qm100%  
-	    New File  		      94	qt_ka.qm100%  
-	    New File  		      84	qt_ko.qm100%  
-	    New File  		      57	qt_lg.qm100%  
-	    New File  		  165383	qt_lt.qm 79%  100%  
-	    New File  		      63	qt_lv.qm100%  
-	    New File  		      91	qt_nl.qm100%  
-	    New File  		      91	qt_nn.qm100%  
-	    New File  		      99	qt_pl.qm100%  
-	    New File  		     106	qt_pt_BR.qm100%  
-	    New File  		   70334	qt_pt_PT.qm100%  
-	    New File  		     102	qt_ru.qm100%  
-	    New File  		      95	qt_sk.qm100%  
-	    New File  		  228428	qt_sl.qm 57%  100%  
-	    New File  		     153	qt_sv.qm100%  
-	    New File  		      84	qt_tr.qm100%  
-	    New File  		     102	qt_uk.qm100%  
-	    New File  		      99	qt_zh_CN.qm100%  
-	    New File  		      99	qt_zh_TW.qm100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\uic\
-	  New Dir          7	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\PyQt6\uic\widget-plugins\
-	    New File  		    1590	qaxcontainer.py100%  
-	    New File  		    1586	qscintilla.py100%  
-	    New File  		    1595	qtcharts.py100%  
-	    New File  		    1597	qtopenglwidgets.py100%  
-	    New File  		    1621	qtprintsupport.py100%  
-	    New File  		    1595	qtquickwidgets.py100%  
-	    New File  		    1601	qtwebenginewidgets.py100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\
-	  New Dir         51	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\
-	    New File  		    2933	CET100%  
-	    New File  		    3592	CST6CDT100%  
-	    New File  		    2416	Cuba100%  
-	    New File  		    2262	EET100%  
-	    New File  		    2399	Egypt100%  
-	    New File  		    3492	Eire100%  
-	    New File  		     182	EST100%  
-	    New File  		    3552	EST5EDT100%  
-	    New File  		     116	Factory100%  
-	    New File  		    3664	GB100%  
-	    New File  		    3664	GB-Eire100%  
-	    New File  		     114	GMT100%  
-	    New File  		     114	GMT+0100%  
-	    New File  		     114	GMT-0100%  
-	    New File  		     114	GMT0100%  
-	    New File  		     114	Greenwich100%  
-	    New File  		    1233	Hongkong100%  
-	    New File  		     329	HST100%  
-	    New File  		     148	Iceland100%  
-	    New File  		    1248	Iran100%  
-	    New File  		    4791	iso3166.tab100%  
-	    New File  		    2388	Israel100%  
-	    New File  		     482	Jamaica100%  
-	    New File  		     309	Japan100%  
-	    New File  		     302	Kwajalein100%  
-	    New File  		    3257	leapseconds100%  
-	    New File  		     625	Libya100%  
-	    New File  		    2933	MET100%  
-	    New File  		     360	MST100%  
-	    New File  		    2460	MST7MDT100%  
-	    New File  		    2460	Navajo100%  
-	    New File  		    2437	NZ100%  
-	    New File  		    2054	NZ-CHAT100%  
-	    New File  		    2654	Poland100%  
-	    New File  		    3527	Portugal100%  
-	    New File  		     561	PRC100%  
-	    New File  		    2852	PST8PDT100%  
-	    New File  		     761	ROC100%  
-	    New File  		     617	ROK100%  
-	    New File  		     401	Singapore100%  
-	    New File  		    1933	Turkey100%  
-	    New File  		  107471	tzdata.zi100%  
-	    New File  		     114	UCT100%  
-	    New File  		     114	Universal100%  
-	    New File  		     114	UTC100%  
-	    New File  		    1535	W-SU100%  
-	    New File  		    3527	WET100%  
-	    New File  		   18822	zone.tab100%  
-	    New File  		   17597	zone1970.tab100%  
-	    New File  		    8084	zonenow.tab100%  
-	    New File  		     114	Zulu100%  
-	  New Dir         54	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Africa\
-	    New File  		     148	Abidjan100%  
-	    New File  		     148	Accra100%  
-	    New File  		     265	Addis_Ababa100%  
-	    New File  		     735	Algiers100%  
-	    New File  		     265	Asmara100%  
-	    New File  		     265	Asmera100%  
-	    New File  		     148	Bamako100%  
-	    New File  		     235	Bangui100%  
-	    New File  		     148	Banjul100%  
-	    New File  		     194	Bissau100%  
-	    New File  		     149	Blantyre100%  
-	    New File  		     235	Brazzaville100%  
-	    New File  		     149	Bujumbura100%  
-	    New File  		    2399	Cairo100%  
-	    New File  		    2429	Casablanca100%  
-	    New File  		    2052	Ceuta100%  
-	    New File  		     148	Conakry100%  
-	    New File  		     148	Dakar100%  
-	    New File  		     265	Dar_es_Salaam100%  
-	    New File  		     265	Djibouti100%  
-	    New File  		     235	Douala100%  
-	    New File  		    2295	El_Aaiun100%  
-	    New File  		     148	Freetown100%  
-	    New File  		     149	Gaborone100%  
-	    New File  		     149	Harare100%  
-	    New File  		     246	Johannesburg100%  
-	    New File  		     679	Juba100%  
-	    New File  		     265	Kampala100%  
-	    New File  		     679	Khartoum100%  
-	    New File  		     149	Kigali100%  
-	    New File  		     235	Kinshasa100%  
-	    New File  		     235	Lagos100%  
-	    New File  		     235	Libreville100%  
-	    New File  		     148	Lome100%  
-	    New File  		     235	Luanda100%  
-	    New File  		     149	Lubumbashi100%  
-	    New File  		     149	Lusaka100%  
-	    New File  		     235	Malabo100%  
-	    New File  		     149	Maputo100%  
-	    New File  		     246	Maseru100%  
-	    New File  		     246	Mbabane100%  
-	    New File  		     265	Mogadishu100%  
-	    New File  		     208	Monrovia100%  
-	    New File  		     265	Nairobi100%  
-	    New File  		     199	Ndjamena100%  
-	    New File  		     235	Niamey100%  
-	    New File  		     148	Nouakchott100%  
-	    New File  		     148	Ouagadougou100%  
-	    New File  		     235	Porto-Novo100%  
-	    New File  		     254	Sao_Tome100%  
-	    New File  		     148	Timbuktu100%  
-	    New File  		     625	Tripoli100%  
-	    New File  		     689	Tunis100%  
-	    New File  		     955	Windhoek100%  
-	  New Dir        143	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\America\
-	    New File  		    2356	Adak100%  
-	    New File  		    2371	Anchorage100%  
-	    New File  		     246	Anguilla100%  
-	    New File  		     246	Antigua100%  
-	    New File  		     870	Araguaina100%  
-	    New File  		     246	Aruba100%  
-	    New File  		    1644	Asuncion100%  
-	    New File  		     182	Atikokan100%  
-	    New File  		    2356	Atka100%  
-	    New File  		    1010	Bahia100%  
-	    New File  		    1100	Bahia_Banderas100%  
-	    New File  		     436	Barbados100%  
-	    New File  		     562	Belem100%  
-	    New File  		    1614	Belize100%  
-	    New File  		     246	Blanc-Sablon100%  
-	    New File  		     618	Boa_Vista100%  
-	    New File  		     232	Bogota100%  
-	    New File  		    2410	Boise100%  
-	    New File  		    1062	Buenos_Aires100%  
-	    New File  		    2254	Cambridge_Bay100%  
-	    New File  		    1430	Campo_Grande100%  
-	    New File  		     864	Cancun100%  
-	    New File  		     250	Caracas100%  
-	    New File  		    1062	Catamarca100%  
-	    New File  		     184	Cayenne100%  
-	    New File  		     182	Cayman100%  
-	    New File  		    3592	Chicago100%  
-	    New File  		    1102	Chihuahua100%  
-	    New File  		    1538	Ciudad_Juarez100%  
-	    New File  		     182	Coral_Harbour100%  
-	    New File  		    1062	Cordoba100%  
-	    New File  		     316	Costa_Rica100%  
-	    New File  		    2126	Coyhaique100%  
-	    New File  		     360	Creston100%  
-	    New File  		    1402	Cuiaba100%  
-	    New File  		     246	Curacao100%  
-	    New File  		     698	Danmarkshavn100%  
-	    New File  		    1614	Dawson100%  
-	    New File  		    1050	Dawson_Creek100%  
-	    New File  		    2460	Denver100%  
-	    New File  		    2230	Detroit100%  
-	    New File  		     246	Dominica100%  
-	    New File  		    2332	Edmonton100%  
-	    New File  		     642	Eirunepe100%  
-	    New File  		     224	El_Salvador100%  
-	    New File  		    2458	Ensenada100%  
-	    New File  		     702	Fortaleza100%  
-	    New File  		    2240	Fort_Nelson100%  
-	    New File  		    1682	Fort_Wayne100%  
-	    New File  		    2192	Glace_Bay100%  
-	    New File  		    1889	Godthab100%  
-	    New File  		    3210	Goose_Bay100%  
-	    New File  		    1834	Grand_Turk100%  
-	    New File  		     246	Grenada100%  
-	    New File  		     246	Guadeloupe100%  
-	    New File  		     280	Guatemala100%  
-	    New File  		     232	Guayaquil100%  
-	    New File  		     248	Guyana100%  
-	    New File  		    3424	Halifax100%  
-	    New File  		    2416	Havana100%  
-	    New File  		     388	Hermosillo100%  
-	    New File  		    1682	Indianapolis100%  
-	    New File  		    2074	Inuvik100%  
-	    New File  		    2202	Iqaluit100%  
-	    New File  		     482	Jamaica100%  
-	    New File  		    1034	Jujuy100%  
-	    New File  		    2353	Juneau100%  
-	    New File  		    2444	Knox_IN100%  
-	    New File  		     246	Kralendijk100%  
-	    New File  		     218	La_Paz100%  
-	    New File  		     392	Lima100%  
-	    New File  		    2852	Los_Angeles100%  
-	    New File  		    2788	Louisville100%  
-	    New File  		     246	Lower_Princes100%  
-	    New File  		     730	Maceio100%  
-	    New File  		     430	Managua100%  
-	    New File  		     590	Manaus100%  
-	    New File  		     246	Marigot100%  
-	    New File  		     232	Martinique100%  
-	    New File  		    1418	Matamoros100%  
-	    New File  		    1060	Mazatlan100%  
-	    New File  		    1062	Mendoza100%  
-	    New File  		    2274	Menominee100%  
-	    New File  		    1004	Merida100%  
-	    New File  		    1423	Metlakatla100%  
-	    New File  		    1222	Mexico_City100%  
-	    New File  		    1652	Miquelon100%  
-	    New File  		    3154	Moncton100%  
-	    New File  		    1114	Monterrey100%  
-	    New File  		    1496	Montevideo100%  
-	    New File  		    3494	Montreal100%  
-	    New File  		     246	Montserrat100%  
-	    New File  		    3494	Nassau100%  
-	    New File  		    3552	New_York100%  
-	    New File  		    3494	Nipigon100%  
-	    New File  		    2367	Nome100%  
-	    New File  		     702	Noronha100%  
-	    New File  		    1889	Nuuk100%  
-	    New File  		    1524	Ojinaga100%  
-	    New File  		     182	Panama100%  
-	    New File  		    2202	Pangnirtung100%  
-	    New File  		     248	Paramaribo100%  
-	    New File  		     360	Phoenix100%  
-	    New File  		    1434	Port-au-Prince100%  
-	    New File  		     614	Porto_Acre100%  
-	    New File  		     562	Porto_Velho100%  
-	    New File  		     246	Port_of_Spain100%  
-	    New File  		     246	Puerto_Rico100%  
-	    New File  		    1902	Punta_Arenas100%  
-	    New File  		    2868	Rainy_River100%  
-	    New File  		    2066	Rankin_Inlet100%  
-	    New File  		     702	Recife100%  
-	    New File  		     980	Regina100%  
-	    New File  		    2066	Resolute100%  
-	    New File  		     614	Rio_Branco100%  
-	    New File  		    1062	Rosario100%  
-	    New File  		     588	Santarem100%  
-	    New File  		    2458	Santa_Isabel100%  
-	    New File  		    2515	Santiago100%  
-	    New File  		     458	Santo_Domingo100%  
-	    New File  		    1430	Sao_Paulo100%  
-	    New File  		    1935	Scoresbysund100%  
-	    New File  		    2460	Shiprock100%  
-	    New File  		    2329	Sitka100%  
-	    New File  		     246	St_Barthelemy100%  
-	    New File  		    3655	St_Johns100%  
-	    New File  		     246	St_Kitts100%  
-	    New File  		     246	St_Lucia100%  
-	    New File  		     246	St_Thomas100%  
-	    New File  		     246	St_Vincent100%  
-	    New File  		     560	Swift_Current100%  
-	    New File  		     252	Tegucigalpa100%  
-	    New File  		    1502	Thule100%  
-	    New File  		    3494	Thunder_Bay100%  
-	    New File  		    2458	Tijuana100%  
-	    New File  		    3494	Toronto100%  
-	    New File  		     246	Tortola100%  
-	    New File  		    2892	Vancouver100%  
-	    New File  		     246	Virgin100%  
-	    New File  		    1614	Whitehorse100%  
-	    New File  		    2868	Winnipeg100%  
-	    New File  		    2305	Yakutat100%  
-	    New File  		    2332	Yellowknife100%  
-	  New Dir         13	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\America\Argentina\
-	    New File  		    1062	Buenos_Aires100%  
-	    New File  		    1062	Catamarca100%  
-	    New File  		    1062	ComodRivadavia100%  
-	    New File  		    1062	Cordoba100%  
-	    New File  		    1034	Jujuy100%  
-	    New File  		    1076	La_Rioja100%  
-	    New File  		    1062	Mendoza100%  
-	    New File  		    1062	Rio_Gallegos100%  
-	    New File  		    1034	Salta100%  
-	    New File  		    1076	San_Juan100%  
-	    New File  		    1088	San_Luis100%  
-	    New File  		    1090	Tucuman100%  
-	    New File  		    1062	Ushuaia100%  
-	  New Dir          8	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\America\Indiana\
-	    New File  		    1682	Indianapolis100%  
-	    New File  		    2444	Knox100%  
-	    New File  		    1738	Marengo100%  
-	    New File  		    1920	Petersburg100%  
-	    New File  		    1700	Tell_City100%  
-	    New File  		    1430	Vevay100%  
-	    New File  		    1710	Vincennes100%  
-	    New File  		    1794	Winamac100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\America\Kentucky\
-	    New File  		    2788	Louisville100%  
-	    New File  		    2368	Monticello100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\America\North_Dakota\
-	    New File  		    2396	Beulah100%  
-	    New File  		    2396	Center100%  
-	    New File  		    2396	New_Salem100%  
-	  New Dir         12	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Antarctica\
-	    New File  		     423	Casey100%  
-	    New File  		     283	Davis100%  
-	    New File  		     172	DumontDUrville100%  
-	    New File  		    2260	Macquarie100%  
-	    New File  		     185	Mawson100%  
-	    New File  		    2437	McMurdo100%  
-	    New File  		    1404	Palmer100%  
-	    New File  		     150	Rothera100%  
-	    New File  		    2437	South_Pole100%  
-	    New File  		     151	Syowa100%  
-	    New File  		    1148	Troll100%  
-	    New File  		     213	Vostok100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Arctic\
-	    New File  		    2298	Longyearbyen100%  
-	  New Dir         99	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Asia\
-	    New File  		     151	Aden100%  
-	    New File  		     983	Almaty100%  
-	    New File  		    1433	Amman100%  
-	    New File  		    1174	Anadyr100%  
-	    New File  		     969	Aqtau100%  
-	    New File  		     997	Aqtobe100%  
-	    New File  		     605	Ashgabat100%  
-	    New File  		     605	Ashkhabad100%  
-	    New File  		     977	Atyrau100%  
-	    New File  		     969	Baghdad100%  
-	    New File  		     185	Bahrain100%  
-	    New File  		    1213	Baku100%  
-	    New File  		     185	Bangkok100%  
-	    New File  		    1207	Barnaul100%  
-	    New File  		    2154	Beirut100%  
-	    New File  		     969	Bishkek100%  
-	    New File  		     469	Brunei100%  
-	    New File  		     285	Calcutta100%  
-	    New File  		    1207	Chita100%  
-	    New File  		     877	Choibalsan100%  
-	    New File  		     561	Chongqing100%  
-	    New File  		     561	Chungking100%  
-	    New File  		     358	Colombo100%  
-	    New File  		     323	Dacca100%  
-	    New File  		    1873	Damascus100%  
-	    New File  		     323	Dhaka100%  
-	    New File  		     257	Dili100%  
-	    New File  		     151	Dubai100%  
-	    New File  		     577	Dushanbe100%  
-	    New File  		    2028	Famagusta100%  
-	    New File  		    3844	Gaza100%  
-	    New File  		     561	Harbin100%  
-	    New File  		    3872	Hebron100%  
-	    New File  		    1233	Hong_Kong100%  
-	    New File  		     877	Hovd100%  
-	    New File  		     337	Ho_Chi_Minh100%  
-	    New File  		    1229	Irkutsk100%  
-	    New File  		    1933	Istanbul100%  
-	    New File  		     383	Jakarta100%  
-	    New File  		     221	Jayapura100%  
-	    New File  		    2388	Jerusalem100%  
-	    New File  		     194	Kabul100%  
-	    New File  		    1152	Kamchatka100%  
-	    New File  		     379	Karachi100%  
-	    New File  		     151	Kashgar100%  
-	    New File  		     198	Kathmandu100%  
-	    New File  		     198	Katmandu100%  
-	    New File  		    1257	Khandyga100%  
-	    New File  		     285	Kolkata100%  
-	    New File  		    1193	Krasnoyarsk100%  
-	    New File  		     401	Kuala_Lumpur100%  
-	    New File  		     469	Kuching100%  
-	    New File  		     151	Kuwait100%  
-	    New File  		    1227	Macao100%  
-	    New File  		    1227	Macau100%  
-	    New File  		    1208	Magadan100%  
-	    New File  		     254	Makassar100%  
-	    New File  		     422	Manila100%  
-	    New File  		     151	Muscat100%  
-	    New File  		    2002	Nicosia100%  
-	    New File  		    1151	Novokuznetsk100%  
-	    New File  		    1207	Novosibirsk100%  
-	    New File  		    1193	Omsk100%  
-	    New File  		     991	Oral100%  
-	    New File  		     185	Phnom_Penh100%  
-	    New File  		     353	Pontianak100%  
-	    New File  		     237	Pyongyang100%  
-	    New File  		     185	Qatar100%  
-	    New File  		    1025	Qostanay100%  
-	    New File  		    1011	Qyzylorda100%  
-	    New File  		     254	Rangoon100%  
-	    New File  		     151	Riyadh100%  
-	    New File  		     337	Saigon100%  
-	    New File  		    1188	Sakhalin100%  
-	    New File  		     563	Samarkand100%  
-	    New File  		     617	Seoul100%  
-	    New File  		     561	Shanghai100%  
-	    New File  		     401	Singapore100%  
-	    New File  		    1194	Srednekolymsk100%  
-	    New File  		     761	Taipei100%  
-	    New File  		     577	Tashkent100%  
-	    New File  		    1021	Tbilisi100%  
-	    New File  		    1248	Tehran100%  
-	    New File  		    2388	Tel_Aviv100%  
-	    New File  		     189	Thimbu100%  
-	    New File  		     189	Thimphu100%  
-	    New File  		     309	Tokyo100%  
-	    New File  		    1207	Tomsk100%  
-	    New File  		     254	Ujung_Pandang100%  
-	    New File  		     877	Ulaanbaatar100%  
-	    New File  		     877	Ulan_Bator100%  
-	    New File  		     151	Urumqi100%  
-	    New File  		    1238	Ust-Nera100%  
-	    New File  		     185	Vientiane100%  
-	    New File  		    1194	Vladivostok100%  
-	    New File  		    1193	Yakutsk100%  
-	    New File  		     254	Yangon100%  
-	    New File  		    1229	Yekaterinburg100%  
-	    New File  		    1137	Yerevan100%  
-	  New Dir         12	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Atlantic\
-	    New File  		    3442	Azores100%  
-	    New File  		    2396	Bermuda100%  
-	    New File  		    1897	Canary100%  
-	    New File  		     256	Cape_Verde100%  
-	    New File  		    1815	Faeroe100%  
-	    New File  		    1815	Faroe100%  
-	    New File  		    2298	Jan_Mayen100%  
-	    New File  		    3377	Madeira100%  
-	    New File  		     148	Reykjavik100%  
-	    New File  		     150	South_Georgia100%  
-	    New File  		    1200	Stanley100%  
-	    New File  		     148	St_Helena100%  
-	  New Dir         23	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Australia\
-	    New File  		    2190	ACT100%  
-	    New File  		    2208	Adelaide100%  
-	    New File  		     419	Brisbane100%  
-	    New File  		    2229	Broken_Hill100%  
-	    New File  		    2190	Canberra100%  
-	    New File  		    2358	Currie100%  
-	    New File  		     325	Darwin100%  
-	    New File  		     456	Eucla100%  
-	    New File  		    2358	Hobart100%  
-	    New File  		    1846	LHI100%  
-	    New File  		     475	Lindeman100%  
-	    New File  		    1846	Lord_Howe100%  
-	    New File  		    2190	Melbourne100%  
-	    New File  		     325	North100%  
-	    New File  		    2190	NSW100%  
-	    New File  		     446	Perth100%  
-	    New File  		     419	Queensland100%  
-	    New File  		    2208	South100%  
-	    New File  		    2190	Sydney100%  
-	    New File  		    2358	Tasmania100%  
-	    New File  		    2190	Victoria100%  
-	    New File  		     446	West100%  
-	    New File  		    2229	Yancowinna100%  
-	  New Dir          4	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Brazil\
-	    New File  		     614	Acre100%  
-	    New File  		     702	DeNoronha100%  
-	    New File  		    1430	East100%  
-	    New File  		     590	West100%  
-	  New Dir          8	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Canada\
-	    New File  		    3424	Atlantic100%  
-	    New File  		    2868	Central100%  
-	    New File  		    3494	Eastern100%  
-	    New File  		    2332	Mountain100%  
-	    New File  		    3655	Newfoundland100%  
-	    New File  		    2892	Pacific100%  
-	    New File  		     980	Saskatchewan100%  
-	    New File  		    1614	Yukon100%  
-	  New Dir          2	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Chile\
-	    New File  		    2515	Continental100%  
-	    New File  		    2219	EasterIsland100%  
-	  New Dir         35	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Etc\
-	    New File  		     114	GMT100%  
-	    New File  		     114	GMT+0100%  
-	    New File  		     116	GMT+1100%  
-	    New File  		     117	GMT+10100%  
-	    New File  		     117	GMT+11100%  
-	    New File  		     117	GMT+12100%  
-	    New File  		     116	GMT+2100%  
-	    New File  		     116	GMT+3100%  
-	    New File  		     116	GMT+4100%  
-	    New File  		     116	GMT+5100%  
-	    New File  		     116	GMT+6100%  
-	    New File  		     116	GMT+7100%  
-	    New File  		     116	GMT+8100%  
-	    New File  		     116	GMT+9100%  
-	    New File  		     114	GMT-0100%  
-	    New File  		     117	GMT-1100%  
-	    New File  		     118	GMT-10100%  
-	    New File  		     118	GMT-11100%  
-	    New File  		     118	GMT-12100%  
-	    New File  		     118	GMT-13100%  
-	    New File  		     118	GMT-14100%  
-	    New File  		     117	GMT-2100%  
-	    New File  		     117	GMT-3100%  
-	    New File  		     117	GMT-4100%  
-	    New File  		     117	GMT-5100%  
-	    New File  		     117	GMT-6100%  
-	    New File  		     117	GMT-7100%  
-	    New File  		     117	GMT-8100%  
-	    New File  		     117	GMT-9100%  
-	    New File  		     114	GMT0100%  
-	    New File  		     114	Greenwich100%  
-	    New File  		     114	UCT100%  
-	    New File  		     114	Universal100%  
-	    New File  		     114	UTC100%  
-	    New File  		     114	Zulu100%  
-	  New Dir         64	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Europe\
-	    New File  		    2933	Amsterdam100%  
-	    New File  		    1742	Andorra100%  
-	    New File  		    1151	Astrakhan100%  
-	    New File  		    2262	Athens100%  
-	    New File  		    3664	Belfast100%  
-	    New File  		    1920	Belgrade100%  
-	    New File  		    2298	Berlin100%  
-	    New File  		    2301	Bratislava100%  
-	    New File  		    2933	Brussels100%  
-	    New File  		    2184	Bucharest100%  
-	    New File  		    2368	Budapest100%  
-	    New File  		    1909	Busingen100%  
-	    New File  		    2390	Chisinau100%  
-	    New File  		    2298	Copenhagen100%  
-	    New File  		    3492	Dublin100%  
-	    New File  		    3068	Gibraltar100%  
-	    New File  		    3664	Guernsey100%  
-	    New File  		    1900	Helsinki100%  
-	    New File  		    3664	Isle_of_Man100%  
-	    New File  		    1933	Istanbul100%  
-	    New File  		    3664	Jersey100%  
-	    New File  		    1493	Kaliningrad100%  
-	    New File  		    2120	Kiev100%  
-	    New File  		    1185	Kirov100%  
-	    New File  		    2120	Kyiv100%  
-	    New File  		    3527	Lisbon100%  
-	    New File  		    1920	Ljubljana100%  
-	    New File  		    3664	London100%  
-	    New File  		    2933	Luxembourg100%  
-	    New File  		    2614	Madrid100%  
-	    New File  		    2620	Malta100%  
-	    New File  		    1900	Mariehamn100%  
-	    New File  		    1307	Minsk100%  
-	    New File  		    2962	Monaco100%  
-	    New File  		    1535	Moscow100%  
-	    New File  		    2002	Nicosia100%  
-	    New File  		    2298	Oslo100%  
-	    New File  		    2962	Paris100%  
-	    New File  		    1920	Podgorica100%  
-	    New File  		    2301	Prague100%  
-	    New File  		    2198	Riga100%  
-	    New File  		    2641	Rome100%  
-	    New File  		    1201	Samara100%  
-	    New File  		    2641	San_Marino100%  
-	    New File  		    1920	Sarajevo100%  
-	    New File  		    1169	Saratov100%  
-	    New File  		    1469	Simferopol100%  
-	    New File  		    1920	Skopje100%  
-	    New File  		    2077	Sofia100%  
-	    New File  		    2298	Stockholm100%  
-	    New File  		    2148	Tallinn100%  
-	    New File  		    2084	Tirane100%  
-	    New File  		    2390	Tiraspol100%  
-	    New File  		    1253	Ulyanovsk100%  
-	    New File  		    2120	Uzhgorod100%  
-	    New File  		    1909	Vaduz100%  
-	    New File  		    2641	Vatican100%  
-	    New File  		    2200	Vienna100%  
-	    New File  		    2162	Vilnius100%  
-	    New File  		    1193	Volgograd100%  
-	    New File  		    2654	Warsaw100%  
-	    New File  		    1920	Zagreb100%  
-	    New File  		    2120	Zaporozhye100%  
-	    New File  		    1909	Zurich100%  
-	  New Dir         11	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Indian\
-	    New File  		     265	Antananarivo100%  
-	    New File  		     185	Chagos100%  
-	    New File  		     185	Christmas100%  
-	    New File  		     254	Cocos100%  
-	    New File  		     265	Comoro100%  
-	    New File  		     185	Kerguelen100%  
-	    New File  		     151	Mahe100%  
-	    New File  		     185	Maldives100%  
-	    New File  		     227	Mauritius100%  
-	    New File  		     265	Mayotte100%  
-	    New File  		     151	Reunion100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Mexico\
-	    New File  		    2458	BajaNorte100%  
-	    New File  		    1060	BajaSur100%  
-	    New File  		    1222	General100%  
-	  New Dir         44	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\Pacific\
-	    New File  		     598	Apia100%  
-	    New File  		    2437	Auckland100%  
-	    New File  		     254	Bougainville100%  
-	    New File  		    2054	Chatham100%  
-	    New File  		     172	Chuuk100%  
-	    New File  		    2219	Easter100%  
-	    New File  		     524	Efate100%  
-	    New File  		     220	Enderbury100%  
-	    New File  		     186	Fakaofo100%  
-	    New File  		     564	Fiji100%  
-	    New File  		     152	Funafuti100%  
-	    New File  		     224	Galapagos100%  
-	    New File  		     150	Gambier100%  
-	    New File  		     152	Guadalcanal100%  
-	    New File  		     494	Guam100%  
-	    New File  		     329	Honolulu100%  
-	    New File  		     329	Johnston100%  
-	    New File  		     220	Kanton100%  
-	    New File  		     224	Kiritimati100%  
-	    New File  		     337	Kosrae100%  
-	    New File  		     302	Kwajalein100%  
-	    New File  		     152	Majuro100%  
-	    New File  		     159	Marquesas100%  
-	    New File  		     175	Midway100%  
-	    New File  		     238	Nauru100%  
-	    New File  		     189	Niue100%  
-	    New File  		     866	Norfolk100%  
-	    New File  		     290	Noumea100%  
-	    New File  		     175	Pago_Pago100%  
-	    New File  		     166	Palau100%  
-	    New File  		     188	Pitcairn100%  
-	    New File  		     152	Pohnpei100%  
-	    New File  		     152	Ponape100%  
-	    New File  		     172	Port_Moresby100%  
-	    New File  		     589	Rarotonga100%  
-	    New File  		     494	Saipan100%  
-	    New File  		     175	Samoa100%  
-	    New File  		     151	Tahiti100%  
-	    New File  		     152	Tarawa100%  
-	    New File  		     358	Tongatapu100%  
-	    New File  		     172	Truk100%  
-	    New File  		     152	Wake100%  
-	    New File  		     152	Wallis100%  
-	    New File  		     172	Yap100%  
-	  New Dir         12	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pytz\zoneinfo\US\
-	    New File  		    2371	Alaska100%  
-	    New File  		    2356	Aleutian100%  
-	    New File  		     360	Arizona100%  
-	    New File  		    3592	Central100%  
-	    New File  		    1682	East-Indiana100%  
-	    New File  		    3552	Eastern100%  
-	    New File  		     329	Hawaii100%  
-	    New File  		    2444	Indiana-Starke100%  
-	    New File  		    2230	Michigan100%  
-	    New File  		    2460	Mountain100%  
-	    New File  		    2852	Pacific100%  
-	    New File  		     175	Samoa100%  
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\pywin32_system32\
-	    New File  		  135680	pywintypes313.dll 96%  100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\setuptools\
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\setuptools\_vendor\
-	  New Dir          7	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\setuptools\_vendor\importlib_metadata-8.0.0.dist-info\
-	    New File  		       4	INSTALLER100%  
-	    New File  		   11358	LICENSE100%  
-	    New File  		    4648	METADATA100%  
-	    New File  		    2518	RECORD100%  
-	    New File  		       0	REQUESTED
-	    New File  		      19	top_level.txt100%  
-	    New File  		      91	WHEEL100%  
-	  New Dir          0	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\setuptools\_vendor\jaraco\
-	  New Dir          1	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\setuptools\_vendor\jaraco\text\
-	    New File  		    1335	Lorem ipsum.txt100%  
-	  New Dir          3	C:\Users\pnqt\PycharmProjects\bvgd_project\dist\main\_internal\win32\
-	    New File  		  135168	win32api.pyd 96%  100%  
-	    New File  		   34816	win32pdh.pyd100%  
-	    New File  		   75264	win32print.pyd100%  
-
-------------------------------------------------------------------------------
-
-               Total    Copied   Skipped  Mismatch    FAILED    Extras
-    Dirs :        71        71         0         0         0         0
-   Files :       963       963         0         0         0         0
-   Bytes :  692.75 m  692.75 m         0         0         0         0
-   Times :   0:00:14   0:00:12                       0:00:00   0:00:01
-
-
-   Speed :            56398258 Bytes/sec.
-   Speed :            3227.134 MegaBytes/min.
-   Ended : Tuesday, January 20, 2026 12:18:25 PM
-
