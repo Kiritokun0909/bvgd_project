@@ -910,7 +910,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         fields_to_check = [
             (ui.ho_ten_bn, "Họ tên bệnh nhân"),
             (ui.dia_chi, "Địa chỉ"),
-            (ui.sdt, "Số điện thoại"),
+            # (ui.sdt, "Số điện thoại"),
             (ui.chan_doan, "Chẩn đoán"),
             (ui.cccd, "Căn cước công dân"),
         ]
