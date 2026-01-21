@@ -1,4 +1,4 @@
-SQLITE_DB_PATH = 'data/hospital.db'
+SQLITE_DB_PATH = '../../data/hospital.db'
 
 """
     Nơi định nghĩa cấu trúc Database.
