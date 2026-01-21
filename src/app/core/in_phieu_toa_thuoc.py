@@ -105,14 +105,14 @@ def draw_drug_form(c, data, thong_tin_qrcode, is_draw = True):
 
     if is_draw:
         try:
-            c.drawImage(thong_tin_qrcode, width - margin_left * 2, y_start - 12, 40, 40)
+            c.drawImage(thong_tin_qrcode, width - margin_left * 2 - 15, y_start - 35, 60, 60)
         except:
             pass
 
     c.setFont(VIET_FONT_BOLD, 10)
-    c.drawCentredString(width - margin_left - 15, y_start - 20, data.get('MaYTe', ''))
+    c.drawCentredString(width - margin_left - 15, y_start - 40, data.get('MaYTe', ''))
     c.setFont(VIET_FONT, 9)
-    c.drawCentredString(width - margin_left - 15, y_start - 30, data.get('DoiTuong', ''))
+    c.drawCentredString(width - margin_left - 15, y_start - 50, data.get('DoiTuong', ''))
 
     c.setFont(VIET_FONT_BOLD, 12)
     c.drawCentredString(width / 2, y_start - 50, PHIEU_TOA_THUOC_HEADER)
