@@ -11,13 +11,16 @@ __pycache__/
 
 # Các file log, database local, v.v.
 *.log
-dist/
 
 build/
 
 main.spec
+PhanMemBenhVien.spec
 
 src/data/
-
-src/logo.png
 src/settings.ini
+
+dist/data/
+dist/main/main.exe
+dist/main/_internal
+dist/settings.ini
