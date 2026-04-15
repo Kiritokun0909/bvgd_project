@@ -263,6 +263,8 @@ def draw_phieu_chi_dinh_paged(c, data, thu_tu, barcode_ma_y_te_path, qr_thong_ti
 
     # 4. Vòng lặp vẽ từng dòng dịch vụ
     for item in ds_dich_vu:
+        if item.get("ChonIn", 0) == 0:
+            continue
         # Kiểm tra ngắt trang
         # Ước lượng 1 dòng dịch vụ wrap text tối đa khoảng 30-40pt.
         # Nếu y_current < MIN_FOOTER_SPACE, ngắt trang.
