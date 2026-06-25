@@ -84,6 +84,10 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ds_da_kham.setRowCount(0)
         # </editor-fold>
 
+        # Disable chức năng thông tuyến bhyt
+        self.ui_kham.btn_check_bhyt.setDisabled(True)
+        self.ui_kham.btn_check_bhyt.setVisible(False)
+
         self.duoc_handler = DuocCompleterHandler(
             table_widget=self.ui_kham.ds_thuoc,
             parent=self,
