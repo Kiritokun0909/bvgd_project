@@ -29,7 +29,7 @@ Dự án BVGD là một ứng dụng máy tính dành cho các công việc qu�
 ## Cấu hình & Cài đặt
 
 ### 1. Điều kiện tiên quyết
-- Python 3.8 trở lên.
+- Python 3.8 trở lên (tốt nhất ở phiên bản Python 3.12).
 - ODBC Driver 17 cho SQL Server.
 - Khuyến nghị sử dụng **Pycharm, QtDesigner** để bảo trì dự án này.
 
