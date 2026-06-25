@@ -18,6 +18,7 @@ class BenhNhan:
     SO_DIEN_THOAI = 'SoDienThoai'
     DIA_CHI = 'DiaChi'
     BHYT = 'BHYT'
+    CMND = 'CMND'
 
     # Định nghĩa cấu trúc (Tên cột, Kiểu dữ liệu SQLite)
     STRUCTURE = [
@@ -29,6 +30,7 @@ class BenhNhan:
         (SO_DIEN_THOAI, "TEXT"),
         (DIA_CHI, "TEXT"),
         (BHYT, "TEXT"),
+        (CMND, "TEXT"),
     ]
     CONSTRAINTS = []
 
