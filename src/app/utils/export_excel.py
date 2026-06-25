@@ -244,5 +244,66 @@ def export_and_show_dialog(parent_widget, date_str=None):
     else:
         QMessageBox.warning(parent_widget, "Thông báo", "Không có dữ liệu để xuất hoặc xảy ra lỗi ghi file.")
 
+
+def export_tiep_nhan_to_excel(date_str=None):
+    if date_str is None:
+        date_str = datetime.now().strftime("%Y-%m-%d")
+
+    source_path = get_file_path('data/lich_su_tiep_nhan.csv')
+    export_dir = get_file_path('data/exports')
+    export_dir.mkdir(parents=True, exist_ok=True)
+
+    if not os.path.exists(source_path):
+        return None
+
+    # Quan trọng: Thêm dtype=str để Pandas hiểu toàn bộ file là chuỗi, tránh mất số 0
+    df = pd.read_csv(source_path, dtype=str)
+    df = df.fillna('')
+
+    if not df.empty and 'NgayTiepNhan' in df.columns:
+        df = df[df['NgayTiepNhan'].astype(str).str.startswith(date_str, na=False)]
+    if 'STT' in df.columns:
+        df['STT'] = df['STT'].astype(str).apply(lambda x: x.zfill(4) if x.isdigit() else x)
+    if 'SoBHYT' in df.columns:
+        df['SoBHYT'] = df['SoBHYT'].astype(str).str.replace('.0', '', regex=False)
+
+    output_path = export_dir / f'tiep_nhan_{date_str}.xlsx'
+    try:
+        with pd.ExcelWriter(output_path, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='Tiếp Nhan', index=False)
+            _auto_adjust_column_width(writer, df, 'Tiếp Nhan') if not df.empty else None
+        return str(output_path)
+    except Exception as e:
+        print(f'Lỗi xuất Excel tiếp nhận: {e}')
+        return None
+
+def export_tiep_nhan_and_show_dialog(parent_widget, date_str=None):
+    """
+    Đã sửa: Bổ sung popup giống hệt hàm `export_and_show_dialog` để có nút mở file
+    """
+    file_path = export_tiep_nhan_to_excel(date_str)
+
+    if file_path and os.path.exists(file_path):
+        msg = QMessageBox(parent_widget)
+        msg.setIcon(QMessageBox.Icon.Information)
+        msg.setWindowTitle("Xuất dữ liệu thành công")
+        msg.setText(f"File Excel đã được lưu tại:\n{file_path}")
+
+        btn_open = msg.addButton("Mở File Ngay", QMessageBox.ButtonRole.ActionRole)
+        msg.addButton("Đóng", QMessageBox.ButtonRole.RejectRole)
+
+        msg.exec()
+
+        if msg.clickedButton() == btn_open:
+            try:
+                os.startfile(file_path)  # Chỉ chạy trên Windows
+            except Exception as e:
+                QMessageBox.warning(parent_widget, "Lỗi", f"Không thể mở file: {e}")
+        return file_path
+
+    QMessageBox.warning(parent_widget, 'Thông báo', 'Không có dữ liệu để xuất.')
+    return None
+
+
 if __name__ == '__main__':
     export_excel()

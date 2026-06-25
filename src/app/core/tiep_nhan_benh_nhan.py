@@ -4,8 +4,11 @@ from datetime import datetime
 
 from PyQt6.QtWidgets import QComboBox
 
-STT_THEO_PHONG_FILE_PATH = "data/tiep_nhan_benh_nhan/stt_theo_ngay.csv"
-LICH_SU_TIEP_NHAN_FILE_PATH = "data/lich_su_tiep_nhan.csv"
+from app.utils.get_file_path import get_file_path
+
+STT_THEO_PHONG_FILE_PATH = get_file_path('data/tiep_nhan_benh_nhan/stt_theo_ngay.csv')
+LICH_SU_TIEP_NHAN_FILE_PATH = get_file_path('data/lich_su_tiep_nhan.csv')
+
 
 def load_data_from_csv(file_path):
     """
@@ -42,7 +45,31 @@ def get_combobox_key(combobox: QComboBox):
     return combobox.currentData()
 
 
-def get_next_queue_number(ma_phong: str) -> str:
+def load_history_records():
+    if not os.path.exists(LICH_SU_TIEP_NHAN_FILE_PATH) or os.path.getsize(LICH_SU_TIEP_NHAN_FILE_PATH) == 0:
+        return []
+    try:
+        return pd.read_csv(LICH_SU_TIEP_NHAN_FILE_PATH).to_dict('records')
+    except Exception:
+        return []
+
+
+def can_tiep_nhan(ma_y_te: str, ma_phong: str, ngay: str) -> tuple[bool, str]:
+    if not str(ma_y_te).strip():
+        return True, ''
+
+    records = [r for r in load_history_records() if
+               str(r.get('MaYTe', '')).strip() == str(ma_y_te).strip() and str(r.get('NgayTiepNhan', ''))[:10] == str(
+                   ngay)]
+    if any(str(r.get('MaPhong', '')) == str(ma_phong) for r in records):
+        return False, 'Bệnh nhân đã tiếp nhận tại phòng này trong ngày.'
+    distinct_rooms = {str(r.get('MaPhong', '')) for r in records}
+    if len(distinct_rooms) >= 4:
+        return False, 'Bệnh nhân đã tiếp nhận tối đa 4 phòng trong ngày.'
+    return True, ''
+
+
+def get_next_queue_number(ma_phong: str, ngay: str = None) -> str:
     """
     Lấy và cập nhật số thứ tự tiếp theo cho một phòng dựa trên ngày hiện tại.
 
@@ -51,8 +78,7 @@ def get_next_queue_number(ma_phong: str) -> str:
     """
     FILE_STT = STT_THEO_PHONG_FILE_PATH
 
-    # Định dạng ngày hiện tại để so sánh
-    today_str = datetime.now().strftime("%Y-%m-%d")
+    today_str = ngay or datetime.now().strftime("%Y-%m-%d")
 
     # Tạo DataFrame rỗng mặc định nếu file chưa tồn tại
     if not os.path.exists(FILE_STT) or os.path.getsize(FILE_STT) == 0:
@@ -94,7 +120,7 @@ def get_next_queue_number(ma_phong: str) -> str:
     # Đảm bảo cột STT được ghi lại ở định dạng 4 chữ số
     df['STT_HienTai'] = df['STT_HienTai'].astype(int).apply(lambda x: f"{x:04d}")
     try:
-        os.makedirs(os.path.dirname(FILE_STT), exist_ok=True)
+        os.makedirs(os.path.dirname(str(FILE_STT)), exist_ok=True)
         df.to_csv(FILE_STT, index=False)
         print(f"STT updated for {ma_phong} on {today_str}: {next_stt_formatted}")
     except Exception as e:
@@ -102,15 +128,41 @@ def get_next_queue_number(ma_phong: str) -> str:
 
     return next_stt_formatted
 
+
 def luu_du_lieu_tiep_nhan(data: dict):
     """
     Lưu toàn bộ dữ liệu tiếp nhận từ biểu mẫu vào file CSV.
+    SỬA ĐỔI: Chuẩn hóa ép kiểu chuỗi độc lập cho STT, SDT, CCCD, BHYT và thêm dtype=str khi đọc file nối dữ liệu.
     """
-
-    # 1. Thêm timestamp để theo dõi thời điểm lưu
+    data = dict(data)
     data['timestamp_luu'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # 2. Chuyển đổi dictionary thành DataFrame
+    # 1. Chuẩn hóa STT
+    stt_val = str(data.get('STT', '')).strip()
+    data['STT'] = stt_val.zfill(4) if stt_val.isdigit() else stt_val
+
+    # 2. Chuẩn hóa Số điện thoại
+    if 'SDT' in data:
+        data['SDT'] = str(data.get('SDT', '')).strip()
+
+    # 3. Chuẩn hóa Căn cước công dân
+    if 'CCCD' in data:
+        data['CCCD'] = str(data.get('CCCD', '')).strip()
+
+    # 4. Chuẩn hóa Số BHYT
+    data['SoBHYT'] = str(data.get('SoBHYT', '')).strip().replace('.0', '')
+
+    data['PhongTiepNhan'] = data.get('PhongTiepNhan') or data.get('Phong') or ''
+    data['TenBenhVien'] = data.get('TenBenhVien') or 'BỆNH VIỆN NHÂN DÂN GIA ĐỊNH'
+
+    # Dọn dẹp các trường dữ liệu rỗng hoặc lỗi NaN
+    for key, value in list(data.items()):
+        if pd.isna(value) or value is None:
+            data[key] = ''
+        else:
+            # Ép toàn bộ value của dict về dạng chuỗi trước khi chuyển thành DataFrame
+            data[key] = str(value).strip()
+
     df_moi = pd.DataFrame([data])
 
     # 3. Kiểm tra và Lưu file
@@ -119,7 +171,8 @@ def luu_du_lieu_tiep_nhan(data: dict):
         try:
             df_hien_tai = pd.read_csv(LICH_SU_TIEP_NHAN_FILE_PATH)
             df_ket_hop = pd.concat([df_hien_tai, df_moi], ignore_index=True)
-            df_ket_hop.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False)
+            df_ket_hop = df_ket_hop.fillna('')
+            df_ket_hop.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False, na_rep='')
             print(f"SUCCESS: Đã thêm dữ liệu mới vào {LICH_SU_TIEP_NHAN_FILE_PATH}.")
         except Exception as e:
             print(f"LỖI LƯU: Không thể đọc/ghi vào file {LICH_SU_TIEP_NHAN_FILE_PATH}. {e}")
@@ -127,8 +180,9 @@ def luu_du_lieu_tiep_nhan(data: dict):
     else:
         # Nếu file chưa tồn tại, tạo file mới
         try:
-            os.makedirs(os.path.dirname(LICH_SU_TIEP_NHAN_FILE_PATH), exist_ok=True)
-            df_moi.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False)
+            os.makedirs(os.path.dirname(str(LICH_SU_TIEP_NHAN_FILE_PATH)), exist_ok=True)
+            df_moi = df_moi.fillna('')
+            df_moi.to_csv(LICH_SU_TIEP_NHAN_FILE_PATH, index=False, na_rep='')
             print(f"SUCCESS: Đã tạo và lưu dữ liệu đầu tiên vào {LICH_SU_TIEP_NHAN_FILE_PATH}.")
         except Exception as e:
             print(f"LỖI LƯU: Không thể tạo file lịch sử. {e}")

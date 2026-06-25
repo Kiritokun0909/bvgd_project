@@ -22,8 +22,10 @@ except ImportError:
     def load_data_from_csv(file_path):
         print("LỖI: Không tìm thấy module 'load_data_from_csv'. Hàm được gọi với filePath:", file_path)
 
+
     def populate_combobox():
         print("LỖI: Không tìm thấy module 'load_data_from_csv'.")
+
 
     def get_combobox_key():
         print("LỖI: Không tìm thấy module 'get_combobox_key'.")
@@ -34,17 +36,18 @@ except ImportError:
     def create_and_open_pdf_for_printing(data):
         print("LỖI: Không tìm thấy module 'create_and_open_pdf_for_printing'. Hàm đã được gọi với data:", data)
 
-PHONG_KHAM_FILE_PATH ='data/tiep_nhan_benh_nhan/phong_kham.csv'
-GIOI_TINH_FILE_PATH ='data/tiep_nhan_benh_nhan/gioi_tinh.csv'
-NGHE_NGHIEP_FILE_PATH ='data/tiep_nhan_benh_nhan/nghe_nghiep.csv'
-QUOC_TICH_FILE_PATH ='data/tiep_nhan_benh_nhan/quoc_tich.csv'
-LY_DO_TIEP_NHAN_FILE_PATH ='data/tiep_nhan_benh_nhan/ly_do_tiep_nhan.csv'
+PHONG_KHAM_FILE_PATH = 'data/tiep_nhan_benh_nhan/phong_kham.csv'
+GIOI_TINH_FILE_PATH = 'data/tiep_nhan_benh_nhan/gioi_tinh.csv'
+NGHE_NGHIEP_FILE_PATH = 'data/tiep_nhan_benh_nhan/nghe_nghiep.csv'
+QUOC_TICH_FILE_PATH = 'data/tiep_nhan_benh_nhan/quoc_tich.csv'
+LY_DO_TIEP_NHAN_FILE_PATH = 'data/tiep_nhan_benh_nhan/ly_do_tiep_nhan.csv'
 NOI_DANG_KY_FILE_PATH = 'data/tiep_nhan_benh_nhan/noi_dang_ky.csv'
 TUYEN_KHAM_BENH_FILE_PATH = 'data/tiep_nhan_benh_nhan/tuyen_kham_benh.csv'
 KHU_VUC_FILE_PATH = 'data/tiep_nhan_benh_nhan/khu_vuc.csv'
 DAN_TOC_FILE_PATH = 'data/tiep_nhan_benh_nhan/dan_toc.csv'
 DOI_TUONG_FILE_PATH = 'data/tiep_nhan_benh_nhan/doi_tuong.csv'
 HINH_THUC_DEN_FILE_PATH = 'data/tiep_nhan_benh_nhan/hinh_thuc_den.csv'
+
 
 class ScrollEventFilter(QObject):
     def __init__(self, scroll_area, parent=None):
@@ -60,6 +63,7 @@ class ScrollEventFilter(QObject):
 
         # Với các sự kiện khác, tiếp tục xử lý bình thường
         return super().eventFilter(obj, event)
+
 
 class TabTiepNhanBenhNhan(QWidget):
     def __init__(self, parent=None):
@@ -104,7 +108,7 @@ class TabTiepNhanBenhNhan(QWidget):
             QLineEdit {
                 min-width: 300px;
             }
-            
+
             QPushButton {
                 /* Trạng thái mặc định */
                 background-color: #0078D7;      /* Màu nền xanh dương */
@@ -115,26 +119,26 @@ class TabTiepNhanBenhNhan(QWidget):
                 font-size: 14pt;                /* Cỡ chữ lớn hơn */
                 font-weight: bold;
             }
-        
+
             QPushButton:hover {
                 /* Trạng thái khi di chuột qua */
                 background-color: #005A9E;      /* Màu nền đậm hơn một chút */
                 border: 2px solid #004070;
             }
-        
+
             QPushButton:pressed {
                 /* Trạng thái khi nhấn giữ chuột */
                 background-color: #003366;      /* Màu nền rất đậm (hiệu ứng nhấn xuống) */
                 border: 2px solid #00254D;
             }
-        
+
             QPushButton:disabled {
                 /* Trạng thái khi nút bị vô hiệu hóa */
                 background-color: #A0A0A0;      /* Màu nền xám */
                 color: #E0E0E0;                 /* Màu chữ xám nhạt */
                 border: none;
             }
-            
+
             /* Style cho trường bị lỗi */
             .error {
                 border: 2px solid red; /* Viền đỏ nổi bật */
@@ -143,14 +147,7 @@ class TabTiepNhanBenhNhan(QWidget):
         """)
         # ----------------------------------------------------
 
-        # 1. Tiêu đề
-        tieu_de = QLabel("<h1>Tiếp nhận bệnh nhân</h1>")
-        tieu_de.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # Sử dụng phương thức .addWidget(widget, row, column, rowSpan, colSpan)
-        # Đặt tiêu đề ở hàng 0, cột 0, kéo dài qua 2 cột (colSpan=2)
-        self.content_layout.addWidget(tieu_de, 0, 0, 1, 2)
-
-        # 2. Danh sách các trường nhập liệu
+        # Danh sách các trường nhập liệu
         # Sử dụng QGridLayout với 2 cột: Cột 0 (Nhãn) và Cột 1 (Trường nhập liệu)
         # Danh sách các trường và loại widget phù hợp
         # Quyết định thứ tự cac trường nhập liệu từ trên xuống dưới
@@ -376,7 +373,6 @@ class TabTiepNhanBenhNhan(QWidget):
         # (Tùy chọn) Giới hạn độ dài tối đa (để người dùng không nhập quá 10)
         sdt_widget.setMaxLength(10)
 
-
     def update_system_time(self):
         """Cập nhật giá trị QDateTimeEdit với thời gian hiện tại của hệ thống."""
         self.tiep_nhan_luc_widget.setDateTime(QDateTime.currentDateTime())
@@ -490,7 +486,7 @@ class TabTiepNhanBenhNhan(QWidget):
             elif isinstance(widget, QComboBox):
                 value = widget.currentText()
             elif isinstance(widget, QCheckBox):
-                value = widget.isChecked() # Trả về True/False
+                value = widget.isChecked()  # Trả về True/False
             else:
                 value = None
 
