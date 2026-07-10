@@ -321,7 +321,7 @@ class TaiVuTabController(QtWidgets.QWidget):
             self.bhyt = data_parts.get('BHYT', '')
 
             ma_dt = data_parts.get('MaDT', '')
-            index = ui.cb_doi_tuong.findData(ma_dt)
+            index = ui.cb_doi_tuong.findText(ma_dt)
             if index != -1:
                 ui.cb_doi_tuong.setCurrentIndex(index)
 

@@ -914,8 +914,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
                 item = table.item(row, col)
                 dich_vu_row_data[field_name] = item.text().strip() if item else ''
 
-            if dich_vu_row_data.get('ChonIn') == 1:
-                dich_vu_dang_ky.append(dich_vu_row_data)
+            # if dich_vu_row_data.get('ChonIn') == 1:
+            dich_vu_dang_ky.append(dich_vu_row_data)
 
         # ------------------ PHẦN CHUYỂN ĐỔI DỮ LIỆU CHO IN PHIẾU ------------------
 
@@ -962,7 +962,8 @@ class DangKyDichVuTabController(QtWidgets.QWidget):
                 "SoLuong": service.get("SoLuong", "1"),
                 "NoiThucHien": service.get("NoiThucHien", ""),
                 "KhongHoTro": service.get("KhongHoTro", 0),
-                "KhongThuTien": service.get("KhongThuTien", 0)
+                "KhongThuTien": service.get("KhongThuTien", 0),
+                "ChonIn": service.get("ChonIn", 0),
             })
 
         dich_vu_output = list(grouped_services.values())

@@ -1,56 +1,45 @@
-# VM File Synchronization Tool
-
-This PowerShell-based tool automates the process of mirroring a local distribution folder to multiple remote Virtual Machines (VMs) or servers over a local network. It includes connectivity checks (Ping) and handles authenticated network shares.
+This Python-based tool automates the process of mirroring a local distribution folder to multiple remote Virtual Machines (VMs) or servers over a local network. It includes connectivity checks (Ping), group-based targeting, and handles authenticated network shares.
 
 ## 📋 Features
-* **Multi-IP Support:** Reads target IP addresses from a central CSV file.
+* **Excel-based Target List:** Reads target IP addresses and group names from an `IpAddress.xlsx` file.
+* **Group Selection:** Allows syncing to all machines or specific groups (e.g., specific departments or wards).
 * **Connectivity Awareness:** Skips offline machines to save time.
 * **Auto-Authentication:** Handles password-protected network shares using `net use`.
-* **Robust Mirroring:** Uses `Robocopy /MIR` to ensure the destination is an exact replica of the source.
+* **Robust Syncing:** Uses `Robocopy /E` to ensure the destination is updated with the source content.
 * **Detailed Logging:** Generates individual timestamped logs for every machine.
 
-## ⚙️ Configuration
+Before running the script, you **must** update the configuration variables in `sync.py` to match your local environment.
 
-Before running the script, you **must** update the configuration variables in `SyncFolders.ps1` to match your local environment.
-
-1.  **Open `SyncFolders.ps1` in a text editor.**
+1.  **Open `src/tools/sync_app/sync.py` in a text editor.**
 2.  **Locate the `--- CONFIGURATION ---` section at the top.**
 3.  **Update the following variables:**
 
-    *   `$ServerList`: Absolute path to your `IpAddress.csv` file.
-        *   *Example:* `$ServerList = "C:\Scripts\SyncTool\IpAddress.csv"`
-    *   `$LocalFolder`: The absolute path of the **source folder** you want to copy (e.g., your build output or distribution folder).
-        *   *Example:* `$LocalFolder = "C:\Projects\MyApp\dist"`
-    *   `$RemoteShare`: The share name or path on the destination VMs.
-        *   *Example:* `$RemoteShare = "Users\Public\BackupFolder"`
-    *   `$LogFolder`: Directory where execution logs will be saved. Ensure this path is valid or let the script create it.
-        *   *Example:* `$LogFolder = "C:\Scripts\SyncTool\logs"`
+    *   `EXCEL_PATH`: Absolute path to your `IpAddress.xlsx` file.
+        *   *The Excel file must have columns: `GroupName` and `IpAddress`.*
+    *   `LOCAL_FOLDER`: The absolute path of the **source folder** you want to copy (e.g., your build output or distribution folder).
+    *   `REMOTE_SHARE`: The share name or path on the destination VMs.
+    *   `LOG_FOLDER`: Directory where execution logs will be saved.
+    *   `USERNAME`: Username for network share authentication.
+    *   `PASSWORD`: Password for network share authentication.
 
-### 🔐 Authentication (Optional)
+## 📦 Prerequisites
 
-If the destination shares are password-protected, you need to enable the authentication logic in the script:
-
-1.  **Define Credentials:**
-    Add your credentials at the top of the Configuration section:
-    ```
-    $User = "AdminUser"
-    $Password = "YourStrongPassword"
-    ```
-2.  **Enable Authentication Logic:**
-    Uncomment the following lines in `SyncFolders.ps1`:
-    *   **Line 28:** `$NetPath = "\\$IP\IPC$"`
-    *   **Line 29:** `net use $NetPath /user:$User $Password /persistent:no | Out-Null`
-    *   **Line 43:** `net use $NetPath /delete /y | Out-Null`
+* Python 3.x
+* `pandas` and `openpyxl` libraries:
+  ```bash
+  pip install pandas openpyxl
+  ```
 
 ## 🚀 Usage
 
 ### Manual Run
-1. Open PowerShell as **Administrator**.
-2. Navigate to the script directory.
+1. Open terminal/PowerShell.
+2. Navigate to the project root.
 3. Execute the script:
+   ```bash
+   python src/tools/sync_app/sync.py
    ```
-   powershell .\SyncFolders.ps1
-   ```
+4. **Choose Target:** When prompted, enter `All` to sync everything or type a specific `GroupName` (e.g., `KHAMBENH`).
 
 ### 📅 Scheduling (Every Sunday)
 
@@ -73,10 +62,17 @@ Windows Task Scheduler **(taskschd.msc)**:
 
     * Action: Start a program.
 
-    * Program/script: powershell.exe
+    * Program/script: **YOUR_PYTHON_EXE_PATH**, for example:  
+    ```
+        C:\Users\{YOUR_USERNAME}\PycharmProjects\{YOUR_PROJECT_NAME}\.venv\Scripts\python.exe
+    ```
 
-    * Add arguments: ```powershell -ExecutionPolicy Bypass -File "C:\Scripts\SyncFolders.ps1"```
-
+    * Add arguments:  **YOUR_PATH_TO_PYTHON_SCRIPT**, for example:
+    ```
+        C:\Users\{YOUR_USERNAME}\PycharmProjects\{YOUR_PROJECT_NAME}\src\tools\sync_app\sync.py
+    ```
+   
+    * Reference: https://community.esri.com/t5/python-documents/schedule-a-python-script-using-windows-task/ta-p/915861
 
 
 
