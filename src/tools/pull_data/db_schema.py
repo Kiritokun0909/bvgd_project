@@ -131,7 +131,7 @@ class DM_Duoc:
         WHERE 
             duoc.TamNgung=0 AND duoc.PhamVi='NT'
     ) tmp
-    WHERE tmp.DonGia is not null;
+    WHERE tmp.DonGia is not null and tmp.dongia>0;
     """
 
 
