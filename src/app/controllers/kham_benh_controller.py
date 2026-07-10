@@ -84,6 +84,10 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ds_da_kham.setRowCount(0)
         # </editor-fold>
 
+        # Disable chức năng thông tuyến bhyt
+        self.ui_kham.btn_check_bhyt.setDisabled(True)
+        self.ui_kham.btn_check_bhyt.setVisible(False)
+
         self.duoc_handler = DuocCompleterHandler(
             table_widget=self.ui_kham.ds_thuoc,
             parent=self,
@@ -425,6 +429,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         sdt = benh_nhan_data[4]
         dia_chi = benh_nhan_data[5]
         bhyt = benh_nhan_data[6]
+        cmnd = benh_nhan_data[7]
 
         ngay_sinh = QDate(int(nam_sinh), 1, 1) if nam_sinh is not None else QDate.currentDate()
 
@@ -435,6 +440,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.sdt.setText(str(sdt) if sdt is not None else '')
         ui.dia_chi.setText(str(dia_chi) if dia_chi is not None else '')
         ui.so_bhyt.setText(str(bhyt) if bhyt is not None else '')
+        ui.cccd.setText(str(cmnd) if cmnd is not None else '')
         self.update_tuoi()
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):

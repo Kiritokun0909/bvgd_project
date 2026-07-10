@@ -29,7 +29,7 @@ The application operates with a local SQLite database for offline capability/spe
 ## Setup & Installation
 
 ### 1. Prerequisites
-- Python 3.8 or higher.
+- Python 3.8 or higher (best support at Python version 3.12).
 - ODBC Driver 17 for SQL Server.
 - Recommend using **Pycharm, QtDesigner** to maintain this project.
 
@@ -106,6 +106,7 @@ python src/main.py
 To build a standalone executable using the provided spec file:
 ```
 pyinstaller --windowed --noconfirm .\src\main.py  
+pyinstaller --onefile --windowed --name="PhanMemBenhVien" .\src\main.py
 ```
 The output file will be located in the `dist/` directory.
 

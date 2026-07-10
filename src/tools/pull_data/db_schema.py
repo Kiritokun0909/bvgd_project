@@ -1,4 +1,4 @@
-SQLITE_DB_PATH = 'data/hospital.db'
+SQLITE_DB_PATH = '../../data/hospital.db'
 
 """
     Nơi định nghĩa cấu trúc Database.
@@ -19,6 +19,7 @@ class BenhNhan:
     SO_DIEN_THOAI = 'SoDienThoai'
     DIA_CHI = 'DiaChi'
     BHYT = 'BHYT'
+    CMND = 'CMND'
 
     # Định nghĩa cấu trúc (Tên cột, Kiểu dữ liệu SQLite)
     STRUCTURE = [
@@ -29,7 +30,8 @@ class BenhNhan:
         (NAM_SINH, "INTEGER"),
         (SO_DIEN_THOAI, "TEXT"),
         (DIA_CHI, "TEXT"),
-        (BHYT, "TEXT")
+        (BHYT, "TEXT"),
+        (CMND, "TEXT")
     ]
     CONSTRAINTS = []
 
@@ -37,7 +39,7 @@ class BenhNhan:
 
     # Query lấy dữ liệu từ SQL Server (Số lượng cột và thứ tự phải khớp với STRUCTURE)
     SOURCE_QUERY = f"""
-        SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe as BHYT
+        SELECT  bn.BenhNhan_Id, SoVaoVien, TenBenhNhan, GioiTinh, NamSinh, SoDienThoai, DiaChi, the.SoThe as BHYT, bn.CMND
         FROM DM_BenhNhan bn
         OUTER apply (
             SELECT top 1 * FROM DM_BenhNhan_BHYT a WHERE a.benhnhan_id=bn.BenhNhan_Id 
