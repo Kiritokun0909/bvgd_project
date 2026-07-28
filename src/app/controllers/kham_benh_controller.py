@@ -24,7 +24,8 @@ from app.ui.ThongBaoThongTuyenBHYT import Ui_Dialog as Ui_ThongBaoThongTuyenBHYT
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
 from app.utils.scanner_utils import parse_scanned_data, should_skip_scanner_input
-from app.utils.constants import MA_Y_TE_LENGTH, CLS_CODE
+from app.utils.constants import CLS_CODE
+from app.utils.setting_loader import AppConfig
 from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
@@ -207,8 +208,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.spo2.setValidator(int_validator)
         self.ui_kham.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{10}$')))
 
-        self.ui_kham.ma_y_te.setMaxLength(8)
-        self.ui_kham.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
+        # self.ui_kham.ma_y_te.setMaxLength(8)
+        # self.ui_kham.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
 
         # 2. Số CCCD: Tối đa 12 ký tự, CHỈ cho phép nhập SỐ
         self.ui_kham.cccd.setMaxLength(12)
@@ -227,7 +228,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
     def _connect_signals(self):
         """Kết nối tất cả các tín hiệu và slot."""
-        self.ui_kham.ma_y_te.textEdited.connect(self.load_thong_tin_benh_nhan)
+        # self.ui_kham.ma_y_te.textEdited.connect(self.load_thong_tin_benh_nhan)
+        self.ui_kham.ma_y_te.returnPressed.connect(self.handle_scan_or_enter)
+
         self.ui_kham.cb_phong_kham.currentIndexChanged.connect(self._save_settings)
         self.ui_kham.ten_bac_si.textEdited.connect(self._save_settings)
         self.ui_kham.is_hen_kham.clicked.connect(self.update_ngay_hen)
@@ -429,6 +432,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         sdt = benh_nhan_data[4]
         dia_chi = benh_nhan_data[5]
         bhyt = benh_nhan_data[6]
+        cccd = benh_nhan_data[7]
 
         ngay_sinh = QDate(int(nam_sinh), 1, 1) if nam_sinh is not None else QDate.currentDate()
 
@@ -439,19 +443,53 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.sdt.setText(str(sdt) if sdt is not None else '')
         ui.dia_chi.setText(str(dia_chi) if dia_chi is not None else '')
         ui.so_bhyt.setText(str(bhyt) if bhyt is not None else '')
+        ui.cccd.setText(str(cccd) if cccd is not None else '')
         self.update_tuoi()
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):
         """Lọc dữ liệu bệnh nhân và cập nhật giao diện."""
-        if len(ma_y_te) != MA_Y_TE_LENGTH:
+        ma_y_te = ma_y_te.strip()
+        if not ma_y_te:
             return
 
         benh_nhan_data = get_benh_nhan_by_id(ma_y_te)
         if benh_nhan_data is None:
-            QMessageBox.warning(self, 'Thông báo', f'Không tìm thấy bệnh nhân với mã y tế {ma_y_te}')
+            QMessageBox.warning(self, 'Không tìm thấy', f'Không tìm thấy bệnh nhân: {ma_y_te}')
             return
 
         self.set_thong_tin_benh_nhan(benh_nhan_data)
+
+    def handle_scan_or_enter(self):
+        """Handle either a manually entered medical ID or a medical QR payload."""
+        input_text = self.ui_kham.ma_y_te.text().strip()
+        if not input_text:
+            return
+
+        if "|" in input_text or ":" in input_text:
+            self.process_qr_data(input_text)
+            return
+
+        self.load_thong_tin_benh_nhan(input_text)
+
+    def process_qr_data(self, qr_text: str):
+        """Load a patient from the ``MaYTe`` value encoded in a medical QR code."""
+        focused_widget = QtWidgets.QApplication.focusWidget()
+        if should_skip_scanner_input(focused_widget):
+            return
+
+        scanned_data = parse_scanned_data(qr_text)
+        ma_y_te = scanned_data.get('ma_y_te', '').strip()
+        if not ma_y_te:
+            if "|" not in qr_text and ":" not in qr_text:
+                self.ui_kham.ma_y_te.setText(qr_text.strip())
+                self.load_thong_tin_benh_nhan(qr_text.strip())
+                return
+            self.parse_cccd_qr_data(qr_text)
+            self.ui_kham.ma_y_te.clear()
+            return
+
+        self.ui_kham.ma_y_te.setText(ma_y_te)
+        self.load_thong_tin_benh_nhan(ma_y_te)
 
     # </editor-fold>
 
@@ -992,7 +1030,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         data = self.get_thong_tin_kham()
 
-        if len(data.get('ToaThuoc')) < 1:
+        if len(data.get('ToaThuoc')) < 1 and self.ui_kham.cb_cach_giai_quyet.currentData() != AppConfig.KHONG_TOA_CODE:
             QMessageBox.warning(self,
                                 "Thiếu dữ liệu",
                                 f"Chưa chọn thuốc nào trong toa thuốc.")
@@ -1409,8 +1447,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
             return
         if '\r' in text or '\n' in text:
             clean_text = text.strip()
-            if "|" in clean_text and len(clean_text.split("|")) >= 6:
-                self.parse_cccd_qr_data(clean_text)
+            if clean_text:
+                self.process_qr_data(clean_text)
             self.serial_buffer = b""
 
     def parse_cccd_qr_data(self, qr_text):

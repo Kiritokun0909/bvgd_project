@@ -30,5 +30,5 @@ if __name__ == '__main__':
     for i in range(len(data)):
         print(f'[{i}]:', data[i])
 
-    data = get_icd_name('A00')
+    data = get_icd_name('e11')
     print(data)

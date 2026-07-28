@@ -14,6 +14,7 @@ env/
 # Ẩn toàn bộ thư mục data và các tệp báo cáo, bản in, ảnh QR/Barcode sinh ra
 data/
 src/data/
+src/settings.ini
 *.db
 *.sqlite
 *.csv

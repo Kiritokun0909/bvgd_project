@@ -11,6 +11,7 @@ PROTECTED_FIELD_NAMES = {
     "so_bhyt",
     "ma_dich_vu",
     "ma_thuoc",
+    "MaYTe"
 }
 
 
@@ -127,4 +128,6 @@ def should_skip_scanner_input(widget: Optional[QWidget]) -> bool:
         return False
 
     object_name = (widget.objectName() or "").strip().lower()
-    return object_name in PROTECTED_FIELD_NAMES
+
+    # skip khi khong co object name trong danh sach
+    return not object_name in PROTECTED_FIELD_NAMES

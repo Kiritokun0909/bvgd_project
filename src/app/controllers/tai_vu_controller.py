@@ -381,7 +381,10 @@ class TaiVuTabController(QtWidgets.QWidget):
             if should_skip_scanner_input(focused_widget):
                 return
 
-            if scanned_data and (scanned_data.get('ma_y_te') or scanned_data.get('ho_ten') or scanned_data.get('bill_type') or scanned_data.get('ds_string')):
+            if scanned_data and (scanned_data.get('ma_y_te')
+                                 or scanned_data.get('ho_ten')
+                                 or scanned_data.get('bill_type')
+                                 or scanned_data.get('ds_string')):
                 if scanned_data.get('ma_y_te'):
                     ui.ma_y_te.setText(scanned_data.get('ma_y_te', ''))
                 if scanned_data.get('ho_ten'):
@@ -395,7 +398,7 @@ class TaiVuTabController(QtWidgets.QWidget):
 
                 ma_dt = scanned_data.get('ma_dt', '')
                 if ma_dt:
-                    index = ui.cb_doi_tuong.findData(ma_dt)
+                    index = ui.cb_doi_tuong.findText(ma_dt)
                     if index != -1:
                         ui.cb_doi_tuong.setCurrentIndex(index)
                     else:
@@ -435,7 +438,7 @@ class TaiVuTabController(QtWidgets.QWidget):
             self.bhyt = data_parts.get('BHYT', '')
 
             ma_dt = data_parts.get('MaDT', '')
-            index = ui.cb_doi_tuong.findData(ma_dt)
+            index = ui.cb_doi_tuong.findText(ma_dt)
             if index != -1:
                 ui.cb_doi_tuong.setCurrentIndex(index)
 

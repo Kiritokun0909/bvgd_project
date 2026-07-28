@@ -187,8 +187,8 @@ class TiepNhanTabController(QtWidgets.QWidget):
             self.ui_tiep_nhan.gioi_tinh.addItem(value, value)
 
     def _set_validators(self):
-        self.ui_tiep_nhan.ma_y_te.setMaxLength(8)
-        self.ui_tiep_nhan.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
+        # self.ui_tiep_nhan.ma_y_te.setMaxLength(8)
+        # self.ui_tiep_nhan.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
 
         self.ui_tiep_nhan.sdt.setMaxLength(10)
         self.ui_tiep_nhan.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{0,10}$')))
@@ -225,7 +225,9 @@ class TiepNhanTabController(QtWidgets.QWidget):
         self.ui_tiep_nhan.num_page.setText('1')
 
     def _connect_signals(self):
-        self.ui_tiep_nhan.ma_y_te.editingFinished.connect(self.auto_fill_benh_nhan)
+        # self.ui_tiep_nhan.ma_y_te.editingFinished.connect(self.auto_fill_benh_nhan)
+        self.ui_tiep_nhan.ma_y_te.returnPressed.connect(self.handle_scan_or_enter)
+
         self.ui_tiep_nhan.cb_phong_kham.currentIndexChanged.connect(self._save_settings)
         self.ui_tiep_nhan.doi_tuong.currentIndexChanged.connect(self._save_settings)
         self.ui_tiep_nhan.ten_bac_si.textEdited.connect(self._save_settings)
@@ -271,11 +273,11 @@ class TiepNhanTabController(QtWidgets.QWidget):
 
     def auto_fill_benh_nhan(self):
         code = self.ui_tiep_nhan.ma_y_te.text().strip()
-        if len(code) != 8:
+        if not code:
             return
         row = get_benh_nhan_by_id(code)
         if not row:
-            QMessageBox.warning(self, 'Thông báo', 'Không tìm thấy mã y tế, vui lòng nhập thủ công.')
+            QMessageBox.warning(self, 'Không tìm thấy', f'Không tìm thấy bệnh nhân: {code}')
             return
         self.ui_tiep_nhan.ho_ten.setText(str(row[1] or ''))
         self.ui_tiep_nhan.gioi_tinh.setCurrentText('Nữ' if str(row[2]).strip().upper() == 'G' else 'Nam')
@@ -287,7 +289,40 @@ class TiepNhanTabController(QtWidgets.QWidget):
         self.ui_tiep_nhan.sdt.setText(self._clean_numeric_string(row[4], expected_length=10))
         self.ui_tiep_nhan.dia_chi.setText(str(row[5] or ''))
         self.ui_tiep_nhan.so_bhyt.setText(self._clean_numeric_string(row[6]))
+        self.ui_tiep_nhan.cccd.setText(self._clean_numeric_string(row[7]))
         self.update_tuoi()
+
+    def handle_scan_or_enter(self):
+        """Handle either a manually entered medical ID or a medical QR payload."""
+        input_text = self.ui_tiep_nhan.ma_y_te.text().strip()
+        if not input_text:
+            return
+
+        if "|" in input_text or ":" in input_text:
+            self.process_qr_data(input_text)
+            return
+
+        self.auto_fill_benh_nhan()
+
+    def process_qr_data(self, qr_text: str):
+        """Load a patient from the ``MaYTe`` value encoded in a medical QR code."""
+        focused_widget = QtWidgets.QApplication.focusWidget()
+        if should_skip_scanner_input(focused_widget):
+            return
+
+        scanned_data = parse_scanned_data(qr_text)
+        ma_y_te = scanned_data.get('ma_y_te', '').strip()
+        if not ma_y_te:
+            if "|" not in qr_text and ":" not in qr_text:
+                self.ui_tiep_nhan.ma_y_te.setText(qr_text.strip())
+                self.auto_fill_benh_nhan()
+                return
+            self.parse_cccd_qr_data(qr_text)
+            self.ui_tiep_nhan.ma_y_te.clear()
+            return
+
+        self.ui_tiep_nhan.ma_y_te.setText(ma_y_te)
+        self.auto_fill_benh_nhan()
 
     def update_tuoi(self):
         ui = self.ui_tiep_nhan
@@ -796,6 +831,6 @@ class TiepNhanTabController(QtWidgets.QWidget):
         # Kết thúc dòng truyền (máy quét gửi \r hoặc \n)
         if '\r' in text or '\n' in text:
             clean_text = text.strip()
-            if "|" in clean_text and len(clean_text.split("|")) >= 6:
-                self.parse_cccd_qr_data(clean_text)
+            if clean_text:
+                self.process_qr_data(clean_text)
             self.serial_buffer = b"" # Reset bộ đệm cho lần quét kế tiếp
