@@ -3,6 +3,8 @@ import json
 import math
 
 from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtSerialPort import QSerialPort
+from PyQt6.QtCore import QDate, QTimer
 from PyQt6.QtCore import QRegularExpression, QDate, pyqtSignal, QEvent, QTimer
 from PyQt6.QtGui import QIntValidator, QRegularExpressionValidator
 from PyQt6.QtWidgets import QTableWidgetItem, QPushButton, QHBoxLayout, QWidget, QMessageBox, QLineEdit
@@ -21,7 +23,9 @@ from app.ui.ThongBaoThongTuyenBHYT import Ui_Dialog as Ui_ThongBaoThongTuyenBHYT
 
 from app.utils.config_manager import ConfigManager
 from app.utils.cong_thuc_tinh_bhyt import tinh_tien_mien_giam
-from app.utils.constants import MA_Y_TE_LENGTH, CLS_CODE
+from app.utils.scanner_utils import parse_scanned_data, should_skip_scanner_input
+from app.utils.constants import CLS_CODE
+from app.utils.setting_loader import AppConfig
 from app.utils.ui_helpers import IcdCompleterHandler, DuocCompleterHandler
 from app.utils.utils import populate_combobox, \
     calculate_age, format_currency_vn, unformat_currency_to_float, populate_list_to_combobox
@@ -33,7 +37,6 @@ from app.utils.write_json_line import write_json_lines, MODE_JSON, TARGET_DIR, g
 
 from app.utils.thong_tuyen_bhyt import thong_tuyen_bhyt
 from app.services.DoiTuongService import get_doi_tuong_by_id
-
 
 def _get_int_value(table: QtWidgets.QTableWidget, row: int, col: int) -> int:
     """Hàm tiện ích để lấy giá trị số từ QLineEdit, trả về 0 nếu rỗng/lỗi."""
@@ -84,10 +87,6 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.ds_da_kham.setRowCount(0)
         # </editor-fold>
 
-        # Disable chức năng thông tuyến bhyt
-        self.ui_kham.btn_check_bhyt.setDisabled(True)
-        self.ui_kham.btn_check_bhyt.setVisible(False)
-
         self.duoc_handler = DuocCompleterHandler(
             table_widget=self.ui_kham.ds_thuoc,
             parent=self,
@@ -111,6 +110,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.check_enable_btn_dang_ky()
         self.update_table_display()
         # </editor-fold>
+
+        self.is_processing_scan = False
 
     # </editor-fold>
 
@@ -207,8 +208,8 @@ class KhamBenhTabController(QtWidgets.QWidget):
         self.ui_kham.spo2.setValidator(int_validator)
         self.ui_kham.sdt.setValidator(QRegularExpressionValidator(QRegularExpression(r'^\d{10}$')))
 
-        self.ui_kham.ma_y_te.setMaxLength(8)
-        self.ui_kham.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
+        # self.ui_kham.ma_y_te.setMaxLength(8)
+        # self.ui_kham.ma_y_te.setValidator(QRegularExpressionValidator(QRegularExpression(r'^[A-Za-z0-9]*$')))
 
         # 2. Số CCCD: Tối đa 12 ký tự, CHỈ cho phép nhập SỐ
         self.ui_kham.cccd.setMaxLength(12)
@@ -227,7 +228,9 @@ class KhamBenhTabController(QtWidgets.QWidget):
     # <editor-fold desc="Setup event cho cac vung nhap lieu va cac nut">
     def _connect_signals(self):
         """Kết nối tất cả các tín hiệu và slot."""
-        self.ui_kham.ma_y_te.textEdited.connect(self.load_thong_tin_benh_nhan)
+        # self.ui_kham.ma_y_te.textEdited.connect(self.load_thong_tin_benh_nhan)
+        self.ui_kham.ma_y_te.returnPressed.connect(self.handle_scan_or_enter)
+
         self.ui_kham.cb_phong_kham.currentIndexChanged.connect(self._save_settings)
         self.ui_kham.ten_bac_si.textEdited.connect(self._save_settings)
         self.ui_kham.is_hen_kham.clicked.connect(self.update_ngay_hen)
@@ -429,7 +432,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
         sdt = benh_nhan_data[4]
         dia_chi = benh_nhan_data[5]
         bhyt = benh_nhan_data[6]
-        cmnd = benh_nhan_data[7]
+        cccd = benh_nhan_data[7]
 
         ngay_sinh = QDate(int(nam_sinh), 1, 1) if nam_sinh is not None else QDate.currentDate()
 
@@ -440,20 +443,53 @@ class KhamBenhTabController(QtWidgets.QWidget):
         ui.sdt.setText(str(sdt) if sdt is not None else '')
         ui.dia_chi.setText(str(dia_chi) if dia_chi is not None else '')
         ui.so_bhyt.setText(str(bhyt) if bhyt is not None else '')
-        ui.cccd.setText(str(cmnd) if cmnd is not None else '')
+        ui.cccd.setText(str(cccd) if cccd is not None else '')
         self.update_tuoi()
 
     def load_thong_tin_benh_nhan(self, ma_y_te: str):
         """Lọc dữ liệu bệnh nhân và cập nhật giao diện."""
-        if len(ma_y_te) != MA_Y_TE_LENGTH:
+        ma_y_te = ma_y_te.strip()
+        if not ma_y_te:
             return
 
         benh_nhan_data = get_benh_nhan_by_id(ma_y_te)
         if benh_nhan_data is None:
-            QMessageBox.warning(self, 'Thông báo', f'Không tìm thấy bệnh nhân với mã y tế {ma_y_te}')
+            QMessageBox.warning(self, 'Không tìm thấy', f'Không tìm thấy bệnh nhân: {ma_y_te}')
             return
 
         self.set_thong_tin_benh_nhan(benh_nhan_data)
+
+    def handle_scan_or_enter(self):
+        """Handle either a manually entered medical ID or a medical QR payload."""
+        input_text = self.ui_kham.ma_y_te.text().strip()
+        if not input_text:
+            return
+
+        if "|" in input_text or ":" in input_text:
+            self.process_qr_data(input_text)
+            return
+
+        self.load_thong_tin_benh_nhan(input_text)
+
+    def process_qr_data(self, qr_text: str):
+        """Load a patient from the ``MaYTe`` value encoded in a medical QR code."""
+        focused_widget = QtWidgets.QApplication.focusWidget()
+        if should_skip_scanner_input(focused_widget):
+            return
+
+        scanned_data = parse_scanned_data(qr_text)
+        ma_y_te = scanned_data.get('ma_y_te', '').strip()
+        if not ma_y_te:
+            if "|" not in qr_text and ":" not in qr_text:
+                self.ui_kham.ma_y_te.setText(qr_text.strip())
+                self.load_thong_tin_benh_nhan(qr_text.strip())
+                return
+            self.parse_cccd_qr_data(qr_text)
+            self.ui_kham.ma_y_te.clear()
+            return
+
+        self.ui_kham.ma_y_te.setText(ma_y_te)
+        self.load_thong_tin_benh_nhan(ma_y_te)
 
     # </editor-fold>
 
@@ -994,7 +1030,7 @@ class KhamBenhTabController(QtWidgets.QWidget):
 
         data = self.get_thong_tin_kham()
 
-        if len(data.get('ToaThuoc')) < 1:
+        if len(data.get('ToaThuoc')) < 1 and self.ui_kham.cb_cach_giai_quyet.currentData() != AppConfig.KHONG_TOA_CODE:
             QMessageBox.warning(self,
                                 "Thiếu dữ liệu",
                                 f"Chưa chọn thuốc nào trong toa thuốc.")
@@ -1323,5 +1359,161 @@ class KhamBenhTabController(QtWidgets.QWidget):
             self.ui_kham.ma_y_te.setFocus()
 
         # </editor-fold>
+
+    def get_scanner_port_name(self):
+        """Tự động bắt cổng COM nghi ngờ là máy quét nhất mà không cần ID cứng"""
+        from PyQt6.QtSerialPort import QSerialPortInfo
+        
+        available_ports = QSerialPortInfo.availablePorts()
+        if not available_ports:
+            return None
+
+        # Danh sách từ khóa thường xuất hiện trong tên/mô tả của máy quét mã vạch
+        target_keywords = ['newland', 'barcode', 'scanner', 'symbol', 'honeywell', 'datalogic']
+        
+        # Ưu tiên tuyệt đối những cổng có tên hãng máy quét
+        for port in available_ports:
+            desc = port.description().lower()
+            manu = port.manufacturer().lower()
+            if any(keyword in desc for keyword in target_keywords) or any(keyword in manu for keyword in target_keywords):
+                return port.portName()
+
+        # Nếu không tìm thấy, thử kiểm tra các cổng có mô tả phổ biến của chip USB-to-Serial (CH340, PL2303)
+        for port in available_ports:
+            desc = port.description().lower()
+            if 'usb serial device' in desc or 'ch340' in desc or 'pl2303' in desc:
+                return port.portName()
+
+        # Nếu không tìm thấy cổng nào phù hợp, trả về cổng cuối cùng trong danh sách
+        return available_ports[-1].portName()
+
+    def setup_serial_scanner(self):
+        """Khởi tạo và cấu hình cổng COM đọc dữ liệu từ máy quét"""
+        # Nếu chưa có đối tượng serial thì mới tạo mới hoàn toàn
+        if not hasattr(self, 'serial') or self.serial is None:
+            self.serial = QSerialPort(self)
+            self.serial.readyRead.connect(self.read_serial_data)
+
+        # Nếu cổng đang mở, đóng lại trước khi tái cấu hình để tránh xung đột bận cổng
+        if self.serial.isOpen():
+            self.serial.close()
+
+        # Tự động tìm cổng COM của máy quét Newland
+        target_port = self.get_scanner_port_name()
+        
+        if not target_port:
+            print("Không tìm thấy máy quét nào được cắm vào máy tính.")
+            return
+
+        self.serial.setPortName(target_port) # Gán tự động COM4, COM6...
+        self.serial.setBaudRate(9600)
+        
+        if self.serial.open(QSerialPort.OpenModeFlag.ReadOnly):
+            print(f"Đã kết nối máy quét thành công tại cổng {target_port} thành công tại Tab Khám bệnh.")
+        else:
+            print(f"Cảnh báo cổng {target_port}  tại Tab Khám bệnh: {self.serial.errorString()}. Vui lòng kiểm tra cắm dây máy quét.")
+
+    def open_serial_port(self):
+        """Mở lại cổng COM tại Tab Khám bệnh"""
+
+        # Tự động tìm cổng COM của máy quét Newland
+        target_port = self.get_scanner_port_name()
+
+        if hasattr(self, 'serial') and self.serial is not None:
+            if not self.serial.isOpen():
+                # ĐÃ SỬA THỤT LỀ LOGIC TẠI ĐÂY
+                if self.serial.open(QSerialPort.OpenModeFlag.ReadOnly):
+                    print(f"Đã mở lại cổng kết nối {target_port} tại Tab Khám bệnh.")
+                else:
+                    print(f"Tab Khám bệnh: Lỗi mở lại cổng ({self.serial.errorString()})")
+        else:
+            self.setup_serial_scanner()
+
+    def close_serial_port(self):
+        """Đóng cổng COM khi ẩn Tab Khám bệnh"""
+        if hasattr(self, 'serial') and self.serial is not None:
+            if self.serial.isOpen():
+                self.serial.close()
+                print("Đã đóng cổng kết nối tại Tab Khám Bệnh.")
+
+    def read_serial_data(self):
+        """Đọc tích lũy dữ liệu cổng COM"""
+        if not hasattr(self, 'serial_buffer'):
+            self.serial_buffer = b""
+        self.serial_buffer += self.serial.readAll().data()
+        try:
+            text = self.serial_buffer.decode('utf-8', errors='ignore')
+        except UnicodeDecodeError:
+            return
+        if '\r' in text or '\n' in text:
+            clean_text = text.strip()
+            if clean_text:
+                self.process_qr_data(clean_text)
+            self.serial_buffer = b""
+
+    def parse_cccd_qr_data(self, qr_text):
+        """"Xử lý dữ liệu QR CCCD từ máy quét và ánh xạ sang các ô nhập liệu"""
+        if self.is_processing_scan:
+            return
+        self.is_processing_scan = True
+
+        try:
+            scanned_data = parse_scanned_data(qr_text)
+            if not scanned_data:
+                return
+
+            focused_widget = QtWidgets.QApplication.focusWidget()
+            if should_skip_scanner_input(focused_widget):
+                self.is_processing_scan = False
+                return
+
+            cccd_code = scanned_data.get('cccd', '')
+            ho_ten = scanned_data.get('ho_ten', '')
+            gioi_tinh = scanned_data.get('gioi_tinh', '')
+            ngay_sinh_raw = scanned_data.get('ngay_sinh', '')
+            dia_chi = scanned_data.get('dia_chi', '')
+
+            self.ui_kham.cccd.setText(cccd_code)
+            self.ui_kham.ho_ten_bn.setText(ho_ten)
+            self.ui_kham.dia_chi.setText(dia_chi)
+
+            # Gán giới tính
+            if hasattr(self, '_normalize_gioi_tinh'):
+                gioi_tinh_chuan = self._normalize_gioi_tinh(gioi_tinh)
+            else:
+                text_gt = str(gioi_tinh or '').strip().lower()
+                mapping_gt = {'nam': 'Nam', 'nu': 'Nữ', 'nữ': 'Nữ', 'g': 'Nữ', 'm': 'Nam'}
+                gioi_tinh_chuan = mapping_gt.get(text_gt, 'Nam')
+            self.ui_kham.cb_gioi_tinh.setCurrentText(gioi_tinh_chuan)
+
+            # Xử lý năm sinh
+            date_parsed = self._parse_cccd_date(ngay_sinh_raw)
+            if date_parsed.isValid():
+                year_of_birth = date_parsed.year()
+                self.ui_kham.ngay_sinh.setDate(QDate(year_of_birth, 1, 1))
+                # Gọi hàm tính tuổi của tab khám bệnh nếu có
+                if hasattr(self, 'update_tuoi'):
+                    self.update_tuoi()
+
+        except Exception as e:
+            QMessageBox.warning(self, "Lỗi quét mã", f"Lỗi phân tích dữ liệu CCCD tại phòng khám: {str(e)}")
+        finally:
+            QTimer.singleShot(1500, lambda: setattr(self, 'is_processing_scan', False))
+
+    def _parse_cccd_date(self, date_str):
+        """Hàm parse date từ mã QR CCCD"""
+        date_str = str(date_str).strip()
+        if len(date_str) == 8 and date_str.isdigit():
+            day = int(date_str[0:2])
+            month = int(date_str[2:4])
+            year = int(date_str[4:8])
+            res_date = QDate(year, month, day)
+            if res_date.isValid():
+                return res_date
+        for fmt in ('dd/MM/yyyy', 'dd-MM-yyyy'):
+            parsed = QDate.fromString(date_str, fmt)
+            if parsed.isValid():
+                return parsed
+        return QDate()
 
     # </editor-fold>

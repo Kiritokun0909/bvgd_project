@@ -1,4 +1,5 @@
 from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QMessageBox
 from PyQt6.uic.Compiler.qtproxies import QtGui
 
@@ -11,6 +12,7 @@ from app.controllers.kham_benh_controller import KhamBenhTabController
 from app.controllers.tiep_nhan_controller import TiepNhanTabController
 
 from app.utils.constants import CLS_CODE
+from app.utils.scanner_port_manager import ScannerPortManager
 
 
 class AppController(QtWidgets.QWidget):
@@ -23,6 +25,8 @@ class AppController(QtWidgets.QWidget):
 
         self.ui_main = Ui_mainWidget()
         self.ui_main.setupUi(self)
+
+        self.ui_main.tabWidget.currentChanged.connect(self.handle_tab_changed)
 
         self.kham_benh_controller = KhamBenhTabController(
             tab_widget_container=self.ui_main.tab_kham_benh
@@ -39,6 +43,11 @@ class AppController(QtWidgets.QWidget):
         self.tiep_nhan_controller = TiepNhanTabController(
             tab_widget_container=self.ui_main.tab_tiep_nhan
         )
+
+        self.scanner_port_manager = ScannerPortManager(self)
+        self.scanner_port_manager.register_controller('kham_benh', self.kham_benh_controller)
+        self.scanner_port_manager.register_controller('tiep_nhan', self.tiep_nhan_controller)
+        self.scanner_port_manager.register_controller('tai_vu', self.tai_vu_controller)
 
         self._apply_tab_stylesheet()
 
@@ -202,15 +211,18 @@ class AppController(QtWidgets.QWidget):
                 self.tiep_nhan_controller.handle_save_and_print()
                 event.accept()
                 return
-
+        
+        if current_index == tiep_nhan_tab_index:
             if (event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier) and \
                     (event.key() == QtCore.Qt.Key.Key_N):
                 self.tiep_nhan_controller.reset_form()
                 event.accept()
                 return
 
+
         # Nếu không phải các phím trên, gọi xử lý mặc định
         super().keyPressEvent(event)
+    
 
 
     def handle_f5_shortcut(self, mode='kham_benh'):
@@ -256,3 +268,16 @@ class AppController(QtWidgets.QWidget):
             self.ui_main.tabWidget.setCurrentIndex(kham_benh_tab_index)
 
         self.kham_benh_controller.reset_all()
+
+    def handle_tab_changed(self, index):
+        """Điều phối đóng/mở cổng COM qua lớp quản lý dùng chung."""
+        current_tab_widget = self.ui_main.tabWidget.widget(index)
+
+        if current_tab_widget == self.ui_main.tab_kham_benh:
+            self.scanner_port_manager.activate_tab('kham_benh')
+        elif current_tab_widget == self.ui_main.tab_tiep_nhan:
+            self.scanner_port_manager.activate_tab('tiep_nhan')
+        elif current_tab_widget == self.ui_main.tab_tai_vu:
+            self.scanner_port_manager.activate_tab('tai_vu')
+        else:
+            self.scanner_port_manager.activate_tab('')
