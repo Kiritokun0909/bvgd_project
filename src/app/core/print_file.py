@@ -21,9 +21,6 @@ def print_file_win32(file_path):
             0  # 0: SW_HIDE - Cố gắng ẩn cửa sổ ứng dụng in
         )
 
-        # print(f"Đã gửi lệnh in thành công:")
-        # print(f" - Tệp: {os.path.basename(abs_path)}")
-        # print(f" - Máy in: {default_printer}")
         return True
 
     except Exception as e:

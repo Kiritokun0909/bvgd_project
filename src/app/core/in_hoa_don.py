@@ -33,7 +33,7 @@ LOGO_PATH = get_file_path(LOGO_FILE_NAME)
 HOA_DON_HEADER = 'HOÁ ĐƠN BÁN HÀNG'
 
 # Kích thước giấy in nhiệt (K80 = 80mm, K57 = 57mm)
-THERMAL_WIDTH_MM = 57
+THERMAL_WIDTH_MM = 80
 MARGIN_LEFT = 2
 MARGIN_RIGHT = 2
 FONT_SIZE = 6
